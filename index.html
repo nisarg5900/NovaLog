@@ -103,19 +103,20 @@ nav .links a:hover{color:var(--text)}
 section{padding:72px 0;position:relative}
 .eyebrow{font-size:11px;color:var(--brand2);text-transform:uppercase;letter-spacing:2px;margin-bottom:14px;font-weight:500;display:inline-flex;align-items:center;gap:8px}
 .eyebrow::before{content:"";width:24px;height:1px;background:var(--brand2)}
-h2{font-size:clamp(28px,4.2vw,44px);font-weight:700;letter-spacing:-.6px;margin-bottom:18px;line-height:1.12;background:linear-gradient(180deg,#fff 0%,#d8d4e8 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+h2{font-size:clamp(28px,4.2vw,44px);font-weight:700;letter-spacing:-.6px;margin-bottom:18px;line-height:1.2;padding-bottom:.08em;background:linear-gradient(180deg,#fff 0%,#d8d4e8 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .lead{font-size:16px;color:var(--text2);max-width:600px;margin-bottom:44px;line-height:1.65}
 
 /* ─ Story section ─ */
-.story{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
-.story-text p{color:var(--text2);font-size:15px;line-height:1.75;margin-bottom:14px}
-.story-text p strong{color:var(--text);font-weight:500}
-.story-text .sig{display:flex;align-items:center;gap:10px;margin-top:24px;font-size:13px;color:var(--text3)}
-.story-text .sig::before{content:"";width:32px;height:1px;background:var(--border2)}
-.story-card{position:relative;padding:36px 32px;background:linear-gradient(180deg,var(--surface) 0%,var(--bg2) 100%);border:1px solid var(--border);border-radius:18px;font-family:'Georgia','Times New Roman',serif;font-size:17px;line-height:1.7;color:var(--text2);font-style:italic}
-.story-card::before{content:"\201C";position:absolute;top:-8px;left:18px;font-size:80px;font-family:Georgia,serif;color:var(--brand);opacity:.5;line-height:1}
-.story-card .meta{font-style:normal;font-family:'Inter',sans-serif;margin-top:18px;display:flex;gap:6px;font-size:11px}
-.story-card .meta span{padding:2px 8px;background:var(--brand-dim);color:var(--brand2);border-radius:10px}
+.story-prose{max-width:640px;margin:32px auto 0;position:relative}
+.story-prose p{color:var(--text2);font-size:16px;line-height:1.78;margin-bottom:20px}
+.story-prose p:first-of-type::first-letter{font-size:1.15em;color:var(--text);font-weight:500}
+.story-prose p em{color:var(--brand2);font-style:normal;font-weight:500}
+.story-prose .pull{font-family:'Georgia','Times New Roman',serif;font-style:italic;font-size:19px;line-height:1.55;color:var(--text);text-align:center;padding:14px 0 22px;margin:8px 0 22px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);position:relative}
+.story-prose .pull::before,.story-prose .pull::after{content:"";position:absolute;left:50%;transform:translateX(-50%);width:6px;height:6px;border-radius:50%;background:var(--brand);box-shadow:0 0 12px var(--brand-glow)}
+.story-prose .pull::before{top:-3.5px}
+.story-prose .pull::after{bottom:-3.5px}
+.story-prose .sig{display:flex;align-items:center;gap:10px;margin-top:32px;font-size:13px;color:var(--text3)}
+.story-prose .sig::before{content:"";width:32px;height:1px;background:var(--border2)}
 
 /* ─ Features ─ */
 .features{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
@@ -236,23 +237,23 @@ footer .ftr-links{display:flex;gap:22px}
       <div class="preview-body">
         <div class="preview-side">
           <div class="label">Tags</div>
-          <div class="tag-row act">● Longing</div>
-          <div class="tag-row">● Faith</div>
-          <div class="tag-row">● Identity</div>
-          <div class="tag-row">● Memory</div>
+          <div class="tag-row act">● Chapter 3</div>
+          <div class="tag-row">● Dialogue</div>
+          <div class="tag-row">● Setting</div>
+          <div class="tag-row">● Theme</div>
         </div>
         <div>
           <div class="preview-card">
-            <div class="tags"><span>Longing</span><span>Philosophy</span></div>
-            <p>Isn't love synonymous with waiting? If you're not patient, you cannot ever be in love…</p>
+            <div class="tags"><span>Chapter 3</span><span>Dialogue</span></div>
+            <p>The line that came to me on the train — something about silence being the loudest answer. Refine before draft.</p>
           </div>
           <div class="preview-card">
-            <div class="tags"><span>Faith</span></div>
-            <p>Where we didn't ask for anything while praying, just say hi — embrace the presence.</p>
+            <div class="tags"><span>Setting</span></div>
+            <p>A café at the edge of a city no one names. Two regulars, a power cut, an unfinished sentence.</p>
           </div>
           <div class="preview-card">
-            <div class="tags"><span>Identity</span></div>
-            <p>The version of me that wrote this is not the version reading it back. Both are mine.</p>
+            <div class="tags"><span>Theme</span></div>
+            <p>Maybe the whole book is just a question disguised as a story. Sit with this one for a few days.</p>
           </div>
         </div>
       </div>
@@ -263,18 +264,17 @@ footer .ftr-links{display:flex;gap:22px}
 <section id="story">
   <div class="eyebrow reveal">The story</div>
   <h2 class="reveal">Built because I kept<br>losing my own lines.</h2>
-  <div class="story" style="margin-top:32px">
-    <div class="story-text reveal">
-      <p>A few years ago I started writing my first book — a quiet, sprawling thing about love, faith, and the people we don't get to keep. <strong>It took me three years.</strong></p>
-      <p>The hardest part wasn't the writing. It was that the ideas kept arriving when I wasn't writing. On walks, in the shower, at 2am with the phone screen lighting up my face. I'd open Notes, type something half-cooked, and never see it again.</p>
-      <p>By year two, I had hundreds of fragments scattered across Notes, Keep, screenshots, voice memos, and an embarrassing number of receipts. Some of them were the best lines in the book. <strong>Some I never found again.</strong></p>
-      <p>So I built NovaLog — a single place where every fragment has a home, can be tagged by theme, and marked the moment it lands in the manuscript. The app is yours now. I hope it keeps your lines safer than I kept mine.</p>
-      <div class="sig">Nisarg · Maker, NovaLog</div>
-    </div>
-    <div class="story-card reveal reveal-delay-1">
-      We don't marry a compatible person — compatibility is an achievement of love. We're all looking for someone who likes the same music, who orders the same coffee, who thinks exactly like us. That's not compatibility. That's similarity.
-      <div class="meta"><span>Philosophy</span><span>Used in Ch. 7</span></div>
-    </div>
+  <div class="story-prose reveal">
+    <p>Last year, while writing a book, I ran into a problem I didn't expect.</p>
+    <p>The writing itself was manageable. The ideas were not.</p>
+    <p>They arrived everywhere except at my desk — on walks, in the shower, during commutes, and in the middle of the night. I'd capture them wherever I could: Notes, voice memos, screenshots, random documents.</p>
+    <p>Soon I had hundreds of fragments scattered across different apps. Some became chapters. Some became my favorite lines. <em>Many disappeared into the void.</em></p>
+    <div class="pull">I built NovaLog because I needed a place where every idea had a home.</div>
+    <p>A place to quickly capture thoughts, organize them by theme, and keep track of which ones had already found their way into a project.</p>
+    <p>NovaLog started as a tool for writing a book, but it's really for anyone who creates, thinks, journals, researches, or simply collects ideas they don't want to lose.</p>
+    <p>It's still a work in progress. I'm actively building it, refining it, and adding features as I discover new ways ideas get lost.</p>
+    <p>For now, my goal is simple: <em>help good ideas survive long enough to become something meaningful.</em></p>
+    <div class="sig">Nisarg · Maker, NovaLog</div>
   </div>
 </section>
 
