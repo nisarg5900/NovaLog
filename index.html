@@ -2,1148 +2,298 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Idea Tracker — Unfinished Story</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>NovaLog — Where ideas are born</title>
+<meta name="description" content="A quiet place to capture, organise, and revisit the ideas you're still becoming. Sync across all your devices.">
+<link rel="icon" type="image/svg+xml" href="assets/novalog-icon.svg">
 <style>
 :root{
-  --bg:#faf9f7;--surface:#fff;--surface2:#f3f1ee;--surface3:#ece9e4;
-  --border:#e4e0da;--border2:#ccc8c0;
-  --text:#1a1714;--text2:#6b6560;--text3:#a09a93;
-  --accent:#c4784a;--accent-bg:#fdf0e8;--accent-text:#7a3c18;
-  --used-border:#4a7fc4;--unused-border:#5a9e6f;
-  --shadow:0 2px 12px rgba(0,0,0,.08);
-  --r:10px;--rs:6px;
-}
-.dark{
-  --bg:#131210;--surface:#1e1c19;--surface2:#272420;--surface3:#302d29;
-  --border:#3a3630;--border2:#4a4540;
-  --text:#f0ece6;--text2:#a09a90;--text3:#6a6460;
-  --accent:#e0946a;--accent-bg:#2e2018;--accent-text:#f0b888;
-  --used-border:#5a8fd4;--unused-border:#6aae7f;
-  --shadow:0 2px 12px rgba(0,0,0,.4);
+  --bg:#07070d;
+  --bg2:#0c0c14;
+  --surface:#12121c;
+  --surface2:#1a1a26;
+  --border:#23233a;
+  --text:#f0eff7;
+  --text2:#b8b4c8;
+  --text3:#6e6a82;
+  --brand:#6666FF;
+  --brand2:#8a8aff;
+  --brand-dim:rgba(102,102,255,.18);
+  --pink:rgba(220,100,200,.16);
+  --cyan:rgba(100,180,255,.14);
 }
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%}
-body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);overflow:hidden}
-button{font-family:inherit;cursor:pointer}
-input,textarea,select{font-family:inherit}
+html,body{background:var(--bg);color:var(--text);font-family:'Inter',-apple-system,'Segoe UI',system-ui,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.55;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+
+/* ─ Nebula background ─ */
+.cosmos{position:fixed;inset:0;z-index:-1;overflow:hidden;background:var(--bg)}
+.cosmos::before{content:"";position:absolute;width:1100px;height:1100px;left:50%;top:-180px;transform:translateX(-50%);background:radial-gradient(circle at 50% 50%, var(--brand-dim) 0%, transparent 55%);filter:blur(40px)}
+.cosmos::after{content:"";position:absolute;width:900px;height:900px;left:-200px;top:600px;background:radial-gradient(circle at 50% 50%, var(--pink) 0%, transparent 60%);filter:blur(60px)}
+.cosmos .glow2{position:absolute;width:700px;height:700px;right:-150px;top:1400px;background:radial-gradient(circle at 50% 50%, var(--cyan) 0%, transparent 60%);filter:blur(60px)}
+.stars{position:absolute;inset:0;opacity:.5;background-image:radial-gradient(1px 1px at 20% 30%, #fff, transparent),radial-gradient(1px 1px at 40% 70%, #ddd, transparent),radial-gradient(1px 1px at 70% 20%, #fff, transparent),radial-gradient(1px 1px at 85% 80%, #ccc, transparent),radial-gradient(1px 1px at 10% 90%, #fff, transparent),radial-gradient(1px 1px at 60% 40%, #eee, transparent),radial-gradient(2px 2px at 30% 50%, #fff, transparent),radial-gradient(1px 1px at 90% 10%, #fff, transparent);background-size:600px 600px,800px 800px,500px 500px,700px 700px,650px 650px,750px 750px,900px 900px,550px 550px}
 
 /* ─ Layout ─ */
-.app{display:flex;height:100vh;overflow:hidden;position:relative}
-.sidebar{width:240px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;transition:width .2s,transform .2s;z-index:10}
-.sidebar.collapsed{width:0;border-right:none}
-.sidebar-inner{width:240px;min-width:240px;display:flex;flex-direction:column;height:100%;overflow-y:auto}
-.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
-.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:10px 14px;display:flex;gap:8px;align-items:center;flex-shrink:0;flex-wrap:wrap}
-.content{flex:1;overflow-y:auto;padding:16px}
+.wrap{max-width:1100px;margin:0 auto;padding:0 24px}
 
-/* ─ Sidebar ─ */
-.sidebar-head{padding:14px 14px 10px;border-bottom:1px solid var(--border);flex-shrink:0}
-.sidebar-head h1{font-size:14px;font-weight:600;color:var(--text)}
-.sidebar-head p{font-size:11px;color:var(--text3);margin-top:2px}
-.sidebar-sec{padding:10px 10px 2px}
-.sidebar-sec-lbl{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--text3);padding:0 4px;margin-bottom:4px;display:flex;justify-content:space-between;align-items:center}
-.sidebar-sec-lbl button{font-size:10px;color:var(--accent);background:none;border:none;cursor:pointer;padding:0}
-.nav-btn{display:flex;align-items:center;gap:7px;width:100%;padding:6px 8px;border-radius:var(--rs);border:none;background:none;color:var(--text2);font-size:13px;cursor:pointer;text-align:left;transition:background .12s}
-.nav-btn:hover{background:var(--surface2)}
-.nav-btn.active{background:var(--accent-bg);color:var(--accent);font-weight:500}
-.nav-btn .ico{width:16px;text-align:center;font-size:13px}
-.nav-btn .cnt{margin-left:auto;font-size:11px;background:var(--surface2);color:var(--text3);padding:1px 6px;border-radius:10px}
-.nav-btn.active .cnt{background:var(--accent-bg);color:var(--accent)}
-.cat-list{display:flex;flex-direction:column;gap:1px;padding:0 10px 6px}
-.cat-btn{display:flex;align-items:center;gap:7px;width:100%;padding:5px 8px;border-radius:var(--rs);border:none;background:none;color:var(--text2);font-size:12px;cursor:pointer;text-align:left;transition:background .12s}
-.cat-btn:hover{background:var(--surface2)}
-.cat-btn.active{background:var(--surface3);color:var(--text);font-weight:500}
-.dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-.cat-btn .cnt{margin-left:auto;font-size:11px;color:var(--text3)}
-.sidebar-bottom{padding:10px 12px 14px;margin-top:auto;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:6px}
-.sb-btn{padding:7px;border-radius:var(--rs);border:1px solid var(--border);background:var(--surface);color:var(--text2);font-size:12px;cursor:pointer;text-align:center;width:100%;transition:background .12s}
-.sb-btn:hover{background:var(--surface2);color:var(--text)}
-.sb-btn.accent{background:var(--accent);color:#fff;border-color:var(--accent);font-weight:500}
-.sb-btn.accent:hover{opacity:.9}
-.sb-row{display:flex;gap:6px}
-.sb-row .sb-btn{flex:1}
+/* ─ Nav ─ */
+nav{padding:22px 0;display:flex;align-items:center;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:15px;letter-spacing:.2px}
+.brand img{width:28px;height:28px}
+nav .links{display:flex;gap:24px;align-items:center;font-size:13px;color:var(--text2)}
+nav .links a:hover{color:var(--text)}
+.cta-sm{padding:8px 16px;background:var(--brand);color:#fff;border-radius:8px;font-weight:500;font-size:13px;transition:transform .15s,box-shadow .15s}
+.cta-sm:hover{transform:translateY(-1px);box-shadow:0 8px 24px var(--brand-dim)}
 
-/* ─ Topbar ─ */
-.toggle-sidebar-btn{background:none;border:1px solid var(--border);border-radius:var(--rs);padding:6px 10px;color:var(--text2);font-size:16px;line-height:1;flex-shrink:0}
-.toggle-sidebar-btn:hover{background:var(--surface2)}
-.search-box{flex:1;min-width:120px;display:flex;align-items:center;gap:7px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--rs);padding:6px 11px}
-.search-box input{border:none;background:none;color:var(--text);font-size:13px;flex:1;outline:none;min-width:0}
-.search-box input::placeholder{color:var(--text3)}
-.tb-btn{padding:6px 12px;border-radius:var(--rs);border:1px solid var(--border);background:var(--surface);color:var(--text2);font-size:12px;cursor:pointer;white-space:nowrap;transition:all .12s;flex-shrink:0}
-.tb-btn:hover{background:var(--surface2);color:var(--text)}
-.view-grp{display:flex;border:1px solid var(--border);border-radius:var(--rs);overflow:hidden;flex-shrink:0}
-.vbtn{padding:5px 9px;border:none;background:none;color:var(--text3);cursor:pointer;font-size:14px;transition:background .12s}
-.vbtn:hover{background:var(--surface2)}
-.vbtn.active{background:var(--surface2);color:var(--text)}
-.sort-sel{padding:5px 8px;border:1px solid var(--border);border-radius:var(--rs);background:var(--surface);color:var(--text);font-size:12px;outline:none;flex-shrink:0}
-.expand-all-btn{padding:6px 10px;border-radius:var(--rs);border:1px solid var(--border);background:var(--surface);color:var(--text2);font-size:12px;cursor:pointer;flex-shrink:0}
-.expand-all-btn:hover{background:var(--surface2)}
+/* ─ Hero ─ */
+.hero{padding:100px 0 90px;text-align:center;position:relative}
+.hero .badge{display:inline-block;padding:5px 12px;border:1px solid var(--border);border-radius:20px;font-size:11px;color:var(--text2);margin-bottom:24px;background:rgba(255,255,255,.02);backdrop-filter:blur(8px)}
+.hero .badge .dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--brand);margin-right:6px;vertical-align:middle;box-shadow:0 0 8px var(--brand)}
+.hero h1{font-size:clamp(40px,7vw,76px);line-height:1.05;font-weight:700;letter-spacing:-1.5px;margin-bottom:22px;background:linear-gradient(180deg,#fff 0%,#c8c5e0 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero h1 .accent{background:linear-gradient(135deg,var(--brand) 0%,#b48aff 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero .sub{font-size:clamp(15px,1.6vw,19px);color:var(--text2);max-width:580px;margin:0 auto 38px;line-height:1.6}
+.hero .ctas{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.cta{padding:14px 28px;border-radius:10px;font-size:14px;font-weight:500;transition:transform .15s,box-shadow .15s;cursor:pointer;display:inline-flex;align-items:center;gap:8px;border:none}
+.cta.primary{background:var(--brand);color:#fff;box-shadow:0 8px 32px var(--brand-dim)}
+.cta.primary:hover{transform:translateY(-1px);box-shadow:0 12px 40px rgba(102,102,255,.32)}
+.cta.ghost{background:transparent;color:var(--text);border:1px solid var(--border)}
+.cta.ghost:hover{border-color:var(--brand);background:rgba(102,102,255,.05)}
 
-/* ─ Stats ─ */
-.stats-strip{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap}
-.stat-pill{background:var(--surface);border:1px solid var(--border);border-radius:var(--rs);padding:7px 14px;display:flex;gap:7px;align-items:baseline}
-.stat-num{font-size:18px;font-weight:600}
-.stat-lbl{font-size:11px;color:var(--text2)}
+/* ─ Preview shot ─ */
+.preview{margin-top:72px;perspective:1200px}
+.preview-frame{position:relative;border-radius:14px;border:1px solid var(--border);overflow:hidden;background:var(--surface);box-shadow:0 30px 80px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.03) inset;transform:rotateX(2deg)}
+.preview-frame::before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at top, var(--brand-dim) 0%, transparent 50%);pointer-events:none;z-index:1}
+.preview-bar{display:flex;gap:6px;padding:12px 16px;border-bottom:1px solid var(--border);background:var(--surface2)}
+.preview-bar span{width:11px;height:11px;border-radius:50%;background:#2a2a3a}
+.preview-body{padding:40px 24px;min-height:300px;display:grid;grid-template-columns:200px 1fr;gap:20px;text-align:left}
+.preview-side{border-right:1px solid var(--border);padding-right:16px}
+.preview-side div{padding:7px 9px;font-size:12px;color:var(--text3);border-radius:6px;margin-bottom:3px}
+.preview-side div.act{background:var(--brand-dim);color:var(--brand2)}
+.preview-card{padding:14px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;margin-bottom:10px;font-size:12px}
+.preview-card .tags{display:flex;gap:5px;margin-bottom:8px}
+.preview-card .tags span{font-size:9px;padding:2px 7px;border-radius:10px;background:var(--brand-dim);color:var(--brand2)}
+.preview-card p{color:var(--text2);font-size:12px;line-height:1.5}
 
-/* ─ Active filters ─ */
-.active-filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;align-items:center}
-.af-lbl{font-size:11px;color:var(--text3)}
-.af-chip{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:500;border:1px solid var(--border2);background:var(--surface2);color:var(--text2)}
-.af-chip button{background:none;border:none;cursor:pointer;color:var(--text3);font-size:13px;padding:0;line-height:1}
+/* ─ Sections ─ */
+section{padding:90px 0;position:relative}
+.eyebrow{font-size:12px;color:var(--brand2);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:14px;font-weight:500}
+h2{font-size:clamp(28px,4vw,42px);font-weight:700;letter-spacing:-.5px;margin-bottom:18px;line-height:1.15}
+.lead{font-size:16px;color:var(--text2);max-width:580px;margin-bottom:48px}
 
-/* ─ Cards ─ */
-.cards-grid{display:flex;flex-direction:column;gap:9px}
-.idea-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);transition:box-shadow .15s,border-color .15s}
-.idea-card:hover{border-color:var(--border2);box-shadow:var(--shadow)}
-.idea-card.used{border-left:3px solid var(--used-border)}
-.idea-card.unused{border-left:3px solid var(--unused-border)}
-.card-head{display:flex;align-items:flex-start;gap:8px;padding:12px 14px 8px;cursor:pointer}
-.card-text{flex:1;font-size:13.5px;line-height:1.7;color:var(--text);white-space:pre-wrap;word-break:break-word}
-.card-text.clamped{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;white-space:normal}
-.exp-btn{background:none;border:1px solid var(--border);border-radius:4px;color:var(--text3);font-size:11px;padding:2px 6px;flex-shrink:0;margin-top:2px;transition:background .12s}
-.exp-btn:hover{background:var(--surface2)}
-.card-foot{padding:6px 14px 10px;display:flex;gap:5px;align-items:center;flex-wrap:wrap;border-top:1px solid var(--border)}
-.badge{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:500;padding:2px 9px;border-radius:20px;white-space:nowrap;user-select:none}
-.badge .bx{cursor:pointer;opacity:.6;font-size:12px;line-height:1}
-.badge .bx:hover{opacity:1}
-.add-tag-btn{font-size:11px;padding:2px 9px;border-radius:20px;border:1px dashed var(--border2);background:none;color:var(--text3);cursor:pointer;transition:all .12s}
-.add-tag-btn:hover{color:var(--text2);border-color:var(--border2);background:var(--surface2)}
-.card-actions{margin-left:auto;display:flex;gap:5px}
-.act-btn{font-size:11px;padding:2px 9px;border-radius:20px;border:1px solid var(--border);background:none;color:var(--text3);cursor:pointer;transition:all .12s}
-.act-btn:hover{background:var(--surface2);color:var(--text2)}
+/* ─ Features ─ */
+.features{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px}
+.feat{padding:28px;border:1px solid var(--border);border-radius:14px;background:linear-gradient(180deg,var(--surface) 0%,var(--bg2) 100%);transition:border-color .2s,transform .2s}
+.feat:hover{border-color:var(--brand);transform:translateY(-2px)}
+.feat-ico{width:36px;height:36px;border-radius:8px;background:var(--brand-dim);display:flex;align-items:center;justify-content:center;color:var(--brand2);font-size:18px;margin-bottom:18px}
+.feat h3{font-size:17px;font-weight:600;margin-bottom:8px}
+.feat p{font-size:13.5px;color:var(--text2);line-height:1.6}
 
-/* ─ Table ─ */
-.tbl-wrap{overflow-x:auto}
-table{width:100%;border-collapse:collapse;font-size:13px}
-thead th{text-align:left;padding:8px 12px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.6px;color:var(--text3);border-bottom:1px solid var(--border);white-space:nowrap;cursor:pointer;user-select:none}
-thead th:hover{color:var(--text2)}
-tbody tr{border-bottom:1px solid var(--border);cursor:pointer}
-tbody tr:hover{background:var(--surface2)}
-tbody td{padding:9px 12px;vertical-align:top}
-.td-text{max-width:400px}
-.td-text p{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.5}
+/* ─ Steps ─ */
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:24px;margin-top:20px}
+.step{position:relative;padding-top:8px}
+.step-num{font-size:48px;font-weight:700;line-height:1;color:transparent;-webkit-text-stroke:1px var(--brand);margin-bottom:14px}
+.step h3{font-size:16px;font-weight:600;margin-bottom:6px}
+.step p{font-size:13.5px;color:var(--text2)}
 
-/* ─ Kanban ─ */
-.kanban-wrap{display:flex;gap:12px;overflow-x:auto;padding-bottom:8px;align-items:flex-start}
-.k-col{min-width:200px;width:210px;flex-shrink:0}
-.k-col-head{font-size:12px;font-weight:600;color:var(--text2);margin-bottom:8px;padding:0 2px;display:flex;justify-content:space-between}
-.k-col-head .kc{font-size:11px;font-weight:400;color:var(--text3)}
-.k-cards{display:flex;flex-direction:column;gap:7px}
-.k-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rs);padding:9px 11px;font-size:12px;line-height:1.55;color:var(--text);cursor:pointer;transition:box-shadow .12s;overflow:hidden;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical}
-.k-card:hover{box-shadow:var(--shadow)}
-.k-card.used{border-left:3px solid var(--used-border)}
-.k-card-tags{margin-top:5px;display:flex;gap:3px;flex-wrap:wrap;-webkit-line-clamp:unset;display:flex}
+/* ─ FAQ ─ */
+.faq{display:grid;gap:8px;max-width:780px}
+.faq-item{border:1px solid var(--border);border-radius:10px;background:var(--surface);overflow:hidden}
+.faq-q{padding:18px 22px;font-weight:500;font-size:14.5px;cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center}
+.faq-q::-webkit-details-marker{display:none}
+.faq-q::after{content:"+";color:var(--brand2);font-size:18px;font-weight:300}
+.faq-item[open] .faq-q::after{content:"−"}
+.faq-a{padding:0 22px 18px;font-size:13.5px;color:var(--text2);line-height:1.65}
 
-/* ─ Dropdown portal ─ */
-#drop-portal{position:fixed;z-index:9999;background:var(--surface);border:1px solid var(--border2);border-radius:var(--rs);padding:4px;min-width:190px;box-shadow:0 6px 20px rgba(0,0,0,.18);display:none;max-height:300px;overflow-y:auto}
-.drop-item{padding:6px 10px;border-radius:4px;font-size:12.5px;cursor:pointer;color:var(--text);display:flex;align-items:center;gap:8px}
-.drop-item:hover{background:var(--surface2)}
-.drop-item.disabled{opacity:.35;pointer-events:none}
-.drop-sep{height:1px;background:var(--border);margin:3px 0}
-.drop-new-input{padding:5px 10px;display:flex;gap:6px;align-items:center}
-.drop-new-input input{flex:1;padding:4px 7px;border:1px solid var(--border);border-radius:4px;background:var(--surface2);color:var(--text);font-size:12px;outline:none}
-.drop-new-input button{padding:4px 8px;border-radius:4px;border:none;background:var(--accent);color:#fff;font-size:11px}
+/* ─ Final CTA ─ */
+.final{text-align:center;padding:120px 0 90px}
+.final-card{max-width:680px;margin:0 auto;padding:60px 40px;border:1px solid var(--border);border-radius:20px;background:linear-gradient(135deg,var(--surface) 0%,var(--bg2) 100%);position:relative;overflow:hidden}
+.final-card::before{content:"";position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle at 50% 0%, var(--brand-dim) 0%, transparent 50%);pointer-events:none}
+.final-card > *{position:relative}
+.final-card h2{margin-bottom:14px}
+.final-card p{color:var(--text2);margin-bottom:32px;font-size:15px}
 
-/* ─ Modal ─ */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:2000;display:none;align-items:center;justify-content:center;padding:16px}
-.modal-overlay.open{display:flex}
-.modal{background:var(--surface);border-radius:14px;width:100%;max-width:600px;max-height:92vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.25)}
-.modal-head{padding:18px 22px 14px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
-.modal-head h2{font-size:15px;font-weight:600}
-.modal-x{background:none;border:none;color:var(--text3);font-size:22px;cursor:pointer;padding:0;line-height:1}
-.modal-body{padding:18px 22px}
-.modal-foot{padding:12px 22px 18px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end}
-.fgrp{margin-bottom:14px}
-.flbl{font-size:12px;font-weight:500;color:var(--text2);display:block;margin-bottom:6px}
-.ftextarea{width:100%;min-height:110px;padding:10px 12px;border:1px solid var(--border);border-radius:var(--rs);background:var(--surface2);color:var(--text);font-size:13.5px;line-height:1.7;resize:vertical;outline:none;transition:border-color .15s}
-.ftextarea:focus{border-color:var(--accent)}
-.finput{width:100%;padding:7px 12px;border:1px solid var(--border);border-radius:var(--rs);background:var(--surface2);color:var(--text);font-size:13px;outline:none;transition:border-color .15s}
-.finput:focus{border-color:var(--accent)}
-.datetime-row{display:flex;gap:8px;flex-wrap:wrap}
-.datetime-row .finput{flex:1;min-width:140px}
-input[type="date"]::-webkit-calendar-picker-indicator,
-input[type="time"]::-webkit-calendar-picker-indicator{filter:invert(0.5);cursor:pointer}
-.dark input[type="date"]::-webkit-calendar-picker-indicator,
-.dark input[type="time"]::-webkit-calendar-picker-indicator{filter:invert(0.7)}
-.card-dt{font-size:11px;color:var(--text3);margin-left:auto;white-space:nowrap;align-self:center}
-.tag-picker{display:flex;gap:6px;flex-wrap:wrap}
-.tpc{padding:5px 13px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;border:2px solid transparent;transition:all .12s;opacity:.55}
-.tpc:hover{opacity:.8}
-.tpc.sel{opacity:1;border-color:currentColor !important}
-.status-row{display:flex;gap:8px;flex-wrap:wrap}
-.sopt{flex:1;min-width:100px;padding:8px 10px;border-radius:var(--rs);border:1.5px solid var(--border);background:none;color:var(--text2);font-size:13px;cursor:pointer;text-align:center;transition:all .12s}
-.sopt:hover{border-color:var(--border2);background:var(--surface2)}
-.sopt.sel{font-weight:500}
-.modal-btn{padding:7px 18px;border-radius:var(--rs);border:1px solid var(--border);background:var(--surface);color:var(--text2);font-size:13px;cursor:pointer;transition:all .12s}
-.modal-btn:hover{background:var(--surface2)}
-.modal-btn.primary{background:var(--accent);color:#fff;border-color:var(--accent);font-weight:500}
-.modal-btn.primary:hover{opacity:.9}
-.modal-btn.danger{background:#e55;color:#fff;border-color:#e55}
-.modal-btn.danger:hover{opacity:.9}
+/* ─ Footer ─ */
+footer{padding:40px 0 60px;border-top:1px solid var(--border);font-size:13px;color:var(--text3);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;margin-top:40px}
+footer a:hover{color:var(--text2)}
+footer .ftr-links{display:flex;gap:22px}
 
-/* ─ Tag/Status manager modal ─ */
-.mgr-list{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
-.mgr-item{display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface2);border-radius:var(--rs);font-size:13px}
-.mgr-item .dot{flex-shrink:0}
-.mgr-item-name{flex:1}
-.mgr-item-cnt{font-size:11px;color:var(--text3);margin-left:auto}
-.mgr-del{background:none;border:none;color:var(--text3);font-size:16px;cursor:pointer;padding:0 4px;line-height:1}
-.mgr-del:hover{color:#e55}
-.mgr-add-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.mgr-add-row input{flex:1;min-width:120px;padding:6px 10px;border:1px solid var(--border);border-radius:var(--rs);background:var(--surface);color:var(--text);font-size:13px;outline:none}
-.mgr-add-row input:focus{border-color:var(--accent)}
-.color-pick{display:flex;gap:6px;flex-wrap:wrap}
-.cpick{width:22px;height:22px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:border-color .12s}
-.cpick.sel{border-color:var(--text)}
-
-/* ─ Empty ─ */
-.empty{text-align:center;padding:50px 20px;color:var(--text3);font-size:14px}
-.empty-ico{font-size:36px;margin-bottom:10px}
-
-/* ─ Scrollbar ─ */
-::-webkit-scrollbar{width:5px;height:5px}
-::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
-
-/* ─ Mobile overlay ─ */
-.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:9}
 @media(max-width:640px){
-  body{overflow:auto}
-  .app{flex-direction:column;height:auto;overflow:auto}
-  .sidebar{position:fixed;top:0;left:0;height:100%;z-index:10;transform:translateX(-100%);width:260px!important;transition:transform .2s}
-  .sidebar.mobile-open{transform:translateX(0)}
-  .sidebar-overlay{display:block}
-  .sidebar.collapsed{transform:translateX(-100%)}
-  .main{min-height:100vh}
-  .content{overflow-y:visible}
-  .body{overflow:visible}
-  .topbar{position:sticky;top:0;z-index:8}
-  .kanban-wrap{flex-direction:column}
-  .k-col{width:100%;min-width:0}
-  table{font-size:12px}
+  .hero{padding:60px 0 70px}
+  section{padding:60px 0}
+  .preview-body{grid-template-columns:1fr;padding:20px}
+  .preview-side{border-right:none;border-bottom:1px solid var(--border);padding-bottom:12px;padding-right:0}
+  nav .links a:not(.cta-sm){display:none}
 }
-/* ─ Auth overlay ─ */
-.auth-overlay{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px}
-.auth-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:28px;width:100%;max-width:360px;box-shadow:var(--shadow)}
-.auth-card h2{font-size:18px;margin-bottom:6px}
-.auth-card p{font-size:12px;color:var(--text2);margin-bottom:18px}
-.auth-card label{display:block;font-size:11px;color:var(--text2);margin:10px 0 4px;font-weight:500}
-.auth-card input{width:100%;padding:9px 11px;border:1px solid var(--border2);border-radius:var(--rs);background:var(--surface2);color:var(--text);font-size:13px;outline:none}
-.auth-card input:focus{border-color:var(--accent)}
-.auth-card button{width:100%;padding:10px;border:none;border-radius:var(--rs);background:var(--accent);color:#fff;font-size:13px;font-weight:500;cursor:pointer;margin-top:14px}
-.auth-card button:disabled{opacity:.6;cursor:not-allowed}
-.auth-card .alt{text-align:center;margin-top:10px;font-size:12px;color:var(--text2)}
-.auth-card .alt a{color:var(--accent);cursor:pointer;text-decoration:none}
-.auth-msg{font-size:12px;margin-top:10px;padding:8px;border-radius:var(--rs);text-align:center}
-.auth-msg.err{background:#fdecec;color:#a02020;border:1px solid #f0bcbc}
-.auth-msg.ok{background:#e8f5e9;color:#1e6b25;border:1px solid #b8dcc0}
-.sync-badge{font-size:10px;color:var(--text3);padding:2px 6px;border-radius:10px;background:var(--surface2);margin-left:6px}
-.sync-badge.syncing{color:var(--accent)}
-.sync-badge.error{color:#a02020}
 </style>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="config.js"></script>
 </head>
 <body>
 
-<!-- Auth overlay (shown until logged in) -->
-<div class="auth-overlay" id="auth-overlay" style="display:none">
-  <div class="auth-card">
-    <h2 id="auth-title">Sign in</h2>
-    <p id="auth-sub">Your ideas sync across all your devices.</p>
-    <label>Email</label>
-    <input type="email" id="auth-email" autocomplete="email" placeholder="you@example.com">
-    <label>Password</label>
-    <input type="password" id="auth-password" autocomplete="current-password" placeholder="••••••••">
-    <button id="auth-submit" onclick="authSubmit()">Sign in</button>
-    <div class="alt"><a id="auth-toggle" onclick="authToggleMode()">Need an account? Sign up</a></div>
-    <div id="auth-msg" style="display:none"></div>
+<div class="cosmos"><div class="stars"></div><div class="glow2"></div></div>
+
+<div class="wrap">
+
+<nav>
+  <a href="/" class="brand">
+    <img src="assets/novalog-icon.svg" alt="">
+    <span>NovaLog</span>
+  </a>
+  <div class="links">
+    <a href="#features">Features</a>
+    <a href="#how">How it works</a>
+    <a href="#faq">FAQ</a>
+    <a href="https://github.com/nisarg5900/NovaLog" target="_blank" rel="noopener">GitHub</a>
+    <a href="app/" class="cta-sm">Open app →</a>
   </div>
-</div>
+</nav>
 
-<div class="app" id="app">
-
-<!-- Sidebar overlay for mobile -->
-<div class="sidebar-overlay" id="sb-overlay" style="display:none" onclick="closeMobileSidebar()"></div>
-
-<!-- Sidebar -->
-<div class="sidebar" id="sidebar">
-<div class="sidebar-inner">
-  <div class="sidebar-head">
-    <h1>📖 Idea Tracker</h1>
-    <p>Unfinished Story</p>
-  </div>
-
-  <div class="sidebar-sec">
-    <div class="sidebar-sec-lbl">Views</div>
-    <div style="display:flex;flex-direction:column;gap:1px">
-      <button class="nav-btn active" id="nav-all" onclick="setNav('all')"><span class="ico">📋</span>All Ideas<span class="cnt" id="cnt-all">0</span></button>
-      <button class="nav-btn" id="nav-used" onclick="setNav('used')"><span class="ico">✅</span>Used in book<span class="cnt" id="cnt-used">0</span></button>
-      <button class="nav-btn" id="nav-unused" onclick="setNav('unused')"><span class="ico">💡</span>Not yet used<span class="cnt" id="cnt-unused">0</span></button>
-    </div>
+<header class="hero">
+  <div class="badge"><span class="dot"></span> Free while in early access</div>
+  <h1>Where ideas are<br><span class="accent">born</span>.</h1>
+  <p class="sub">A quiet place to capture the half-formed thoughts, the lines you don't want to lose, the threads you're still becoming. Tag them, revisit them, watch them grow.</p>
+  <div class="ctas">
+    <a href="app/" class="cta primary">Open NovaLog →</a>
+    <a href="https://github.com/nisarg5900/NovaLog" target="_blank" rel="noopener" class="cta ghost">View on GitHub</a>
   </div>
 
-  <div class="sidebar-sec" style="margin-top:4px">
-    <div class="sidebar-sec-lbl">By Category <button onclick="openMgr('tag')">Manage</button></div>
-  </div>
-  <div class="cat-list" id="cat-list"></div>
-
-  <div class="sidebar-sec" style="margin-top:4px">
-    <div class="sidebar-sec-lbl">By Status <button onclick="openMgr('status')">Manage</button></div>
-  </div>
-  <div class="cat-list" id="status-list"></div>
-
-  <div class="sidebar-bottom">
-    <button class="sb-btn accent" onclick="openAdd()">+ Add Idea</button>
-    <div class="sb-row">
-      <button class="sb-btn" onclick="exportData()">Export JSON</button>
-      <label class="sb-btn" style="cursor:pointer">Import<input type="file" accept=".json" style="display:none" onchange="importData(event)"></label>
-    </div>
-    <button class="sb-btn" onclick="toggleDark()">Toggle dark mode</button>
-    <div class="sync-badge" id="sync-badge" style="text-align:center;padding:6px;margin:0">Loading…</div>
-    <button class="sb-btn" id="account-btn" onclick="openAccount()" style="display:none;text-align:left;padding:8px 10px">
-      <div style="font-size:11px;color:var(--text3);margin-bottom:1px">Account</div>
-      <div id="account-email" style="font-size:12px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></div>
-    </button>
-  </div>
-</div>
-</div>
-
-<!-- Main -->
-<div class="main">
-  <div class="topbar">
-    <button class="toggle-sidebar-btn" onclick="toggleSidebar()" title="Toggle sidebar">☰</button>
-    <div class="search-box">
-      <span style="color:var(--text3);font-size:13px">🔍</span>
-      <input type="text" id="search" placeholder="Search ideas… (Ctrl+K)" oninput="render()">
-    </div>
-    <select class="sort-sel" id="sort-sel" onchange="render()">
-      <option value="newest">Newest first</option>
-      <option value="oldest">Oldest first</option>
-      <option value="az">A → Z</option>
-      <option value="za">Z → A</option>
-      <option value="used-first">Used first</option>
-      <option value="unused-first">Unused first</option>
-    </select>
-    <button class="expand-all-btn" id="exp-all-btn" onclick="toggleExpandAll()">Expand all</button>
-    <div class="view-grp">
-      <button class="vbtn active" id="vb-cards" title="Cards" onclick="setView('cards')">≡</button>
-      <button class="vbtn" id="vb-table" title="Table" onclick="setView('table')">⊞</button>
-      <button class="vbtn" id="vb-kanban" title="Kanban" onclick="setView('kanban')">⬛</button>
-    </div>
-  </div>
-
-  <div class="content">
-    <div class="stats-strip" id="stats-strip"></div>
-    <div class="active-filters" id="active-filters"></div>
-    <div id="main-area"></div>
-  </div>
-</div>
-</div>
-
-<!-- Tag dropdown portal -->
-<div id="drop-portal"></div>
-
-<!-- Idea modal -->
-<div class="modal-overlay" id="idea-modal">
-  <div class="modal">
-    <div class="modal-head">
-      <h2 id="modal-title">Add Idea</h2>
-      <button class="modal-x" onclick="closeModal('idea-modal')">×</button>
-    </div>
-    <div class="modal-body">
-      <div class="fgrp">
-        <label class="flbl">Idea / text (full, uncompressed)</label>
-        <textarea class="ftextarea" id="m-text" rows="6" placeholder="Paste or write the full idea here…"></textarea>
-      </div>
-      <div class="fgrp">
-        <label class="flbl">Date &amp; time</label>
-        <div class="datetime-row">
-          <input class="finput" type="date" id="m-date">
-          <input class="finput" type="time" id="m-time" step="1">
+  <div class="preview">
+    <div class="preview-frame">
+      <div class="preview-bar"><span></span><span></span><span></span></div>
+      <div class="preview-body">
+        <div class="preview-side">
+          <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;padding:0 4px">Tags</div>
+          <div class="act">● Longing</div>
+          <div>● Faith</div>
+          <div>● Identity</div>
+          <div>● Philosophy</div>
+        </div>
+        <div>
+          <div class="preview-card">
+            <div class="tags"><span>Longing</span><span>Philosophy</span></div>
+            <p>Isn't love synonymous with waiting? If you're not patient, you cannot ever be in love…</p>
+          </div>
+          <div class="preview-card">
+            <div class="tags"><span>Faith</span></div>
+            <p>Where we didn't ask for anything while praying, just say hi, embrace the presence.</p>
+          </div>
+          <div class="preview-card">
+            <div class="tags"><span>Identity</span></div>
+            <p>The version of me that wrote this is not the version reading it back. Both are mine.</p>
+          </div>
         </div>
       </div>
-      <div class="fgrp">
-        <label class="flbl">Chapter / note (optional)</label>
-        <input class="finput" id="m-chapter" placeholder="e.g. Ch 3, or 'for the ending'">
-      </div>
-      <div class="fgrp">
-        <label class="flbl">Tags <span style="font-size:11px;color:var(--text3)">(click to toggle — must keep at least one)</span></label>
-        <div class="tag-picker" id="m-tags"></div>
-      </div>
-      <div class="fgrp">
-        <label class="flbl">Status</label>
-        <div class="status-row" id="m-statuses"></div>
-      </div>
-    </div>
-    <div class="modal-foot">
-      <button class="modal-btn danger" id="m-delete-btn" onclick="deleteIdea()" style="display:none;margin-right:auto">Delete idea</button>
-      <button class="modal-btn" onclick="closeModal('idea-modal')">Cancel</button>
-      <button class="modal-btn primary" onclick="saveIdea()">Save</button>
     </div>
   </div>
-</div>
+</header>
 
-<!-- Tag/Status manager modal -->
-<div class="modal-overlay" id="mgr-modal">
-  <div class="modal" style="max-width:460px">
-    <div class="modal-head">
-      <h2 id="mgr-title">Manage Tags</h2>
-      <button class="modal-x" onclick="closeModal('mgr-modal')">×</button>
+<section id="features">
+  <div class="eyebrow">Built for thinking</div>
+  <h2>A workspace for the<br>unfinished.</h2>
+  <p class="lead">Ideas don't arrive complete. NovaLog is built around that — small, fast, and forgiving.</p>
+  <div class="features">
+    <div class="feat">
+      <div class="feat-ico">✦</div>
+      <h3>Capture in seconds</h3>
+      <p>One field, one click. No friction between the spark and the note. Add tags later, or never.</p>
     </div>
-    <div class="modal-body">
-      <div class="mgr-list" id="mgr-list"></div>
-      <div class="mgr-add-row">
-        <input id="mgr-new-name" placeholder="New name…">
-        <div class="color-pick" id="mgr-color-pick"></div>
-        <button class="modal-btn primary" onclick="mgrAdd()" style="padding:6px 14px;font-size:12px">Add</button>
-      </div>
+    <div class="feat">
+      <div class="feat-ico">◇</div>
+      <h3>Three ways to see</h3>
+      <p>Cards for browsing, table for scanning, kanban for moving ideas from <em>raw</em> to <em>used</em>.</p>
     </div>
-    <div class="modal-foot">
-      <button class="modal-btn" onclick="closeModal('mgr-modal')">Done</button>
+    <div class="feat">
+      <div class="feat-ico">⟡</div>
+      <h3>Tags that mean something</h3>
+      <p>Build your own taxonomy — themes, chapters, moods, projects. Colour-coded, searchable.</p>
     </div>
-  </div>
-</div>
-
-<!-- Account modal -->
-<div class="modal-overlay" id="account-modal">
-  <div class="modal" style="max-width:440px">
-    <div class="modal-head">
-      <h2>Account</h2>
-      <button class="modal-x" onclick="closeModal('account-modal')">×</button>
+    <div class="feat">
+      <div class="feat-ico">↺</div>
+      <h3>Sync, everywhere</h3>
+      <p>Sign in once. Your ideas follow you — phone, laptop, library computer at 2am.</p>
     </div>
-    <div class="modal-body">
-
-      <div class="fgrp">
-        <label class="flbl">Signed in as</label>
-        <div id="acc-current-email" style="font-size:14px;color:var(--text);padding:8px 11px;background:var(--surface2);border-radius:var(--rs);border:1px solid var(--border)"></div>
-        <div id="acc-user-id" style="font-size:10px;color:var(--text3);margin-top:4px;font-family:monospace"></div>
-      </div>
-
-      <div class="fgrp" style="border-top:1px solid var(--border);padding-top:14px;margin-top:14px">
-        <label class="flbl">Change email</label>
-        <input class="finput" type="email" id="acc-new-email" placeholder="new@example.com">
-        <button class="modal-btn primary" onclick="changeEmail()" style="margin-top:8px;padding:7px 14px;font-size:12px">Update email</button>
-        <div style="font-size:11px;color:var(--text3);margin-top:6px">A confirmation link will be sent to the new address.</div>
-      </div>
-
-      <div class="fgrp" style="border-top:1px solid var(--border);padding-top:14px;margin-top:14px">
-        <label class="flbl">Change password</label>
-        <input class="finput" type="password" id="acc-new-password" placeholder="New password (min 6 chars)">
-        <button class="modal-btn primary" onclick="changePassword()" style="margin-top:8px;padding:7px 14px;font-size:12px">Update password</button>
-      </div>
-
-      <div id="acc-msg" style="display:none;margin-top:12px"></div>
-
-      <div class="fgrp" style="border-top:1px solid #f0bcbc;padding-top:14px;margin-top:18px">
-        <label class="flbl" style="color:#a02020">Danger zone</label>
-        <div style="font-size:12px;color:var(--text2);margin-bottom:8px">Permanently delete your account and all ideas. This cannot be undone.</div>
-        <button class="modal-btn danger" onclick="deleteAccount()" style="padding:7px 14px;font-size:12px">Delete my account</button>
-      </div>
-
+    <div class="feat">
+      <div class="feat-ico">◐</div>
+      <h3>Dark by default</h3>
+      <p>Soft on the eyes for late nights. Light mode is there too, if the sun ever wins.</p>
     </div>
-    <div class="modal-foot">
-      <button class="modal-btn" onclick="signOut()" style="margin-right:auto">Sign out</button>
-      <button class="modal-btn" onclick="closeModal('account-modal')">Close</button>
+    <div class="feat">
+      <div class="feat-ico">↧</div>
+      <h3>Your data, exportable</h3>
+      <p>One click to a JSON file. No lock-in, no walled garden. Take it with you if you leave.</p>
     </div>
   </div>
+</section>
+
+<section id="how">
+  <div class="eyebrow">How it works</div>
+  <h2>Sign up.<br>Start writing.</h2>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">01</div>
+      <h3>Create an account</h3>
+      <p>Email and password. No credit card, no setup, no onboarding tour.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <h3>Drop in your ideas</h3>
+      <p>Paste a passage, type a line, tag it however you want. NovaLog auto-saves to the cloud.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <h3>Open it anywhere</h3>
+      <p>Same URL, same login, every device. Your nebula of ideas, always within reach.</p>
+    </div>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="eyebrow">FAQ</div>
+  <h2>Questions you might<br>be holding.</h2>
+  <div class="faq">
+    <details class="faq-item">
+      <summary class="faq-q">Is it really free?</summary>
+      <div class="faq-a">Yes — and it'll stay free while NovaLog is in early access. If a paid tier comes later (think: more features, team sharing), the basics stay free.</div>
+    </details>
+    <details class="faq-item">
+      <summary class="faq-q">Who can see my ideas?</summary>
+      <div class="faq-a">Only you. Every idea is stored against your account and protected by row-level security on the database. Even the developer can't browse your notes.</div>
+    </details>
+    <details class="faq-item">
+      <summary class="faq-q">Can I export my data?</summary>
+      <div class="faq-a">Yes. In the app sidebar, click Export JSON — you get a full backup of your ideas, tags, and statuses in a single file. Import works the same way.</div>
+    </details>
+    <details class="faq-item">
+      <summary class="faq-q">Can I delete my account?</summary>
+      <div class="faq-a">Yes, fully. Account → Danger zone → Delete my account. Your data is wiped permanently within seconds — there's no soft-delete or shadow archive.</div>
+    </details>
+    <details class="faq-item">
+      <summary class="faq-q">Is the code open source?</summary>
+      <div class="faq-a">The frontend is public on <a href="https://github.com/nisarg5900/NovaLog" target="_blank" rel="noopener" style="color:var(--brand2)">GitHub</a>. You can host your own copy, fork it, or just read how it works.</div>
+    </details>
+    <details class="faq-item">
+      <summary class="faq-q">Who built this?</summary>
+      <div class="faq-a">Hi — I'm Nisarg. I built NovaLog because I was tired of losing ideas in Notes apps and Google Keep. Feedback welcome: <a href="mailto:nisarg6900@gmail.com" style="color:var(--brand2)">nisarg6900@gmail.com</a>.</div>
+    </details>
+  </div>
+</section>
+
+<section class="final">
+  <div class="final-card">
+    <h2>Your ideas are<br>waiting for a home.</h2>
+    <p>Free. No credit card. Two clicks to start.</p>
+    <a href="app/" class="cta primary">Open NovaLog →</a>
+  </div>
+</section>
+
+<footer>
+  <div>© 2026 NovaLog · Built with care in India.</div>
+  <div class="ftr-links">
+    <a href="https://github.com/nisarg5900/NovaLog" target="_blank" rel="noopener">GitHub</a>
+    <a href="mailto:nisarg6900@gmail.com">Contact</a>
+    <a href="app/">Open app</a>
+  </div>
+</footer>
+
 </div>
 
-<script>
-// ── Palette for new tags/statuses ─────────────────────────────────────
-const PALETTE = [
-  {bg:'#f0eeff',text:'#4a36b8',border:'#7c69d4'},
-  {bg:'#fef0ea',text:'#aa3c1a',border:'#d9622e'},
-  {bg:'#e8f7ef',text:'#1a7047',border:'#3aaa70'},
-  {bg:'#e8f2fd',text:'#1653a0',border:'#3a7fd4'},
-  {bg:'#fef8e8',text:'#8a5c10',border:'#d49a2a'},
-  {bg:'#fdeef4',text:'#992050',border:'#d45a84'},
-  {bg:'#eef8e8',text:'#2a6a1a',border:'#5aaa3a'},
-  {bg:'#f4f3f0',text:'#5a5550',border:'#aaa090'},
-  {bg:'#fff0f0',text:'#aa1a1a',border:'#e05050'},
-  {bg:'#f0f8ff',text:'#1a5a8a',border:'#50a0e0'},
-  {bg:'#fff8f0',text:'#8a4a0a',border:'#e0901a'},
-  {bg:'#f8f0ff',text:'#7a1a9a',border:'#c050e0'},
-];
-
-// ── Default data ──────────────────────────────────────────────────────
-const DEFAULT_TAGS = [
-  {key:'devotion',   label:'Devotion & love',     color:PALETTE[0]},
-  {key:'loss',       label:'Loss & grief',         color:PALETTE[1]},
-  {key:'longing',    label:'Longing & waiting',    color:PALETTE[5]},
-  {key:'memory',     label:'Memory & moments',     color:PALETTE[2]},
-  {key:'faith',      label:'Faith & spirituality', color:PALETTE[3]},
-  {key:'philosophy', label:'Philosophy of love',   color:PALETTE[4]},
-  {key:'future',     label:'Future & dreams',      color:PALETTE[6]},
-  {key:'identity',   label:'Identity & growth',    color:PALETTE[7]},
-];
-const DEFAULT_STATUSES = [
-  {key:'used',   label:'Used in book',  color:{bg:'#e8f2fd',text:'#1653a0',border:'#3a7fd4'}},
-  {key:'unused', label:'Not yet used',  color:{bg:'#eef8e8',text:'#2a6a1a',border:'#5aaa3a'}},
-];
-
-
-// ── State ─────────────────────────────────────────────────────────────
-let S = loadState();
-let dropState = {open:false, ideaId:null, triggerEl:null};
-let modalState = {mode:'add', id:null, tagSel:new Set(), statusSel:null};
-let mgrState = {type:'tag', colorIdx:0};
-let allExpanded = false;
-
-function loadState(){
-  try {
-    const saved = localStorage.getItem('ideaTracker_v3');
-    if(saved){
-      const d = JSON.parse(saved);
-      d.tags.forEach(t=>{ if(!t.color) t.color=PALETTE[0]; });
-      d.statuses.forEach(s=>{ if(!s.color) s.color=PALETTE[3]; });
-      // Backfill ts for any ideas loaded from older saves
-      const base = 1583020800000;
-      d.ideas.forEach((idea,idx)=>{ if(!idea.ts) idea.ts = base + idx*1000; });
-      return d;
-    }
-  } catch(e){}
-  return {
-    ideas: [],
-    tags: JSON.parse(JSON.stringify(DEFAULT_TAGS)),
-    statuses: JSON.parse(JSON.stringify(DEFAULT_STATUSES)),
-    navFilter:'all',
-    catFilter: [],
-    statusFilter: [],
-    view:'cards',
-    dark: false,
-    nextId: 1,
-  };
-}
-function save(){
-  try { localStorage.setItem('ideaTracker_v3', JSON.stringify(S)); } catch(e){}
-  scheduleCloudPush();
-}
-
-// ── Cloud sync (Supabase) ─────────────────────────────────────────────
-let _sb = null, _user = null, _pushTimer = null, _authMode = 'signin';
-function sbClient(){
-  if(_sb) return _sb;
-  if(typeof SUPABASE_CONFIG === 'undefined' || !SUPABASE_CONFIG.url){
-    console.warn('config.js missing — running in local-only mode');
-    return null;
-  }
-  _sb = supabase.createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.anonKey);
-  return _sb;
-}
-function setSyncBadge(text, cls){
-  const el = document.getElementById('sync-badge');
-  if(!el) return;
-  el.textContent = text;
-  el.className = 'sync-badge' + (cls ? ' ' + cls : '');
-}
-function scheduleCloudPush(){
-  if(!_user || !_sb) return;
-  if(_pushTimer) clearTimeout(_pushTimer);
-  setSyncBadge('Editing…', 'syncing');
-  _pushTimer = setTimeout(cloudPush, 800);
-}
-async function cloudPush(){
-  if(!_user || !_sb) return;
-  setSyncBadge('Saving…', 'syncing');
-  const payload = { user_id: _user.id, data: S, updated_at: new Date().toISOString() };
-  const { error } = await _sb.from('idea_tracker_state').upsert(payload, { onConflict: 'user_id' });
-  if(error){ console.error(error); setSyncBadge('Sync error', 'error'); }
-  else setSyncBadge('Synced ✓');
-}
-async function cloudPull(){
-  if(!_user || !_sb) return null;
-  const { data, error } = await _sb.from('idea_tracker_state').select('data').eq('user_id', _user.id).maybeSingle();
-  if(error){ console.error(error); return null; }
-  return data ? data.data : null;
-}
-function showAuthMsg(text, cls){
-  const el = document.getElementById('auth-msg');
-  el.textContent = text; el.className = 'auth-msg ' + cls; el.style.display = 'block';
-}
-function authToggleMode(){
-  _authMode = _authMode === 'signin' ? 'signup' : 'signin';
-  document.getElementById('auth-title').textContent = _authMode === 'signin' ? 'Sign in' : 'Create account';
-  document.getElementById('auth-submit').textContent = _authMode === 'signin' ? 'Sign in' : 'Sign up';
-  document.getElementById('auth-toggle').textContent = _authMode === 'signin' ? 'Need an account? Sign up' : 'Have an account? Sign in';
-  document.getElementById('auth-msg').style.display = 'none';
-}
-async function authSubmit(){
-  const sb = sbClient();
-  if(!sb){ showAuthMsg('config.js is missing — see README.', 'err'); return; }
-  const email = document.getElementById('auth-email').value.trim();
-  const password = document.getElementById('auth-password').value;
-  if(!email || !password){ showAuthMsg('Enter email and password.', 'err'); return; }
-  const btn = document.getElementById('auth-submit');
-  btn.disabled = true;
-  const fn = _authMode === 'signin' ? sb.auth.signInWithPassword({email,password}) : sb.auth.signUp({email,password});
-  const { data, error } = await fn;
-  btn.disabled = false;
-  if(error){ showAuthMsg(error.message, 'err'); return; }
-  if(_authMode === 'signup' && !data.session){
-    showAuthMsg('Check your email to confirm, then sign in.', 'ok');
-    _authMode = 'signin'; authToggleMode(); authToggleMode();
-    return;
-  }
-  await onSignedIn(data.session.user);
-}
-async function signOut(){
-  if(_sb) { try { await _sb.auth.signOut(); } catch(e){} }
-  location.reload();
-}
-function openAccount(){
-  if(!_user) return;
-  document.getElementById('acc-current-email').textContent = _user.email || '(no email)';
-  document.getElementById('acc-user-id').textContent = 'ID: ' + _user.id;
-  document.getElementById('acc-new-email').value = '';
-  document.getElementById('acc-new-password').value = '';
-  document.getElementById('acc-msg').style.display = 'none';
-  document.getElementById('account-modal').classList.add('open');
-}
-function showAccMsg(text, cls){
-  const el = document.getElementById('acc-msg');
-  el.textContent = text; el.className = 'auth-msg ' + cls; el.style.display = 'block';
-}
-async function changeEmail(){
-  const newEmail = document.getElementById('acc-new-email').value.trim();
-  if(!newEmail){ showAccMsg('Enter a new email.', 'err'); return; }
-  if(newEmail === _user.email){ showAccMsg('That is already your email.', 'err'); return; }
-  const { error } = await _sb.auth.updateUser({ email: newEmail });
-  if(error){ showAccMsg(error.message, 'err'); return; }
-  showAccMsg('Confirmation link sent to ' + newEmail + '. Click it to complete the change.', 'ok');
-}
-async function changePassword(){
-  const newPw = document.getElementById('acc-new-password').value;
-  if(!newPw || newPw.length < 6){ showAccMsg('Password must be at least 6 characters.', 'err'); return; }
-  const { error } = await _sb.auth.updateUser({ password: newPw });
-  if(error){ showAccMsg(error.message, 'err'); return; }
-  document.getElementById('acc-new-password').value = '';
-  showAccMsg('Password updated.', 'ok');
-}
-async function deleteAccount(){
-  const sure = prompt('This will permanently delete your account and all ideas.\n\nType DELETE to confirm:');
-  if(sure !== 'DELETE') return;
-  const { error } = await _sb.rpc('delete_my_account');
-  if(error){ showAccMsg('Could not delete: ' + error.message, 'err'); return; }
-  try { localStorage.removeItem('ideaTracker_v3'); } catch(e){}
-  try { await _sb.auth.signOut(); } catch(e){}
-  alert('Account deleted.');
-  location.reload();
-}
-async function onSignedIn(user){
-  _user = user;
-  document.getElementById('auth-overlay').style.display = 'none';
-  const accBtn = document.getElementById('account-btn');
-  accBtn.style.display = 'block';
-  document.getElementById('account-email').textContent = user.email || '(no email)';
-  setSyncBadge('Loading…', 'syncing');
-  const remote = await cloudPull();
-  if(remote){
-    S = remote;
-    // Backfill fields that older payloads might not have
-    if(!S.tags) S.tags = JSON.parse(JSON.stringify(DEFAULT_TAGS));
-    if(!S.statuses) S.statuses = JSON.parse(JSON.stringify(DEFAULT_STATUSES));
-    if(!S.ideas) S.ideas = [];
-    try { localStorage.setItem('ideaTracker_v3', JSON.stringify(S)); } catch(e){}
-    setSyncBadge('Synced ✓');
-  } else {
-    // First sign-in — push whatever local state exists (incl. seed ideas)
-    setSyncBadge('Initialising…', 'syncing');
-    await cloudPush();
-  }
-  applyBootUI();
-  render();
-}
-function applyBootUI(){
-  if(S.dark) document.body.classList.add('dark');
-  ['cards','table','kanban'].forEach(x=>{
-    const btn = document.getElementById('vb-'+x);
-    if(btn) btn.classList.toggle('active',S.view===x);
-  });
-}
-async function bootstrap(){
-  const sb = sbClient();
-  if(!sb){
-    // Local-only fallback: no cloud, just run as before.
-    setSyncBadge('Local only', 'error');
-    applyBootUI(); render(); return;
-  }
-  const { data:{ session } } = await sb.auth.getSession();
-  if(session){
-    await onSignedIn(session.user);
-  } else {
-    document.getElementById('auth-overlay').style.display = 'flex';
-  }
-}
-
-// ── Helpers ───────────────────────────────────────────────────────────
-function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-function tagByKey(k){ return S.tags.find(t=>t.key===k)||{key:k,label:k,color:PALETTE[0]}; }
-function statusByKey(k){ return S.statuses.find(s=>s.key===k)||{key:k,label:k,color:PALETTE[3]}; }
-function badgeStyle(color){ return `background:${color.bg};color:${color.text};border-color:${color.border}`; }
-function dotStyle(color){ return `background:${color.border}`; }
-function ideaCount(filterFn){ return S.ideas.filter(filterFn).length; }
-
-// ── Datetime helpers ──────────────────────────────────────────────────
-function nowTs(){ return Date.now(); }
-function tsToDateVal(ts){ // returns "YYYY-MM-DD"
-  const d=new Date(ts);
-  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
-}
-function tsToTimeVal(ts){ // returns "HH:MM:SS"
-  const d=new Date(ts);
-  return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')+':'+String(d.getSeconds()).padStart(2,'0');
-}
-function dateTimeToTs(dateVal, timeVal){
-  const s = dateVal+'T'+(timeVal||'00:00:00');
-  const d = new Date(s);
-  return isNaN(d.getTime()) ? Date.now() : d.getTime();
-}
-function fmtTs(ts){
-  if(!ts) return '';
-  const d=new Date(ts);
-  const day=String(d.getDate()).padStart(2,'0');
-  const mon=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()];
-  const yr=d.getFullYear();
-  const hh=String(d.getHours()).padStart(2,'0');
-  const mm=String(d.getMinutes()).padStart(2,'0');
-  return `${day} ${mon} ${yr}, ${hh}:${mm}`;
-}
-
-// ── Filtering ─────────────────────────────────────────────────────────
-function getFiltered(){
-  const q = (document.getElementById('search')||{value:''}).value.toLowerCase();
-  const sort = (document.getElementById('sort-sel')||{value:'newest'}).value;
-  let list = S.ideas.filter(i=>{
-    if(q && !i.text.toLowerCase().includes(q)) return false;
-    if(S.navFilter==='used' && i.status!=='used') return false;
-    if(S.navFilter==='unused' && i.status==='used') return false;
-    if(S.catFilter.length && !S.catFilter.some(c=>i.cats.includes(c))) return false;
-    if(S.statusFilter.length && !S.statusFilter.includes(i.status)) return false;
-    return true;
-  });
-  if(sort==='newest') list.sort((a,b)=>(b.ts||0)-(a.ts||0));
-  else if(sort==='oldest') list.sort((a,b)=>(a.ts||0)-(b.ts||0));
-  else if(sort==='az') list.sort((a,b)=>a.text.localeCompare(b.text));
-  else if(sort==='za') list.sort((a,b)=>b.text.localeCompare(a.text));
-  else if(sort==='used-first') list.sort((a,b)=>(b.status==='used')-(a.status==='used'));
-  else if(sort==='unused-first') list.sort((a,b)=>(a.status==='used')-(b.status==='used'));
-  return list;
-}
-
-// ── Main render ───────────────────────────────────────────────────────
-function render(){
-  buildSidebar();
-  buildStats();
-  buildActiveFilters();
-  const list = getFiltered();
-  const area = document.getElementById('main-area');
-  if(!list.length){
-    area.innerHTML='<div class="empty"><div class="empty-ico">🔍</div>No ideas match your filters.</div>';
-    return;
-  }
-  if(S.view==='cards') renderCards(list, area);
-  else if(S.view==='table') renderTable(list, area);
-  else renderKanban(list, area);
-}
-
-// ── Sidebar ───────────────────────────────────────────────────────────
-function buildSidebar(){
-  document.getElementById('cnt-all').textContent = S.ideas.length;
-  document.getElementById('cnt-used').textContent = S.ideas.filter(i=>i.status==='used').length;
-  document.getElementById('cnt-unused').textContent = S.ideas.filter(i=>i.status!=='used').length;
-  ['all','used','unused'].forEach(x=>{
-    document.getElementById('nav-'+x).classList.toggle('active', S.navFilter===x);
-  });
-  document.getElementById('cat-list').innerHTML = S.tags.map(t=>{
-    const cnt = S.ideas.filter(i=>i.cats.includes(t.key)).length;
-    const active = S.catFilter.includes(t.key);
-    return `<button class="cat-btn ${active?'active':''}" onclick="toggleCatFilter('${t.key}')">
-      <span class="dot" style="${dotStyle(t.color)}"></span>
-      <span>${esc(t.label)}</span>
-      <span class="cnt">${cnt}</span>
-    </button>`;
-  }).join('');
-  document.getElementById('status-list').innerHTML = S.statuses.map(s=>{
-    const cnt = S.ideas.filter(i=>i.status===s.key).length;
-    const active = S.statusFilter.includes(s.key);
-    return `<button class="cat-btn ${active?'active':''}" onclick="toggleStatusFilter('${s.key}')">
-      <span class="dot" style="${dotStyle(s.color)}"></span>
-      <span>${esc(s.label)}</span>
-      <span class="cnt">${cnt}</span>
-    </button>`;
-  }).join('');
-}
-
-// ── Stats ─────────────────────────────────────────────────────────────
-function buildStats(){
-  const total=S.ideas.length, used=S.ideas.filter(i=>i.status==='used').length;
-  document.getElementById('stats-strip').innerHTML=
-    `<div class="stat-pill"><span class="stat-num">${total}</span><span class="stat-lbl">Total</span></div>
-     <div class="stat-pill"><span class="stat-num">${used}</span><span class="stat-lbl">Used</span></div>
-     <div class="stat-pill"><span class="stat-num">${total-used}</span><span class="stat-lbl">Unused</span></div>`;
-}
-
-// ── Active filters bar ────────────────────────────────────────────────
-function buildActiveFilters(){
-  const chips = [];
-  S.catFilter.forEach(k=>{ const t=tagByKey(k); chips.push(`<span class="af-chip" style="${badgeStyle(t.color)}">${esc(t.label)}<button onclick="toggleCatFilter('${k}')">×</button></span>`); });
-  S.statusFilter.forEach(k=>{ const s=statusByKey(k); chips.push(`<span class="af-chip" style="${badgeStyle(s.color)}">${esc(s.label)}<button onclick="toggleStatusFilter('${k}')">×</button></span>`); });
-  const el = document.getElementById('active-filters');
-  if(chips.length){
-    el.innerHTML = `<span class="af-lbl">Filters:</span>${chips.join('')}<button class="act-btn" onclick="clearFilters()" style="font-size:11px;padding:2px 8px">Clear all</button>`;
-  } else { el.innerHTML=''; }
-}
-function clearFilters(){ S.catFilter=[]; S.statusFilter=[]; save(); render(); }
-
-// ── Cards ─────────────────────────────────────────────────────────────
-function renderCards(list, area){
-  area.innerHTML=`<div class="cards-grid">${list.map(cardHtml).join('')}</div>`;
-}
-function cardHtml(i){
-  const tagBadges = i.cats.map(k=>{
-    const t=tagByKey(k);
-    return `<span class="badge" style="${badgeStyle(t.color)}">${esc(t.label)}<span class="bx" onclick="removeTagInline(event,${i.id},'${k}')">×</span></span>`;
-  }).join('');
-  const st = statusByKey(i.status||'unused');
-  const dtStr = i.ts ? fmtTs(i.ts) : '';
-  return `<div class="idea-card ${i.status==='used'?'used':'unused'}" id="card-${i.id}">
-    <div class="card-head" onclick="toggleExpand(${i.id})">
-      <div class="card-text ${i.expanded?'':'clamped'}">${esc(i.text)}</div>
-      <button class="exp-btn">${i.expanded?'↑':'↓'}</button>
-    </div>
-    <div class="card-foot">
-      ${tagBadges}
-      <button class="add-tag-btn" onclick="openDropdown(event,${i.id})">+ tag</button>
-      <span class="badge" style="${badgeStyle(st.color)}">${esc(st.label)}${i.chapter?` · <em>${esc(i.chapter)}</em>`:''}</span>
-      ${dtStr?`<span class="card-dt" title="Created: ${dtStr}">🕐 ${dtStr}</span>`:''}
-      <div class="card-actions">
-        <button class="act-btn" onclick="openEdit(${i.id})">Edit</button>
-        <button class="act-btn" onclick="quickToggleStatus(event,${i.id})">${i.status==='used'?'↩ unused':'✓ used'}</button>
-      </div>
-    </div>
-  </div>`;
-}
-
-// ── Table ─────────────────────────────────────────────────────────────
-function renderTable(list, area){
-  area.innerHTML=`<div class="tbl-wrap"><table>
-    <thead><tr>
-      <th style="width:44%">Idea</th>
-      <th>Tags</th>
-      <th>Status</th>
-      <th>Chapter</th>
-      <th onclick="cycleSortDate()" style="cursor:pointer" title="Sort by date">Date ↕</th>
-      <th></th>
-    </tr></thead>
-    <tbody>${list.map(i=>{
-      const st=statusByKey(i.status||'unused');
-      const tags=i.cats.map(k=>{const t=tagByKey(k);return `<span class="badge" style="${badgeStyle(t.color)};font-size:10px;padding:1px 7px">${esc(t.label)}</span>`;}).join(' ');
-      const dtStr = i.ts ? fmtTs(i.ts) : '—';
-      return `<tr onclick="openEdit(${i.id})">
-        <td class="td-text"><p>${esc(i.text)}</p></td>
-        <td>${tags}</td>
-        <td><span class="badge" style="${badgeStyle(st.color)}">${esc(st.label)}</span></td>
-        <td style="font-size:11px;color:var(--text3)">${esc(i.chapter||'')}</td>
-        <td style="font-size:11px;color:var(--text3);white-space:nowrap">${dtStr}</td>
-        <td onclick="event.stopPropagation()"><button class="act-btn" onclick="quickToggleStatus(event,${i.id})">${i.status==='used'?'↩':'✓'}</button></td>
-      </tr>`;
-    }).join('')}</tbody>
-  </table></div>`;
-}
-function cycleSortDate(){
-  const s=document.getElementById('sort-sel');
-  s.value = s.value==='newest' ? 'oldest' : 'newest';
-  render();
-}
-
-// ── Kanban ────────────────────────────────────────────────────────────
-function renderKanban(list, area){
-  area.innerHTML=`<div class="kanban-wrap">${S.tags.map(t=>{
-    const cards=list.filter(i=>i.cats.includes(t.key));
-    if(!cards.length) return '';
-    return `<div class="k-col">
-      <div class="k-col-head"><span><span class="dot" style="${dotStyle(t.color)};display:inline-block;vertical-align:middle;margin-right:5px"></span>${esc(t.label)}</span><span class="kc">${cards.length}</span></div>
-      <div class="k-cards">${cards.map(i=>{
-        const st=statusByKey(i.status||'unused');
-        return `<div class="k-card ${i.status==='used'?'used':'unused'}" onclick="openEdit(${i.id})">
-          ${esc(i.text)}
-          <div class="k-card-tags">${i.cats.map(k=>{const t2=tagByKey(k);return `<span class="badge" style="${badgeStyle(t2.color)};font-size:10px;padding:1px 6px">${esc(t2.label)}</span>`;}).join('')}</div>
-        </div>`;
-      }).join('')}</div>
-    </div>`;
-  }).join('')}</div>`;
-}
-
-// ── Actions ───────────────────────────────────────────────────────────
-function toggleExpand(id){
-  const i=S.ideas.find(x=>x.id===id); if(!i) return;
-  i.expanded=!i.expanded; save(); render();
-}
-function quickToggleStatus(e,id){
-  e.stopPropagation();
-  const i=S.ideas.find(x=>x.id===id); if(!i) return;
-  if(S.statuses.length<2){ i.status=i.status==='used'?'unused':'used'; save(); render(); return; }
-  const cur=S.statuses.findIndex(s=>s.key===i.status);
-  i.status=S.statuses[(cur+1)%S.statuses.length].key;
-  save(); render();
-}
-function removeTagInline(e,id,key){
-  e.stopPropagation();
-  const i=S.ideas.find(x=>x.id===id); if(!i) return;
-  if(i.cats.length<=1) return;
-  i.cats=i.cats.filter(c=>c!==key); save(); render();
-}
-function toggleExpandAll(){
-  allExpanded=!allExpanded;
-  S.ideas.forEach(i=>i.expanded=allExpanded);
-  document.getElementById('exp-all-btn').textContent=allExpanded?'Collapse all':'Expand all';
-  save(); render();
-}
-
-// ── Dropdown portal ───────────────────────────────────────────────────
-function openDropdown(e,id){
-  e.stopPropagation();
-  const idea=S.ideas.find(x=>x.id===id); if(!idea) return;
-  const portal=document.getElementById('drop-portal');
-  dropState={open:true,ideaId:id,triggerEl:e.currentTarget};
-  const rect=e.currentTarget.getBoundingClientRect();
-  portal.style.cssText=`display:block;top:${rect.bottom+window.scrollY+4}px;left:${Math.min(rect.left,window.innerWidth-200)}px`;
-  portal.innerHTML=
-    S.tags.map(t=>`<div class="drop-item ${idea.cats.includes(t.key)?'disabled':''}" onclick="addTagDrop(${id},'${t.key}')"><span class="dot" style="${dotStyle(t.color)}"></span>${esc(t.label)}</div>`).join('')+
-    `<div class="drop-sep"></div>
-     <div class="drop-new-input"><input id="dpi" placeholder="New tag name…" onclick="event.stopPropagation()"><button onclick="dropCreateTag(${id})">+</button></div>`;
-}
-function addTagDrop(id,key){
-  const i=S.ideas.find(x=>x.id===id); if(!i) return;
-  if(!i.cats.includes(key)) i.cats.push(key);
-  closeDrop(); save(); render();
-}
-function dropCreateTag(id){
-  const name=document.getElementById('dpi').value.trim(); if(!name) return;
-  const key='tag_'+Date.now();
-  const color=PALETTE[S.tags.length%PALETTE.length];
-  S.tags.push({key,label:name,color});
-  addTagDrop(id,key);
-}
-function closeDrop(){ document.getElementById('drop-portal').style.display='none'; dropState.open=false; }
-document.addEventListener('click',e=>{
-  if(dropState.open&&!document.getElementById('drop-portal').contains(e.target)&&e.target!==dropState.triggerEl) closeDrop();
-});
-
-// ── Nav filters ───────────────────────────────────────────────────────
-function setNav(v){ S.navFilter=v; save(); render(); }
-function toggleCatFilter(k){
-  const idx=S.catFilter.indexOf(k);
-  if(idx>=0) S.catFilter.splice(idx,1); else S.catFilter.push(k);
-  save(); render();
-}
-function toggleStatusFilter(k){
-  const idx=S.statusFilter.indexOf(k);
-  if(idx>=0) S.statusFilter.splice(idx,1); else S.statusFilter.push(k);
-  save(); render();
-}
-
-// ── View ──────────────────────────────────────────────────────────────
-function setView(v){
-  S.view=v;
-  ['cards','table','kanban'].forEach(x=>{ document.getElementById('vb-'+x).classList.toggle('active',x===v); });
-  save(); render();
-}
-
-// ── Sidebar toggle ────────────────────────────────────────────────────
-function toggleSidebar(){
-  const sb=document.getElementById('sidebar');
-  const isMobile=window.innerWidth<=640;
-  if(isMobile){
-    sb.classList.toggle('mobile-open');
-    document.getElementById('sb-overlay').style.display=sb.classList.contains('mobile-open')?'block':'none';
-  } else {
-    sb.classList.toggle('collapsed');
-  }
-}
-function closeMobileSidebar(){
-  document.getElementById('sidebar').classList.remove('mobile-open');
-  document.getElementById('sb-overlay').style.display='none';
-}
-
-// ── Idea modal ────────────────────────────────────────────────────────
-function openAdd(){
-  const now = nowTs();
-  modalState={mode:'add',id:null,tagSel:new Set([S.tags[0]?.key||'devotion']),statusSel:S.statuses[1]?.key||'unused'};
-  document.getElementById('modal-title').textContent='Add Idea';
-  document.getElementById('m-text').value='';
-  document.getElementById('m-chapter').value='';
-  document.getElementById('m-date').value=tsToDateVal(now);
-  document.getElementById('m-time').value=tsToTimeVal(now);
-  document.getElementById('m-delete-btn').style.display='none';
-  buildModalPickers();
-  openModal('idea-modal');
-  setTimeout(()=>document.getElementById('m-text').focus(),80);
-}
-function openEdit(id){
-  const i=S.ideas.find(x=>x.id===id); if(!i) return;
-  modalState={mode:'edit',id,tagSel:new Set(i.cats),statusSel:i.status||'unused'};
-  document.getElementById('modal-title').textContent='Edit Idea';
-  document.getElementById('m-text').value=i.text;
-  document.getElementById('m-chapter').value=i.chapter||'';
-  const ts = i.ts || nowTs();
-  document.getElementById('m-date').value=tsToDateVal(ts);
-  document.getElementById('m-time').value=tsToTimeVal(ts);
-  document.getElementById('m-delete-btn').style.display='inline-block';
-  buildModalPickers();
-  openModal('idea-modal');
-}
-function buildModalPickers(){
-  document.getElementById('m-tags').innerHTML=S.tags.map(t=>{
-    const sel=modalState.tagSel.has(t.key);
-    return `<span class="tpc ${sel?'sel':''}" style="background:${t.color.bg};color:${t.color.text};border-color:${sel?t.color.border:'transparent'}" onclick="toggleModalTag('${t.key}')">${esc(t.label)}</span>`;
-  }).join('');
-  document.getElementById('m-statuses').innerHTML=S.statuses.map(s=>{
-    const sel=modalState.statusSel===s.key;
-    return `<button class="sopt ${sel?'sel':''}" style="${sel?`background:${s.color.bg};color:${s.color.text};border-color:${s.color.border}`:''}" onclick="setModalStatus('${s.key}')">${esc(s.label)}</button>`;
-  }).join('');
-}
-function toggleModalTag(k){
-  if(modalState.tagSel.has(k)){
-    if(modalState.tagSel.size<=1) return;
-    modalState.tagSel.delete(k);
-  } else { modalState.tagSel.add(k); }
-  buildModalPickers();
-}
-function setModalStatus(k){ modalState.statusSel=k; buildModalPickers(); }
-function saveIdea(){
-  const text=document.getElementById('m-text').value.trim();
-  if(!text){ document.getElementById('m-text').focus(); return; }
-  const chapter=document.getElementById('m-chapter').value.trim()||undefined;
-  const cats=[...modalState.tagSel];
-  const status=modalState.statusSel||S.statuses[1]?.key||'unused';
-  const dateVal=document.getElementById('m-date').value;
-  const timeVal=document.getElementById('m-time').value;
-  const ts=dateTimeToTs(dateVal, timeVal);
-  if(modalState.mode==='add'){
-    S.ideas.push({id:S.nextId++,text,cats,status,chapter,ts,expanded:false});
-  } else {
-    const i=S.ideas.find(x=>x.id===modalState.id); if(!i) return;
-    Object.assign(i,{text,cats,status,chapter,ts});
-  }
-  save(); closeModal('idea-modal'); render();
-}
-function deleteIdea(){
-  if(modalState.mode!=='edit') return;
-  if(!confirm('Delete this idea? This cannot be undone.')) return;
-  S.ideas=S.ideas.filter(x=>x.id!==modalState.id);
-  save(); closeModal('idea-modal'); render();
-}
-
-// ── Manager modal ─────────────────────────────────────────────────────
-function openMgr(type){
-  mgrState={type,colorIdx:0};
-  document.getElementById('mgr-title').textContent=type==='tag'?'Manage Tags':'Manage Statuses';
-  document.getElementById('mgr-new-name').value='';
-  buildMgrList();
-  buildColorPick();
-  openModal('mgr-modal');
-}
-function buildMgrList(){
-  const arr=mgrState.type==='tag'?S.tags:S.statuses;
-  document.getElementById('mgr-list').innerHTML=arr.map((item,idx)=>{
-    const cnt=mgrState.type==='tag'
-      ?S.ideas.filter(i=>i.cats.includes(item.key)).length
-      :S.ideas.filter(i=>i.status===item.key).length;
-    return `<div class="mgr-item">
-      <span class="dot" style="${dotStyle(item.color)}"></span>
-      <span class="mgr-item-name">${esc(item.label)}</span>
-      <span class="mgr-item-cnt">${cnt} idea${cnt!==1?'s':''}</span>
-      <button class="mgr-del" onclick="mgrDel('${item.key}',${cnt})" title="Delete">×</button>
-    </div>`;
-  }).join('');
-}
-function buildColorPick(){
-  document.getElementById('mgr-color-pick').innerHTML=PALETTE.map((c,i)=>
-    `<span class="cpick ${i===mgrState.colorIdx?'sel':''}" style="background:${c.bg};border-color:${c.border}" onclick="pickColor(${i})" title="${c.text}"></span>`
-  ).join('');
-}
-function pickColor(i){ mgrState.colorIdx=i; buildColorPick(); }
-function mgrAdd(){
-  const name=document.getElementById('mgr-new-name').value.trim(); if(!name) return;
-  const key=(mgrState.type==='tag'?'tag_':'st_')+Date.now();
-  const color=PALETTE[mgrState.colorIdx];
-  if(mgrState.type==='tag') S.tags.push({key,label:name,color});
-  else S.statuses.push({key,label:name,color});
-  document.getElementById('mgr-new-name').value='';
-  save(); buildMgrList(); render();
-}
-function mgrDel(key,cnt){
-  const isTag=mgrState.type==='tag';
-  const arr=isTag?S.tags:S.statuses;
-  if(arr.length<=1){ alert('You must keep at least one '+(isTag?'tag':'status')+'.'); return; }
-  const msg=cnt>0
-    ?`This ${isTag?'tag':'status'} is used in ${cnt} idea${cnt!==1?'s':''}. Deleting it will remove it from those ideas. Continue?`
-    :`Delete "${isTag?tagByKey(key).label:statusByKey(key).label}"?`;
-  if(!confirm(msg)) return;
-  if(isTag){
-    S.tags=S.tags.filter(t=>t.key!==key);
-    const fallback=S.tags[0]?.key;
-    S.ideas.forEach(i=>{
-      i.cats=i.cats.filter(c=>c!==key);
-      if(i.cats.length===0 && fallback) i.cats=[fallback];
-    });
-  } else {
-    S.statuses=S.statuses.filter(s=>s.key!==key);
-    const fallback=S.statuses[0]?.key;
-    S.ideas.forEach(i=>{ if(i.status===key) i.status=fallback; });
-  }
-  save(); buildMgrList(); render();
-}
-
-// ── Modal helpers ─────────────────────────────────────────────────────
-function openModal(id){ document.getElementById(id).classList.add('open'); }
-function closeModal(id){ document.getElementById(id).classList.remove('open'); }
-document.addEventListener('click',e=>{
-  ['idea-modal','mgr-modal'].forEach(id=>{
-    const el=document.getElementById(id);
-    if(e.target===el) closeModal(id);
-  });
-});
-document.addEventListener('keydown',e=>{
-  if(e.key==='Escape'){ closeModal('idea-modal'); closeModal('mgr-modal'); closeDrop(); }
-  if((e.metaKey||e.ctrlKey)&&e.key==='k'){ e.preventDefault(); document.getElementById('search')?.focus(); }
-});
-
-// ── Dark mode ─────────────────────────────────────────────────────────
-function toggleDark(){
-  S.dark=!S.dark;
-  document.body.classList.toggle('dark',S.dark);
-  save();
-}
-
-// ── Export / Import ───────────────────────────────────────────────────
-function exportData(){
-  const blob=new Blob([JSON.stringify({ideas:S.ideas,tags:S.tags,statuses:S.statuses},null,2)],{type:'application/json'});
-  const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
-  a.download='idea_tracker_backup.json'; a.click();
-}
-function importData(e){
-  const file=e.target.files[0]; if(!file) return;
-  const r=new FileReader();
-  r.onload=ev=>{
-    try {
-      const d=JSON.parse(ev.target.result);
-      if(d.ideas) S.ideas=d.ideas;
-      if(d.tags) S.tags=d.tags;
-      if(d.statuses) S.statuses=d.statuses;
-      S.nextId=Math.max(...S.ideas.map(i=>i.id||0),0)+1;
-      save(); render();
-    } catch(err){ alert('Invalid backup file'); }
-  };
-  r.readAsText(file);
-  e.target.value='';
-}
-
-// ── Init ──────────────────────────────────────────────────────────────
-bootstrap();
-</script>
 </body>
 </html>
