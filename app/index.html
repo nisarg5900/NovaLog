@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>NovaLog — Where ideas are born</title>
 <link rel="icon" type="image/svg+xml" href="../assets/novalog-icon.svg">
 <style>
@@ -259,7 +259,7 @@ input[type="time"]::-webkit-calendar-picker-indicator{filter:invert(0.5);cursor:
 .to-top:hover{border-color:var(--accent);background:var(--accent);color:#fff;box-shadow:0 6px 20px rgba(102,102,255,.35)}
 .to-top svg{transition:transform .2s}
 .to-top:hover svg{transform:translateY(-2px)}
-@media(max-width:640px){.to-top{bottom:14px;right:14px;width:40px;height:40px}}
+@media(max-width:640px){.to-top{bottom:calc(14px + env(safe-area-inset-bottom));right:calc(14px + env(safe-area-inset-right));width:40px;height:40px}}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="config.js"></script>
