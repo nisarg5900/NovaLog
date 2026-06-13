@@ -254,6 +254,18 @@ input[type="time"]::-webkit-calendar-picker-indicator{filter:invert(0.5);cursor:
 .sync-badge.syncing{color:var(--accent)}
 .sync-badge.error{color:#a02020}
 
+/* ─ Icons ─ */
+.icn{display:inline-flex;align-items:center;justify-content:center;vertical-align:middle;flex-shrink:0}
+.icn svg{display:block;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.nav-btn .ico .icn svg,.nav-btn .ico svg{width:15px;height:15px}
+.toggle-sidebar-btn .icn svg{width:18px;height:18px}
+.search-box .icn svg{width:14px;height:14px;color:var(--text3)}
+.vbtn .icn svg{width:14px;height:14px}
+.exp-btn .icn svg{width:11px;height:11px}
+.card-dt .icn svg{width:11px;height:11px;margin-right:2px}
+.act-btn .icn svg{width:11px;height:11px;margin-right:3px}
+.empty-ico .icn svg{width:42px;height:42px;color:var(--text3);stroke-width:1.5}
+
 /* ─ Scroll-to-top FAB ─ */
 .to-top{position:fixed;bottom:20px;right:20px;width:42px;height:42px;border-radius:50%;background:var(--surface);border:1px solid var(--border2);color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transform:translateY(16px);transition:opacity .25s,transform .25s,box-shadow .2s,border-color .2s,background .2s,color .2s;z-index:90;backdrop-filter:blur(10px)}
 .to-top.show{opacity:1;pointer-events:auto;transform:translateY(0)}
@@ -308,7 +320,7 @@ input[type="time"]::-webkit-calendar-picker-indicator{filter:invert(0.5);cursor:
   <div class="sidebar-sec">
     <div class="sidebar-sec-lbl">Views</div>
     <div style="display:flex;flex-direction:column;gap:1px">
-      <button class="nav-btn" id="nav-all" onclick="setNav('all')"><span class="ico">📋</span>All Ideas<span class="cnt" id="cnt-all">0</span></button>
+      <button class="nav-btn" id="nav-all" onclick="setNav('all')"><span class="ico"><span class="icn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg></span></span>All Ideas<span class="cnt" id="cnt-all">0</span></button>
       <div id="nav-status-views"></div>
     </div>
   </div>
@@ -342,9 +354,9 @@ input[type="time"]::-webkit-calendar-picker-indicator{filter:invert(0.5);cursor:
 <!-- Main -->
 <div class="main">
   <div class="topbar">
-    <button class="toggle-sidebar-btn" onclick="toggleSidebar()" title="Toggle sidebar">☰</button>
+    <button class="toggle-sidebar-btn" onclick="toggleSidebar()" title="Toggle sidebar"><span class="icn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></span></button>
     <div class="search-box">
-      <span style="color:var(--text3);font-size:13px">🔍</span>
+      <span class="icn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text3)"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
       <input type="text" id="search" placeholder="Search ideas… (Ctrl+K)" oninput="render()">
     </div>
     <select class="sort-sel" id="sort-sel" onchange="render()">
@@ -356,8 +368,8 @@ input[type="time"]::-webkit-calendar-picker-indicator{filter:invert(0.5);cursor:
     </select>
     <button class="expand-all-btn" id="exp-all-btn" onclick="toggleExpandAll()">Expand all</button>
     <div class="view-grp">
-      <button class="vbtn active" id="vb-cards" title="Cards" onclick="setView('cards')">≡</button>
-      <button class="vbtn" id="vb-table" title="Table" onclick="setView('table')">⊞</button>
+      <button class="vbtn active" id="vb-cards" title="Cards" onclick="setView('cards')" style="display:flex;align-items:center;justify-content:center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="4" rx="1"/><rect x="3" y="10" width="18" height="4" rx="1"/><rect x="3" y="16" width="18" height="4" rx="1"/></svg></button>
+      <button class="vbtn" id="vb-table" title="Table" onclick="setView('table')" style="display:flex;align-items:center;justify-content:center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="1"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="4" x2="9" y2="20"/></svg></button>
       <button class="vbtn" id="vb-kanban" title="Kanban" onclick="setView('kanban')" style="display:flex;align-items:center;justify-content:center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="5" height="16" rx="1"/><rect x="10" y="4" width="5" height="10" rx="1"/><rect x="17" y="4" width="4" height="13" rx="1"/></svg></button>
     </div>
   </div>
@@ -484,6 +496,21 @@ input[type="time"]::-webkit-calendar-picker-indicator{filter:invert(0.5);cursor:
 </button>
 
 <script>
+// ── Inline SVG icons (Lucide-style) ───────────────────────────────────
+const ICON = {
+  menu:       '<span class="icn"><svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></span>',
+  search:     '<span class="icn"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>',
+  inbox:      '<span class="icn"><svg viewBox="0 0 24 24"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg></span>',
+  rows:       '<span class="icn"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="4" rx="1"/><rect x="3" y="10" width="18" height="4" rx="1"/><rect x="3" y="16" width="18" height="4" rx="1"/></svg></span>',
+  table:      '<span class="icn"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="1"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="4" x2="9" y2="20"/></svg></span>',
+  kanban:     '<span class="icn"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="5" height="16" rx="1"/><rect x="10" y="4" width="5" height="10" rx="1"/><rect x="17" y="4" width="4" height="13" rx="1"/></svg></span>',
+  chevDown:   '<span class="icn"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></span>',
+  chevUp:     '<span class="icn"><svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg></span>',
+  clock:      '<span class="icn"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg></span>',
+  refresh:    '<span class="icn"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><polyline points="21 3 21 8 16 8"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><polyline points="3 21 3 16 8 16"/></svg></span>',
+  searchX:    '<span class="icn"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/></svg></span>'
+};
+
 // ── Palette for new tags/statuses ─────────────────────────────────────
 const PALETTE = [
   {bg:'#f0eeff',text:'#4a36b8',border:'#7c69d4'},
@@ -802,7 +829,7 @@ function render(){
   const list = getFiltered();
   const area = document.getElementById('main-area');
   if(!list.length){
-    area.innerHTML='<div class="empty"><div class="empty-ico">🔍</div>No ideas match your filters.</div>';
+    area.innerHTML=`<div class="empty"><div class="empty-ico">${ICON.searchX}</div>No ideas match your filters.</div>`;
     return;
   }
   if(S.view==='cards') renderCards(list, area);
@@ -878,16 +905,16 @@ function cardHtml(i){
   return `<div class="idea-card" id="card-${i.id}" style="border-left:3px solid ${st.color.border}">
     <div class="card-head" onclick="toggleExpand(${i.id})">
       <div class="card-text ${i.expanded?'':'clamped'}">${esc(i.text)}</div>
-      <button class="exp-btn">${i.expanded?'↑':'↓'}</button>
+      <button class="exp-btn">${i.expanded?ICON.chevUp:ICON.chevDown}</button>
     </div>
     <div class="card-foot">
       ${tagBadges}
       <button class="add-tag-btn" onclick="openDropdown(event,${i.id})">+ tag</button>
       <span class="badge" style="${badgeStyle(st.color)}">${esc(st.label)}${i.chapter?` · <em>${esc(i.chapter)}</em>`:''}</span>
-      ${dtStr?`<span class="card-dt" title="Created: ${dtStr}">🕐 ${dtStr}</span>`:''}
+      ${dtStr?`<span class="card-dt" title="Created: ${dtStr}">${ICON.clock} ${dtStr}</span>`:''}
       <div class="card-actions">
         <button class="act-btn" onclick="openEdit(${i.id})">Edit</button>
-        ${nextStatus?`<button class="act-btn" onclick="quickToggleStatus(event,${i.id})" title="Cycle status">↻ ${esc(nextStatus.label)}</button>`:''}
+        ${nextStatus?`<button class="act-btn" onclick="quickToggleStatus(event,${i.id})" title="Cycle status">${ICON.refresh} ${esc(nextStatus.label)}</button>`:''}
       </div>
     </div>
   </div>`;
@@ -914,7 +941,7 @@ function renderTable(list, area){
         <td><span class="badge" style="${badgeStyle(st.color)}">${esc(st.label)}</span></td>
         <td style="font-size:11px;color:var(--text3)">${esc(i.chapter||'')}</td>
         <td style="font-size:11px;color:var(--text3);white-space:nowrap">${dtStr}</td>
-        <td onclick="event.stopPropagation()"><button class="act-btn" onclick="quickToggleStatus(event,${i.id})" title="Cycle status">↻</button></td>
+        <td onclick="event.stopPropagation()"><button class="act-btn" onclick="quickToggleStatus(event,${i.id})" title="Cycle status">${ICON.refresh}</button></td>
       </tr>`;
     }).join('')}</tbody>
   </table></div>`;
