@@ -302,7 +302,10 @@ input[type="time"]::-webkit-calendar-picker-indicator{filter:invert(0.5);cursor:
     </div>
     <button class="sb-btn" onclick="toggleDark()">Toggle dark mode</button>
     <div class="sync-badge" id="sync-badge" style="text-align:center;padding:6px;margin:0">Loading…</div>
-    <button class="sb-btn" id="signout-btn" onclick="signOut()" style="display:none">Sign out</button>
+    <button class="sb-btn" id="account-btn" onclick="openAccount()" style="display:none;text-align:left;padding:8px 10px">
+      <div style="font-size:11px;color:var(--text3);margin-bottom:1px">Account</div>
+      <div id="account-email" style="font-size:12px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></div>
+    </button>
   </div>
 </div>
 </div>
@@ -399,6 +402,50 @@ input[type="time"]::-webkit-calendar-picker-indicator{filter:invert(0.5);cursor:
     </div>
     <div class="modal-foot">
       <button class="modal-btn" onclick="closeModal('mgr-modal')">Done</button>
+    </div>
+  </div>
+</div>
+
+<!-- Account modal -->
+<div class="modal-overlay" id="account-modal">
+  <div class="modal" style="max-width:440px">
+    <div class="modal-head">
+      <h2>Account</h2>
+      <button class="modal-x" onclick="closeModal('account-modal')">×</button>
+    </div>
+    <div class="modal-body">
+
+      <div class="fgrp">
+        <label class="flbl">Signed in as</label>
+        <div id="acc-current-email" style="font-size:14px;color:var(--text);padding:8px 11px;background:var(--surface2);border-radius:var(--rs);border:1px solid var(--border)"></div>
+        <div id="acc-user-id" style="font-size:10px;color:var(--text3);margin-top:4px;font-family:monospace"></div>
+      </div>
+
+      <div class="fgrp" style="border-top:1px solid var(--border);padding-top:14px;margin-top:14px">
+        <label class="flbl">Change email</label>
+        <input class="finput" type="email" id="acc-new-email" placeholder="new@example.com">
+        <button class="modal-btn primary" onclick="changeEmail()" style="margin-top:8px;padding:7px 14px;font-size:12px">Update email</button>
+        <div style="font-size:11px;color:var(--text3);margin-top:6px">A confirmation link will be sent to the new address.</div>
+      </div>
+
+      <div class="fgrp" style="border-top:1px solid var(--border);padding-top:14px;margin-top:14px">
+        <label class="flbl">Change password</label>
+        <input class="finput" type="password" id="acc-new-password" placeholder="New password (min 6 chars)">
+        <button class="modal-btn primary" onclick="changePassword()" style="margin-top:8px;padding:7px 14px;font-size:12px">Update password</button>
+      </div>
+
+      <div id="acc-msg" style="display:none;margin-top:12px"></div>
+
+      <div class="fgrp" style="border-top:1px solid #f0bcbc;padding-top:14px;margin-top:18px">
+        <label class="flbl" style="color:#a02020">Danger zone</label>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:8px">Permanently delete your account and all ideas. This cannot be undone.</div>
+        <button class="modal-btn danger" onclick="deleteAccount()" style="padding:7px 14px;font-size:12px">Delete my account</button>
+      </div>
+
+    </div>
+    <div class="modal-foot">
+      <button class="modal-btn" onclick="signOut()" style="margin-right:auto">Sign out</button>
+      <button class="modal-btn" onclick="closeModal('account-modal')">Close</button>
     </div>
   </div>
 </div>
@@ -545,10 +592,51 @@ async function signOut(){
   if(_sb) { try { await _sb.auth.signOut(); } catch(e){} }
   location.reload();
 }
+function openAccount(){
+  if(!_user) return;
+  document.getElementById('acc-current-email').textContent = _user.email || '(no email)';
+  document.getElementById('acc-user-id').textContent = 'ID: ' + _user.id;
+  document.getElementById('acc-new-email').value = '';
+  document.getElementById('acc-new-password').value = '';
+  document.getElementById('acc-msg').style.display = 'none';
+  document.getElementById('account-modal').classList.add('open');
+}
+function showAccMsg(text, cls){
+  const el = document.getElementById('acc-msg');
+  el.textContent = text; el.className = 'auth-msg ' + cls; el.style.display = 'block';
+}
+async function changeEmail(){
+  const newEmail = document.getElementById('acc-new-email').value.trim();
+  if(!newEmail){ showAccMsg('Enter a new email.', 'err'); return; }
+  if(newEmail === _user.email){ showAccMsg('That is already your email.', 'err'); return; }
+  const { error } = await _sb.auth.updateUser({ email: newEmail });
+  if(error){ showAccMsg(error.message, 'err'); return; }
+  showAccMsg('Confirmation link sent to ' + newEmail + '. Click it to complete the change.', 'ok');
+}
+async function changePassword(){
+  const newPw = document.getElementById('acc-new-password').value;
+  if(!newPw || newPw.length < 6){ showAccMsg('Password must be at least 6 characters.', 'err'); return; }
+  const { error } = await _sb.auth.updateUser({ password: newPw });
+  if(error){ showAccMsg(error.message, 'err'); return; }
+  document.getElementById('acc-new-password').value = '';
+  showAccMsg('Password updated.', 'ok');
+}
+async function deleteAccount(){
+  const sure = prompt('This will permanently delete your account and all ideas.\n\nType DELETE to confirm:');
+  if(sure !== 'DELETE') return;
+  const { error } = await _sb.rpc('delete_my_account');
+  if(error){ showAccMsg('Could not delete: ' + error.message, 'err'); return; }
+  try { localStorage.removeItem('ideaTracker_v3'); } catch(e){}
+  try { await _sb.auth.signOut(); } catch(e){}
+  alert('Account deleted.');
+  location.reload();
+}
 async function onSignedIn(user){
   _user = user;
   document.getElementById('auth-overlay').style.display = 'none';
-  document.getElementById('signout-btn').style.display = 'block';
+  const accBtn = document.getElementById('account-btn');
+  accBtn.style.display = 'block';
+  document.getElementById('account-email').textContent = user.email || '(no email)';
   setSyncBadge('Loading…', 'syncing');
   const remote = await cloudPull();
   if(remote){
