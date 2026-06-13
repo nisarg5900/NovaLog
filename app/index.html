@@ -308,6 +308,30 @@ body:not(.dark) .logo-dark{display:none}
 #install-btn{display:none;align-items:center;justify-content:center;gap:6px;font-weight:500}
 #install-btn svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 
+/* ─ Profile button (sidebar bottom) ─ */
+.profile-btn{display:none;align-items:center;gap:10px;width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:var(--rs);background:var(--surface);color:var(--text);cursor:pointer;text-align:left;transition:background .12s,border-color .12s;font:inherit}
+.profile-btn:hover{background:var(--surface2);border-color:var(--border2)}
+.profile-avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:#fff;flex-shrink:0;letter-spacing:.3px;background:var(--accent)}
+.profile-text{flex:1;min-width:0;overflow:hidden}
+.profile-name{font-size:13px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.25}
+.profile-handle{font-size:11px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.25;margin-top:1px}
+.profile-cog{flex-shrink:0;color:var(--text3);transition:color .12s,transform .25s}
+.profile-cog svg{width:15px;height:15px;display:block}
+.profile-btn:hover .profile-cog{color:var(--accent);transform:rotate(45deg)}
+
+/* ─ Settings modal rows ─ */
+.settings-row{display:flex;align-items:center;gap:12px;padding:14px 16px;border:1px solid var(--border);border-radius:var(--rs);margin-bottom:8px;background:var(--surface);cursor:pointer;transition:border-color .12s,background .12s;width:100%;color:var(--text);font:inherit;text-align:left}
+.settings-row:hover{border-color:var(--border2);background:var(--surface2)}
+.settings-row .s-icn{width:34px;height:34px;border-radius:8px;background:var(--surface2);display:inline-flex;align-items:center;justify-content:center;color:var(--text2);flex-shrink:0}
+.settings-row .s-icn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.settings-row .s-text{flex:1;min-width:0}
+.settings-row .s-title{font-size:13.5px;font-weight:500;color:var(--text)}
+.settings-row .s-sub{font-size:11.5px;color:var(--text3);margin-top:2px}
+.settings-row .s-trail{font-size:11px;color:var(--text3);flex-shrink:0}
+.settings-row.danger:hover{border-color:#e07a7a}
+.settings-row.danger .s-icn{color:#e07a7a}
+.settings-section-lbl{font-size:10px;text-transform:uppercase;letter-spacing:1.2px;color:var(--text3);font-weight:600;margin:12px 4px 6px}
+
 /* ─ Idea-text inline markdown ─ */
 .card-text strong, .k-card-text strong, .td-text strong{font-weight:600;color:var(--text)}
 .card-text em, .k-card-text em, .td-text em{font-style:italic}
@@ -372,6 +396,18 @@ body:not(.dark) .logo-dark{display:none}
     </div>
     <h2 id="auth-title">Welcome back</h2>
     <p id="auth-sub">Your ideas, synced across every device.</p>
+    <div id="auth-name-row" style="display:none">
+      <label>Your name</label>
+      <div style="display:flex;gap:8px">
+        <input id="auth-first-name" autocomplete="given-name" placeholder="First name" style="flex:1">
+        <input id="auth-last-name"  autocomplete="family-name" placeholder="Last name" style="flex:1">
+      </div>
+      <label style="margin-top:14px">Username <span style="font-weight:400;text-transform:none;color:var(--text3);letter-spacing:0">(optional)</span></label>
+      <div style="display:flex;align-items:center;gap:4px">
+        <span style="color:#5a566a;font-size:14px;padding-left:2px">@</span>
+        <input id="auth-username" autocomplete="username" placeholder="yourhandle" style="flex:1" oninput="this.value=this.value.toLowerCase().replace(/[^a-z0-9_]/g,'')">
+      </div>
+    </div>
     <label>Email</label>
     <input type="email" id="auth-email" autocomplete="email" placeholder="you@example.com">
     <label>Password</label>
@@ -420,17 +456,17 @@ body:not(.dark) .logo-dark{display:none}
 
   <div class="sidebar-bottom">
     <button class="sb-btn accent" onclick="openAdd()" title="Add new idea (press N)">+ Add Idea</button>
-    <div class="sb-row">
-      <button class="sb-btn" onclick="openExport()" title="Export your ideas">Export</button>
-      <label class="sb-btn" style="cursor:pointer">Import<input type="file" accept=".json" style="display:none" onchange="importData(event)"></label>
-    </div>
-    <button class="sb-btn" onclick="toggleDark()">Toggle dark mode</button>
-    <button class="sb-btn" id="install-btn" onclick="triggerInstall()" style="background:var(--accent-bg);color:var(--accent);border-color:var(--accent)"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Install NovaLog</button>
-    <div class="sync-badge" id="sync-badge" style="text-align:center;padding:6px;margin:0">Loading…</div>
-    <button class="sb-btn" id="account-btn" onclick="openAccount()" style="display:none;text-align:left;padding:8px 10px">
-      <div style="font-size:11px;color:var(--text3);margin-bottom:1px">Account</div>
-      <div id="account-email" style="font-size:12px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></div>
+    <div class="sync-badge" id="sync-badge"></div>
+    <button class="profile-btn" id="profile-btn" onclick="openSettings()" style="display:none">
+      <div class="profile-avatar" id="profile-avatar"></div>
+      <div class="profile-text">
+        <div class="profile-name" id="profile-name"></div>
+        <div class="profile-handle" id="profile-handle"></div>
+      </div>
+      <div class="profile-cog" title="Settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div>
     </button>
+    <!-- Import file input kept hidden, triggered from settings modal -->
+    <input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(event)">
   </div>
 </div>
 </div>
@@ -554,6 +590,21 @@ body:not(.dark) .logo-dark{display:none}
       </div>
 
       <div class="fgrp" style="border-top:1px solid var(--border);padding-top:14px;margin-top:14px">
+        <label class="flbl">Your name</label>
+        <div style="display:flex;gap:8px">
+          <input class="finput" id="acc-first-name" placeholder="First name" style="flex:1">
+          <input class="finput" id="acc-last-name"  placeholder="Last name" style="flex:1">
+        </div>
+        <label class="flbl" style="margin-top:10px">Username</label>
+        <div style="display:flex;align-items:center;gap:4px">
+          <span style="color:var(--text3);font-size:13px">@</span>
+          <input class="finput" id="acc-username" placeholder="yourhandle" style="flex:1" oninput="this.value=this.value.toLowerCase().replace(/[^a-z0-9_]/g,'')">
+        </div>
+        <div style="font-size:11px;color:var(--text3);margin-top:4px">Shown under your name in the sidebar. Lowercase letters, numbers, underscore.</div>
+        <button class="modal-btn primary" onclick="saveProfile()" style="margin-top:10px;padding:7px 14px;font-size:12px">Save profile</button>
+      </div>
+
+      <div class="fgrp" style="border-top:1px solid var(--border);padding-top:14px;margin-top:14px">
         <label class="flbl">Change email</label>
         <input class="finput" type="email" id="acc-new-email" placeholder="new@example.com">
         <button class="modal-btn primary" onclick="changeEmail()" style="margin-top:8px;padding:7px 14px;font-size:12px">Update email</button>
@@ -578,6 +629,60 @@ body:not(.dark) .logo-dark{display:none}
     <div class="modal-foot">
       <button class="modal-btn" onclick="signOut()" style="margin-right:auto">Sign out</button>
       <button class="modal-btn" onclick="closeModal('account-modal')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Settings modal -->
+<div class="modal-overlay" id="settings-modal">
+  <div class="modal" style="max-width:460px">
+    <div class="modal-head">
+      <h2>Settings</h2>
+      <button class="modal-x" onclick="closeModal('settings-modal')">×</button>
+    </div>
+    <div class="modal-body">
+
+      <div class="settings-section-lbl">Account</div>
+      <button class="settings-row" onclick="closeModal('settings-modal'); openAccount()">
+        <div class="s-icn"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+        <div class="s-text"><div class="s-title">Profile & account</div><div class="s-sub">Name, username, email, password</div></div>
+        <span class="s-trail">›</span>
+      </button>
+
+      <div class="settings-section-lbl">Appearance</div>
+      <button class="settings-row" onclick="toggleDark(); refreshSettingsModal()">
+        <div class="s-icn"><svg viewBox="0 0 24 24" id="theme-icn"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></div>
+        <div class="s-text"><div class="s-title" id="theme-row-title">Dark mode</div><div class="s-sub" id="theme-row-sub">Currently dark</div></div>
+        <span class="s-trail" id="theme-row-trail">on</span>
+      </button>
+
+      <div class="settings-section-lbl">Your data</div>
+      <button class="settings-row" onclick="closeModal('settings-modal'); openExport()">
+        <div class="s-icn"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div>
+        <div class="s-text"><div class="s-title">Export ideas</div><div class="s-sub">JSON backup or Markdown</div></div>
+        <span class="s-trail">›</span>
+      </button>
+      <button class="settings-row" onclick="closeModal('settings-modal'); document.getElementById('import-file').click()">
+        <div class="s-icn"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div>
+        <div class="s-text"><div class="s-title">Import from JSON</div><div class="s-sub">Restore from a backup file</div></div>
+        <span class="s-trail">›</span>
+      </button>
+
+      <div class="settings-section-lbl" id="settings-app-lbl" style="display:none">App</div>
+      <button class="settings-row" id="settings-install-row" onclick="closeModal('settings-modal'); triggerInstall()" style="display:none">
+        <div class="s-icn" style="background:var(--accent-bg);color:var(--accent)"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div>
+        <div class="s-text"><div class="s-title" style="color:var(--accent)">Install NovaLog</div><div class="s-sub">Add to your dock / home screen</div></div>
+      </button>
+
+      <div class="settings-section-lbl">Session</div>
+      <button class="settings-row danger" onclick="closeModal('settings-modal'); signOut()">
+        <div class="s-icn"><svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></div>
+        <div class="s-text"><div class="s-title">Sign out</div><div class="s-sub" id="settings-signed-as"></div></div>
+      </button>
+
+    </div>
+    <div class="modal-foot">
+      <button class="modal-btn" onclick="closeModal('settings-modal')">Close</button>
     </div>
   </div>
 </div>
@@ -839,10 +944,12 @@ function showAuthMsg(text, cls){
 }
 function authToggleMode(){
   _authMode = _authMode === 'signin' ? 'signup' : 'signin';
-  document.getElementById('auth-title').textContent = _authMode === 'signin' ? 'Welcome back' : 'Join NovaLog';
-  document.getElementById('auth-sub').textContent = _authMode === 'signin' ? 'Your ideas, synced across every device.' : 'A home for the ideas you’re still becoming.';
-  document.getElementById('auth-submit').textContent = _authMode === 'signin' ? 'Sign in' : 'Create account';
-  document.getElementById('auth-toggle').textContent = _authMode === 'signin' ? 'New to NovaLog? Create an account' : 'Already have an account? Sign in';
+  const isSignup = _authMode === 'signup';
+  document.getElementById('auth-title').textContent = isSignup ? 'Join NovaLog' : 'Welcome back';
+  document.getElementById('auth-sub').textContent = isSignup ? 'A home for the ideas you’re still becoming.' : 'Your ideas, synced across every device.';
+  document.getElementById('auth-submit').textContent = isSignup ? 'Create account' : 'Sign in';
+  document.getElementById('auth-toggle').textContent = isSignup ? 'Already have an account? Sign in' : 'New to NovaLog? Create an account';
+  document.getElementById('auth-name-row').style.display = isSignup ? 'block' : 'none';
   document.getElementById('auth-msg').style.display = 'none';
   resetCaptcha();
 }
@@ -860,12 +967,24 @@ function resetCaptcha(){
     try { hcaptcha.reset(_captchaWidgetId); } catch(e){}
   }
 }
+let _pendingSignupProfile = null;
 async function authSubmit(){
   const sb = sbClient();
   if(!sb){ showAuthMsg('config.js is missing — see README.', 'err'); return; }
   const email = document.getElementById('auth-email').value.trim();
   const password = document.getElementById('auth-password').value;
   if(!email || !password){ showAuthMsg('Enter email and password.', 'err'); return; }
+
+  // Signup-specific validation
+  let profile = null;
+  if(_authMode === 'signup'){
+    const firstName = document.getElementById('auth-first-name').value.trim();
+    const lastName  = document.getElementById('auth-last-name').value.trim();
+    const username  = document.getElementById('auth-username').value.trim();
+    if(!firstName || !lastName){ showAuthMsg('Please enter your first and last name.', 'err'); return; }
+    profile = { firstName, lastName, username };
+  }
+
   const captchaRequired = !!(window.SUPABASE_CONFIG && SUPABASE_CONFIG.hcaptchaSiteKey);
   let captchaToken = '';
   if(captchaRequired){
@@ -882,6 +1001,8 @@ async function authSubmit(){
   btn.disabled = false;
   resetCaptcha();
   if(error){ showAuthMsg(error.message, 'err'); return; }
+  // Stash profile so onSignedIn can persist it as part of the first cloud push.
+  if(profile) _pendingSignupProfile = profile;
   if(_authMode === 'signup' && !data.session){
     showAuthMsg('Check your email to confirm, then sign in.', 'ok');
     _authMode = 'signin'; authToggleMode(); authToggleMode();
@@ -967,12 +1088,64 @@ function openIdeaFromResurface(id){
 
 function openAccount(){
   if(!_user) return;
+  const p = S.profile || {};
   document.getElementById('acc-current-email').textContent = _user.email || '(no email)';
   document.getElementById('acc-user-id').textContent = 'ID: ' + _user.id;
+  document.getElementById('acc-first-name').value = p.firstName || '';
+  document.getElementById('acc-last-name').value = p.lastName || '';
+  document.getElementById('acc-username').value = p.username || '';
   document.getElementById('acc-new-email').value = '';
   document.getElementById('acc-new-password').value = '';
   document.getElementById('acc-msg').style.display = 'none';
   document.getElementById('account-modal').classList.add('open');
+}
+function saveProfile(){
+  if(!S.profile) S.profile = { firstName:'', lastName:'', username:'' };
+  S.profile.firstName = document.getElementById('acc-first-name').value.trim();
+  S.profile.lastName  = document.getElementById('acc-last-name').value.trim();
+  S.profile.username  = document.getElementById('acc-username').value.trim();
+  save();
+  updateProfileDisplay();
+  showAccMsg('Profile saved.', 'ok');
+}
+function updateProfileDisplay(){
+  const btn = document.getElementById('profile-btn');
+  const avatar = document.getElementById('profile-avatar');
+  const nameEl = document.getElementById('profile-name');
+  const handleEl = document.getElementById('profile-handle');
+  if(!btn || !avatar || !nameEl || !handleEl) return;
+  if(!_user){ btn.style.display = 'none'; return; }
+  btn.style.display = 'flex';
+  avatar.textContent = userInitials();
+  avatar.style.background = userAvatarColor();
+  nameEl.textContent = userDisplayName();
+  handleEl.textContent = userHandle();
+}
+function openSettings(){
+  if(!_user && sbClient()) return;
+  // Theme row state
+  const isDark = !!S.dark;
+  document.getElementById('theme-row-sub').textContent = isDark ? 'Currently dark' : 'Currently light';
+  document.getElementById('theme-row-trail').textContent = isDark ? 'on' : 'off';
+  // Install row — show only when prompt is available
+  const installRow = document.getElementById('settings-install-row');
+  const appLbl = document.getElementById('settings-app-lbl');
+  if(_deferredInstall){
+    installRow.style.display = 'flex';
+    appLbl.style.display = 'block';
+  } else {
+    installRow.style.display = 'none';
+    appLbl.style.display = 'none';
+  }
+  // Signed-in-as line
+  document.getElementById('settings-signed-as').textContent = userHandle() || (_user?.email || '');
+  document.getElementById('settings-modal').classList.add('open');
+}
+function refreshSettingsModal(){
+  // After toggleDark — keep the modal open and update the row
+  const isDark = !!S.dark;
+  document.getElementById('theme-row-sub').textContent = isDark ? 'Currently dark' : 'Currently light';
+  document.getElementById('theme-row-trail').textContent = isDark ? 'on' : 'off';
 }
 function showAccMsg(text, cls){
   const el = document.getElementById('acc-msg');
@@ -1015,14 +1188,40 @@ function freshState(){
     view: 'cards',
     dark: true,
     nextId: 1,
+    profile: { firstName: '', lastName: '', username: '' },
   };
+}
+
+// ── Profile helpers ──────────────────────────────────────────────────
+function userInitials(){
+  const p = (S && S.profile) || {};
+  const f = (p.firstName||'').trim();
+  const l = (p.lastName||'').trim();
+  if(f || l) return ((f[0]||'') + (l[0]||'')).toUpperCase();
+  if(_user && _user.email) return _user.email[0].toUpperCase();
+  return '?';
+}
+function userDisplayName(){
+  const p = (S && S.profile) || {};
+  if(p.firstName || p.lastName) return [p.firstName, p.lastName].filter(Boolean).join(' ');
+  if(_user && _user.email) return _user.email.split('@')[0];
+  return 'You';
+}
+function userHandle(){
+  const p = (S && S.profile) || {};
+  if(p.username) return '@' + p.username;
+  if(_user && _user.email) return _user.email;
+  return '';
+}
+function userAvatarColor(){
+  const seed = (S?.profile?.username) || (_user?.id) || 'novalog';
+  let h = 0;
+  for(let i=0;i<seed.length;i++) h = (h*31 + seed.charCodeAt(i)) & 0xFFFFFF;
+  return `hsl(${h%360}, 55%, 50%)`;
 }
 async function onSignedIn(user){
   _user = user;
   document.getElementById('auth-overlay').style.display = 'none';
-  const accBtn = document.getElementById('account-btn');
-  accBtn.style.display = 'block';
-  document.getElementById('account-email').textContent = user.email || '(no email)';
   setSyncBadge('Loading…', 'syncing');
 
   // SECURITY: always start from a clean slate. Any other user's data
@@ -1045,14 +1244,27 @@ async function onSignedIn(user){
     if(!S.tags) S.tags = JSON.parse(JSON.stringify(DEFAULT_TAGS));
     if(!S.statuses) S.statuses = JSON.parse(JSON.stringify(DEFAULT_STATUSES));
     if(!S.ideas) S.ideas = [];
+    if(!S.profile) S.profile = { firstName:'', lastName:'', username:'' };
     cacheLocalForCurrentUser();
     setSyncBadge('Synced ✓');
   } else {
-    // First sign-in for this account — push the fresh defaults to cloud.
+    // First sign-in for this account — apply pending signup profile + push.
+    if(_pendingSignupProfile){
+      S.profile = _pendingSignupProfile;
+      _pendingSignupProfile = null;
+    }
     setSyncBadge('Initialising…', 'syncing');
     cacheLocalForCurrentUser();
     await cloudPush();
   }
+  // If a signup profile is pending and remote was empty (or pre-existing
+  // remote had no profile), persist it now.
+  if(_pendingSignupProfile){
+    S.profile = _pendingSignupProfile;
+    _pendingSignupProfile = null;
+    save();
+  }
+  updateProfileDisplay();
   applyBootUI();
   render();
   // If a previous offline session left a queued push, flush it now.
@@ -1641,7 +1853,7 @@ document.addEventListener('click',e=>{
 document.addEventListener('keydown',e=>{
   // Escape always closes whatever's open
   if(e.key==='Escape'){
-    closeModal('idea-modal'); closeModal('mgr-modal'); closeModal('account-modal'); closeModal('resurface-modal'); closeModal('export-modal');
+    closeModal('idea-modal'); closeModal('mgr-modal'); closeModal('account-modal'); closeModal('resurface-modal'); closeModal('export-modal'); closeModal('settings-modal');
     closeDrop();
     return;
   }
