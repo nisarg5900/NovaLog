@@ -489,19 +489,14 @@ const PALETTE = [
 ];
 
 // ── Default data ──────────────────────────────────────────────────────
+// Minimal neutral defaults — users rename/replace from the sidebar.
+// The app requires at least one tag and one status to function.
 const DEFAULT_TAGS = [
-  {key:'devotion',   label:'Devotion & love',     color:PALETTE[0]},
-  {key:'loss',       label:'Loss & grief',         color:PALETTE[1]},
-  {key:'longing',    label:'Longing & waiting',    color:PALETTE[5]},
-  {key:'memory',     label:'Memory & moments',     color:PALETTE[2]},
-  {key:'faith',      label:'Faith & spirituality', color:PALETTE[3]},
-  {key:'philosophy', label:'Philosophy of love',   color:PALETTE[4]},
-  {key:'future',     label:'Future & dreams',      color:PALETTE[6]},
-  {key:'identity',   label:'Identity & growth',    color:PALETTE[7]},
+  {key:'general', label:'General', color:PALETTE[0]},
 ];
 const DEFAULT_STATUSES = [
-  {key:'used',   label:'Used in book',  color:{bg:'#e8f2fd',text:'#1653a0',border:'#3a7fd4'}},
-  {key:'unused', label:'Not yet used',  color:{bg:'#eef8e8',text:'#2a6a1a',border:'#5aaa3a'}},
+  {key:'open', label:'Open', color:{bg:'#e8f2fd',text:'#1653a0',border:'#3a7fd4'}},
+  {key:'done', label:'Done', color:{bg:'#eef8e8',text:'#2a6a1a',border:'#5aaa3a'}},
 ];
 
 
