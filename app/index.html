@@ -97,8 +97,6 @@ input,textarea,select{font-family:inherit}
 .cards-grid{display:flex;flex-direction:column;gap:9px}
 .idea-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);transition:box-shadow .15s,border-color .15s}
 .idea-card:hover{border-color:var(--border2);box-shadow:var(--shadow)}
-.idea-card.used{border-left:3px solid var(--used-border)}
-.idea-card.unused{border-left:3px solid var(--unused-border)}
 .card-head{display:flex;align-items:flex-start;gap:8px;padding:12px 14px 8px;cursor:pointer}
 .card-text{flex:1;font-size:13.5px;line-height:1.7;color:var(--text);white-space:pre-wrap;word-break:break-word}
 .card-text.clamped{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;white-space:normal}
@@ -131,9 +129,10 @@ tbody td{padding:9px 12px;vertical-align:top}
 .k-col-head{font-size:12px;font-weight:600;color:var(--text2);margin-bottom:8px;padding:0 2px;display:flex;justify-content:space-between}
 .k-col-head .kc{font-size:11px;font-weight:400;color:var(--text3)}
 .k-cards{display:flex;flex-direction:column;gap:7px}
-.k-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rs);padding:9px 11px;font-size:12px;line-height:1.55;color:var(--text);cursor:pointer;transition:box-shadow .12s;overflow:hidden;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical}
+.k-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rs);padding:10px 12px;font-size:12.5px;line-height:1.6;color:var(--text);cursor:pointer;transition:box-shadow .12s,border-color .12s,transform .12s}
+.k-card:hover{border-color:var(--border2);transform:translateY(-1px)}
+.k-card-text{display:-webkit-box;-webkit-line-clamp:7;-webkit-box-orient:vertical;overflow:hidden}
 .k-card:hover{box-shadow:var(--shadow)}
-.k-card.used{border-left:3px solid var(--used-border)}
 .k-card-tags{margin-top:5px;display:flex;gap:3px;flex-wrap:wrap;-webkit-line-clamp:unset;display:flex}
 
 /* ─ Dropdown portal ─ */
@@ -195,8 +194,10 @@ input[type="time"]::-webkit-calendar-picker-indicator{filter:invert(0.5);cursor:
 .mgr-add-row input{flex:1;min-width:120px;padding:6px 10px;border:1px solid var(--border);border-radius:var(--rs);background:var(--surface);color:var(--text);font-size:13px;outline:none}
 .mgr-add-row input:focus{border-color:var(--accent)}
 .color-pick{display:flex;gap:6px;flex-wrap:wrap}
-.cpick{width:22px;height:22px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:border-color .12s}
-.cpick.sel{border-color:var(--text)}
+.cpick{width:24px;height:24px;border-radius:50%;cursor:pointer;border:1px solid;position:relative;transition:transform .15s,box-shadow .15s}
+.cpick:hover{transform:scale(1.1)}
+.cpick.sel{transform:scale(1.15);box-shadow:0 0 0 2px var(--surface),0 0 0 4px var(--accent)}
+.cpick.sel::after{content:"";position:absolute;left:50%;top:50%;width:8px;height:8px;border-right:2px solid var(--text);border-bottom:2px solid var(--text);transform:translate(-55%,-65%) rotate(45deg)}
 
 /* ─ Empty ─ */
 .empty{text-align:center;padding:50px 20px;color:var(--text3);font-size:14px}
@@ -307,9 +308,8 @@ input[type="time"]::-webkit-calendar-picker-indicator{filter:invert(0.5);cursor:
   <div class="sidebar-sec">
     <div class="sidebar-sec-lbl">Views</div>
     <div style="display:flex;flex-direction:column;gap:1px">
-      <button class="nav-btn active" id="nav-all" onclick="setNav('all')"><span class="ico">📋</span>All Ideas<span class="cnt" id="cnt-all">0</span></button>
-      <button class="nav-btn" id="nav-used" onclick="setNav('used')"><span class="ico">✅</span>Used in book<span class="cnt" id="cnt-used">0</span></button>
-      <button class="nav-btn" id="nav-unused" onclick="setNav('unused')"><span class="ico">💡</span>Not yet used<span class="cnt" id="cnt-unused">0</span></button>
+      <button class="nav-btn" id="nav-all" onclick="setNav('all')"><span class="ico">📋</span>All Ideas<span class="cnt" id="cnt-all">0</span></button>
+      <div id="nav-status-views"></div>
     </div>
   </div>
 
@@ -352,14 +352,13 @@ input[type="time"]::-webkit-calendar-picker-indicator{filter:invert(0.5);cursor:
       <option value="oldest">Oldest first</option>
       <option value="az">A → Z</option>
       <option value="za">Z → A</option>
-      <option value="used-first">Used first</option>
-      <option value="unused-first">Unused first</option>
+      <option value="by-status">Group by status</option>
     </select>
     <button class="expand-all-btn" id="exp-all-btn" onclick="toggleExpandAll()">Expand all</button>
     <div class="view-grp">
       <button class="vbtn active" id="vb-cards" title="Cards" onclick="setView('cards')">≡</button>
       <button class="vbtn" id="vb-table" title="Table" onclick="setView('table')">⊞</button>
-      <button class="vbtn" id="vb-kanban" title="Kanban" onclick="setView('kanban')">⬛</button>
+      <button class="vbtn" id="vb-kanban" title="Kanban" onclick="setView('kanban')" style="display:flex;align-items:center;justify-content:center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="5" height="16" rx="1"/><rect x="10" y="4" width="5" height="10" rx="1"/><rect x="17" y="4" width="4" height="13" rx="1"/></svg></button>
     </div>
   </div>
 
@@ -737,6 +736,12 @@ async function bootstrap(){
 function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function tagByKey(k){ return S.tags.find(t=>t.key===k)||{key:k,label:k,color:PALETTE[0]}; }
 function statusByKey(k){ return S.statuses.find(s=>s.key===k)||{key:k,label:k,color:PALETTE[3]}; }
+function nextStatusOf(k){
+  if(!S.statuses.length) return null;
+  const idx = S.statuses.findIndex(s=>s.key===k);
+  if(S.statuses.length<2) return idx===0 ? null : S.statuses[0];
+  return S.statuses[(idx<0?0:(idx+1)%S.statuses.length)];
+}
 function badgeStyle(color){ return `background:${color.bg};color:${color.text};border-color:${color.border}`; }
 function dotStyle(color){ return `background:${color.border}`; }
 function ideaCount(filterFn){ return S.ideas.filter(filterFn).length; }
@@ -773,8 +778,7 @@ function getFiltered(){
   const sort = (document.getElementById('sort-sel')||{value:'newest'}).value;
   let list = S.ideas.filter(i=>{
     if(q && !i.text.toLowerCase().includes(q)) return false;
-    if(S.navFilter==='used' && i.status!=='used') return false;
-    if(S.navFilter==='unused' && i.status==='used') return false;
+    if(S.navFilter && S.navFilter!=='all' && i.status!==S.navFilter) return false;
     if(S.catFilter.length && !S.catFilter.some(c=>i.cats.includes(c))) return false;
     if(S.statusFilter.length && !S.statusFilter.includes(i.status)) return false;
     return true;
@@ -783,8 +787,10 @@ function getFiltered(){
   else if(sort==='oldest') list.sort((a,b)=>(a.ts||0)-(b.ts||0));
   else if(sort==='az') list.sort((a,b)=>a.text.localeCompare(b.text));
   else if(sort==='za') list.sort((a,b)=>b.text.localeCompare(a.text));
-  else if(sort==='used-first') list.sort((a,b)=>(b.status==='used')-(a.status==='used'));
-  else if(sort==='unused-first') list.sort((a,b)=>(a.status==='used')-(b.status==='used'));
+  else if(sort==='by-status'){
+    const order = Object.fromEntries(S.statuses.map((s,i)=>[s.key,i]));
+    list.sort((a,b)=>((order[a.status]??99)-(order[b.status]??99)) || ((b.ts||0)-(a.ts||0)));
+  }
   return list;
 }
 
@@ -807,11 +813,13 @@ function render(){
 // ── Sidebar ───────────────────────────────────────────────────────────
 function buildSidebar(){
   document.getElementById('cnt-all').textContent = S.ideas.length;
-  document.getElementById('cnt-used').textContent = S.ideas.filter(i=>i.status==='used').length;
-  document.getElementById('cnt-unused').textContent = S.ideas.filter(i=>i.status!=='used').length;
-  ['all','used','unused'].forEach(x=>{
-    document.getElementById('nav-'+x).classList.toggle('active', S.navFilter===x);
-  });
+  document.getElementById('nav-all').classList.toggle('active', !S.navFilter || S.navFilter==='all');
+  // Dynamic status views — one per user-defined status
+  document.getElementById('nav-status-views').innerHTML = S.statuses.map(s=>{
+    const cnt = S.ideas.filter(i=>i.status===s.key).length;
+    const active = S.navFilter===s.key;
+    return `<button class="nav-btn ${active?'active':''}" onclick="setNav('${s.key}')"><span class="dot" style="${dotStyle(s.color)};display:inline-block;width:8px;height:8px;border-radius:50%;flex-shrink:0"></span>${esc(s.label)}<span class="cnt">${cnt}</span></button>`;
+  }).join('');
   document.getElementById('cat-list').innerHTML = S.tags.map(t=>{
     const cnt = S.ideas.filter(i=>i.cats.includes(t.key)).length;
     const active = S.catFilter.includes(t.key);
@@ -834,11 +842,13 @@ function buildSidebar(){
 
 // ── Stats ─────────────────────────────────────────────────────────────
 function buildStats(){
-  const total=S.ideas.length, used=S.ideas.filter(i=>i.status==='used').length;
-  document.getElementById('stats-strip').innerHTML=
-    `<div class="stat-pill"><span class="stat-num">${total}</span><span class="stat-lbl">Total</span></div>
-     <div class="stat-pill"><span class="stat-num">${used}</span><span class="stat-lbl">Used</span></div>
-     <div class="stat-pill"><span class="stat-num">${total-used}</span><span class="stat-lbl">Unused</span></div>`;
+  const total=S.ideas.length;
+  const pills = [`<div class="stat-pill"><span class="stat-num">${total}</span><span class="stat-lbl">Total</span></div>`];
+  S.statuses.forEach(s=>{
+    const cnt = S.ideas.filter(i=>i.status===s.key).length;
+    pills.push(`<div class="stat-pill"><span class="stat-num">${cnt}</span><span class="stat-lbl">${esc(s.label)}</span></div>`);
+  });
+  document.getElementById('stats-strip').innerHTML = pills.join('');
 }
 
 // ── Active filters bar ────────────────────────────────────────────────
@@ -864,7 +874,8 @@ function cardHtml(i){
   }).join('');
   const st = statusByKey(i.status||'unused');
   const dtStr = i.ts ? fmtTs(i.ts) : '';
-  return `<div class="idea-card ${i.status==='used'?'used':'unused'}" id="card-${i.id}">
+  const nextStatus = nextStatusOf(i.status);
+  return `<div class="idea-card" id="card-${i.id}" style="border-left:3px solid ${st.color.border}">
     <div class="card-head" onclick="toggleExpand(${i.id})">
       <div class="card-text ${i.expanded?'':'clamped'}">${esc(i.text)}</div>
       <button class="exp-btn">${i.expanded?'↑':'↓'}</button>
@@ -876,7 +887,7 @@ function cardHtml(i){
       ${dtStr?`<span class="card-dt" title="Created: ${dtStr}">🕐 ${dtStr}</span>`:''}
       <div class="card-actions">
         <button class="act-btn" onclick="openEdit(${i.id})">Edit</button>
-        <button class="act-btn" onclick="quickToggleStatus(event,${i.id})">${i.status==='used'?'↩ unused':'✓ used'}</button>
+        ${nextStatus?`<button class="act-btn" onclick="quickToggleStatus(event,${i.id})" title="Cycle status">↻ ${esc(nextStatus.label)}</button>`:''}
       </div>
     </div>
   </div>`;
@@ -903,7 +914,7 @@ function renderTable(list, area){
         <td><span class="badge" style="${badgeStyle(st.color)}">${esc(st.label)}</span></td>
         <td style="font-size:11px;color:var(--text3)">${esc(i.chapter||'')}</td>
         <td style="font-size:11px;color:var(--text3);white-space:nowrap">${dtStr}</td>
-        <td onclick="event.stopPropagation()"><button class="act-btn" onclick="quickToggleStatus(event,${i.id})">${i.status==='used'?'↩':'✓'}</button></td>
+        <td onclick="event.stopPropagation()"><button class="act-btn" onclick="quickToggleStatus(event,${i.id})" title="Cycle status">↻</button></td>
       </tr>`;
     }).join('')}</tbody>
   </table></div>`;
@@ -922,9 +933,9 @@ function renderKanban(list, area){
     return `<div class="k-col">
       <div class="k-col-head"><span><span class="dot" style="${dotStyle(t.color)};display:inline-block;vertical-align:middle;margin-right:5px"></span>${esc(t.label)}</span><span class="kc">${cards.length}</span></div>
       <div class="k-cards">${cards.map(i=>{
-        const st=statusByKey(i.status||'unused');
-        return `<div class="k-card ${i.status==='used'?'used':'unused'}" onclick="openEdit(${i.id})">
-          ${esc(i.text)}
+        const st=statusByKey(i.status);
+        return `<div class="k-card" onclick="openEdit(${i.id})" style="border-left:3px solid ${st.color.border}">
+          <div class="k-card-text">${esc(i.text)}</div>
           <div class="k-card-tags">${i.cats.map(k=>{const t2=tagByKey(k);return `<span class="badge" style="${badgeStyle(t2.color)};font-size:10px;padding:1px 6px">${esc(t2.label)}</span>`;}).join('')}</div>
         </div>`;
       }).join('')}</div>
@@ -940,7 +951,7 @@ function toggleExpand(id){
 function quickToggleStatus(e,id){
   e.stopPropagation();
   const i=S.ideas.find(x=>x.id===id); if(!i) return;
-  if(S.statuses.length<2){ i.status=i.status==='used'?'unused':'used'; save(); render(); return; }
+  if(S.statuses.length<2) return;
   const cur=S.statuses.findIndex(s=>s.key===i.status);
   i.status=S.statuses[(cur+1)%S.statuses.length].key;
   save(); render();
