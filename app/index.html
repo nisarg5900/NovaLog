@@ -16,12 +16,12 @@
   --r:10px;--rs:6px;
 }
 .dark{
-  --bg:#131210;--surface:#1e1c19;--surface2:#272420;--surface3:#302d29;
-  --border:#3a3630;--border2:#4a4540;
-  --text:#f0ece6;--text2:#a09a90;--text3:#6a6460;
-  --accent:#e0946a;--accent-bg:#2e2018;--accent-text:#f0b888;
-  --used-border:#5a8fd4;--unused-border:#6aae7f;
-  --shadow:0 2px 12px rgba(0,0,0,.4);
+  --bg:#07070d;--surface:#12121c;--surface2:#1a1a26;--surface3:#23233a;
+  --border:#23233a;--border2:#34344a;
+  --text:#f0eff7;--text2:#b8b4c8;--text3:#6e6a82;
+  --accent:#6666FF;--accent-bg:rgba(102,102,255,.15);--accent-text:#8a8aff;
+  --used-border:#6a8aff;--unused-border:#7accb0;
+  --shadow:0 2px 24px rgba(0,0,0,.5);
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%}
@@ -224,41 +224,58 @@ input[type="time"]::-webkit-calendar-picker-indicator{filter:invert(0.5);cursor:
   .k-col{width:100%;min-width:0}
   table{font-size:12px}
 }
-/* ─ Auth overlay ─ */
-.auth-overlay{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px}
-.auth-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:28px;width:100%;max-width:360px;box-shadow:var(--shadow)}
-.auth-card h2{font-size:18px;margin-bottom:6px}
-.auth-card p{font-size:12px;color:var(--text2);margin-bottom:18px}
-.auth-card label{display:block;font-size:11px;color:var(--text2);margin:10px 0 4px;font-weight:500}
-.auth-card input{width:100%;padding:9px 11px;border:1px solid var(--border2);border-radius:var(--rs);background:var(--surface2);color:var(--text);font-size:13px;outline:none}
-.auth-card input:focus{border-color:var(--accent)}
-.auth-card button{width:100%;padding:10px;border:none;border-radius:var(--rs);background:var(--accent);color:#fff;font-size:13px;font-weight:500;cursor:pointer;margin-top:14px}
-.auth-card button:disabled{opacity:.6;cursor:not-allowed}
-.auth-card .alt{text-align:center;margin-top:10px;font-size:12px;color:var(--text2)}
-.auth-card .alt a{color:var(--accent);cursor:pointer;text-decoration:none}
-.auth-msg{font-size:12px;margin-top:10px;padding:8px;border-radius:var(--rs);text-align:center}
-.auth-msg.err{background:#fdecec;color:#a02020;border:1px solid #f0bcbc}
-.auth-msg.ok{background:#e8f5e9;color:#1e6b25;border:1px solid #b8dcc0}
+/* ─ Auth overlay (cosmic) ─ */
+.auth-overlay{position:fixed;inset:0;background:#07070d;display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px;overflow:hidden}
+.auth-overlay::before{content:"";position:absolute;width:900px;height:900px;left:50%;top:-150px;transform:translateX(-50%);background:radial-gradient(circle at 50% 50%, rgba(102,102,255,.22) 0%, transparent 55%);filter:blur(40px);pointer-events:none}
+.auth-overlay::after{content:"";position:absolute;width:700px;height:700px;left:-150px;bottom:-200px;background:radial-gradient(circle at 50% 50%, rgba(220,100,200,.14) 0%, transparent 60%);filter:blur(60px);pointer-events:none}
+.auth-stars{position:absolute;inset:0;opacity:.45;pointer-events:none;background-image:radial-gradient(1px 1px at 20% 30%, #fff, transparent),radial-gradient(1px 1px at 40% 70%, #ddd, transparent),radial-gradient(1px 1px at 70% 20%, #fff, transparent),radial-gradient(1px 1px at 85% 80%, #ccc, transparent),radial-gradient(2px 2px at 30% 50%, #fff, transparent),radial-gradient(1px 1px at 90% 10%, #fff, transparent);background-size:600px 600px,800px 800px,500px 500px,700px 700px,900px 900px,550px 550px}
+.auth-card{position:relative;background:linear-gradient(180deg,#12121c 0%,#0c0c14 100%);border:1px solid #23233a;border-radius:16px;padding:36px 32px;width:100%;max-width:380px;box-shadow:0 30px 80px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.03) inset;color:#f0eff7}
+.auth-brand{display:flex;align-items:center;gap:10px;justify-content:center;margin-bottom:22px}
+.auth-brand img{width:36px;height:36px}
+.auth-brand .name{font-size:18px;font-weight:600;letter-spacing:.2px;color:#f0eff7}
+.auth-card h2{font-size:22px;margin-bottom:6px;font-weight:600;text-align:center;letter-spacing:-.3px}
+.auth-card p{font-size:13px;color:#b8b4c8;margin-bottom:20px;text-align:center}
+.auth-card label{display:block;font-size:11px;color:#9b96a8;margin:12px 0 6px;font-weight:500;letter-spacing:.3px;text-transform:uppercase}
+.auth-card input{width:100%;padding:11px 13px;border:1px solid #2a2a40;border-radius:8px;background:#0c0c14;color:#f0eff7;font-size:14px;outline:none;transition:border-color .15s,box-shadow .15s}
+.auth-card input:focus{border-color:#6666FF;box-shadow:0 0 0 3px rgba(102,102,255,.15)}
+.auth-card input::placeholder{color:#5a566a}
+.auth-card #auth-captcha{margin-top:14px;display:flex;justify-content:center;min-height:0}
+.auth-card button#auth-submit{width:100%;padding:12px;border:none;border-radius:8px;background:#6666FF;color:#fff;font-size:14px;font-weight:500;cursor:pointer;margin-top:18px;transition:transform .15s,box-shadow .15s}
+.auth-card button#auth-submit:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 8px 24px rgba(102,102,255,.32)}
+.auth-card button#auth-submit:disabled{opacity:.55;cursor:not-allowed}
+.auth-card .alt{text-align:center;margin-top:14px;font-size:13px;color:#9b96a8}
+.auth-card .alt a{color:#8a8aff;cursor:pointer;text-decoration:none}
+.auth-card .alt a:hover{color:#a8a8ff;text-decoration:underline}
+.auth-msg{font-size:12.5px;margin-top:14px;padding:10px 12px;border-radius:8px;text-align:center;line-height:1.5}
+.auth-msg.err{background:rgba(220,80,80,.1);color:#ff8a8a;border:1px solid rgba(220,80,80,.3)}
+.auth-msg.ok{background:rgba(80,200,120,.1);color:#8aebaa;border:1px solid rgba(80,200,120,.3)}
 .sync-badge{font-size:10px;color:var(--text3);padding:2px 6px;border-radius:10px;background:var(--surface2);margin-left:6px}
 .sync-badge.syncing{color:var(--accent)}
 .sync-badge.error{color:#a02020}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="config.js"></script>
+<script src="https://js.hcaptcha.com/1/api.js" async defer></script>
 </head>
-<body>
+<body class="dark">
 
 <!-- Auth overlay (shown until logged in) -->
 <div class="auth-overlay" id="auth-overlay" style="display:none">
+  <div class="auth-stars"></div>
   <div class="auth-card">
-    <h2 id="auth-title">Sign in</h2>
-    <p id="auth-sub">Your ideas sync across all your devices.</p>
+    <div class="auth-brand">
+      <img src="../assets/novalog-icon.svg" alt="">
+      <span class="name">NovaLog</span>
+    </div>
+    <h2 id="auth-title">Welcome back</h2>
+    <p id="auth-sub">Your ideas, synced across every device.</p>
     <label>Email</label>
     <input type="email" id="auth-email" autocomplete="email" placeholder="you@example.com">
     <label>Password</label>
     <input type="password" id="auth-password" autocomplete="current-password" placeholder="••••••••">
+    <div id="auth-captcha"></div>
     <button id="auth-submit" onclick="authSubmit()">Sign in</button>
-    <div class="alt"><a id="auth-toggle" onclick="authToggleMode()">Need an account? Sign up</a></div>
+    <div class="alt"><a id="auth-toggle" onclick="authToggleMode()">New to NovaLog? Create an account</a></div>
     <div id="auth-msg" style="display:none"></div>
   </div>
 </div>
@@ -516,7 +533,7 @@ function loadState(){
     catFilter: [],
     statusFilter: [],
     view:'cards',
-    dark: false,
+    dark: true,
     nextId: 1,
   };
 }
@@ -568,10 +585,26 @@ function showAuthMsg(text, cls){
 }
 function authToggleMode(){
   _authMode = _authMode === 'signin' ? 'signup' : 'signin';
-  document.getElementById('auth-title').textContent = _authMode === 'signin' ? 'Sign in' : 'Create account';
-  document.getElementById('auth-submit').textContent = _authMode === 'signin' ? 'Sign in' : 'Sign up';
-  document.getElementById('auth-toggle').textContent = _authMode === 'signin' ? 'Need an account? Sign up' : 'Have an account? Sign in';
+  document.getElementById('auth-title').textContent = _authMode === 'signin' ? 'Welcome back' : 'Join NovaLog';
+  document.getElementById('auth-sub').textContent = _authMode === 'signin' ? 'Your ideas, synced across every device.' : 'A home for the ideas you’re still becoming.';
+  document.getElementById('auth-submit').textContent = _authMode === 'signin' ? 'Sign in' : 'Create account';
+  document.getElementById('auth-toggle').textContent = _authMode === 'signin' ? 'New to NovaLog? Create an account' : 'Already have an account? Sign in';
   document.getElementById('auth-msg').style.display = 'none';
+  resetCaptcha();
+}
+let _captchaWidgetId = null;
+function renderCaptcha(){
+  const key = (window.SUPABASE_CONFIG && SUPABASE_CONFIG.hcaptchaSiteKey) || '';
+  if(!key) return;
+  if(typeof hcaptcha === 'undefined'){ setTimeout(renderCaptcha, 300); return; }
+  const slot = document.getElementById('auth-captcha');
+  if(!slot || _captchaWidgetId !== null) return;
+  _captchaWidgetId = hcaptcha.render(slot, { sitekey: key, theme: 'dark' });
+}
+function resetCaptcha(){
+  if(_captchaWidgetId !== null && typeof hcaptcha !== 'undefined'){
+    try { hcaptcha.reset(_captchaWidgetId); } catch(e){}
+  }
 }
 async function authSubmit(){
   const sb = sbClient();
@@ -579,11 +612,21 @@ async function authSubmit(){
   const email = document.getElementById('auth-email').value.trim();
   const password = document.getElementById('auth-password').value;
   if(!email || !password){ showAuthMsg('Enter email and password.', 'err'); return; }
+  const captchaRequired = !!(window.SUPABASE_CONFIG && SUPABASE_CONFIG.hcaptchaSiteKey);
+  let captchaToken = '';
+  if(captchaRequired){
+    captchaToken = (typeof hcaptcha !== 'undefined' && _captchaWidgetId !== null) ? hcaptcha.getResponse(_captchaWidgetId) : '';
+    if(!captchaToken){ showAuthMsg('Please complete the captcha.', 'err'); return; }
+  }
   const btn = document.getElementById('auth-submit');
   btn.disabled = true;
-  const fn = _authMode === 'signin' ? sb.auth.signInWithPassword({email,password}) : sb.auth.signUp({email,password});
+  const opts = captchaToken ? { captchaToken } : undefined;
+  const fn = _authMode === 'signin'
+    ? sb.auth.signInWithPassword({ email, password, options: opts })
+    : sb.auth.signUp({ email, password, options: opts });
   const { data, error } = await fn;
   btn.disabled = false;
+  resetCaptcha();
   if(error){ showAuthMsg(error.message, 'err'); return; }
   if(_authMode === 'signup' && !data.session){
     showAuthMsg('Check your email to confirm, then sign in.', 'ok');
@@ -660,7 +703,7 @@ async function onSignedIn(user){
   render();
 }
 function applyBootUI(){
-  if(S.dark) document.body.classList.add('dark');
+  document.body.classList.toggle('dark', !!S.dark);
   ['cards','table','kanban'].forEach(x=>{
     const btn = document.getElementById('vb-'+x);
     if(btn) btn.classList.toggle('active',S.view===x);
@@ -678,6 +721,7 @@ async function bootstrap(){
     await onSignedIn(session.user);
   } else {
     document.getElementById('auth-overlay').style.display = 'flex';
+    renderCaptcha();
   }
 }
 
