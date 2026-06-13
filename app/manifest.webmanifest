@@ -1,0 +1,29 @@
+{
+  "name": "NovaLog",
+  "short_name": "NovaLog",
+  "description": "A quiet workspace for the half-formed ideas your book is still becoming.",
+  "start_url": "/NovaLog/app/",
+  "scope": "/NovaLog/app/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#07070d",
+  "theme_color": "#6666FF",
+  "icons": [
+    { "src": "../assets/novalog-icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "../assets/novalog-icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    {
+      "name": "New idea",
+      "short_name": "Add",
+      "description": "Capture a new fragment",
+      "url": "/NovaLog/app/?action=new"
+    },
+    {
+      "name": "Resurface",
+      "short_name": "Resurface",
+      "description": "Pull up a forgotten idea",
+      "url": "/NovaLog/app/?action=resurface"
+    }
+  ]
+}
