@@ -301,10 +301,8 @@ input[type="time"]::-webkit-calendar-picker-indicator{filter:invert(0.5);cursor:
       <label class="sb-btn" style="cursor:pointer">Import<input type="file" accept=".json" style="display:none" onchange="importData(event)"></label>
     </div>
     <button class="sb-btn" onclick="toggleDark()">Toggle dark mode</button>
-    <div class="sb-row">
-      <span class="sync-badge" id="sync-badge" style="flex:1;text-align:center;padding:6px">Loading…</span>
-      <button class="sb-btn" style="flex:0 0 auto" onclick="signOut()" title="Sign out">⎋</button>
-    </div>
+    <div class="sync-badge" id="sync-badge" style="text-align:center;padding:6px;margin:0">Loading…</div>
+    <button class="sb-btn" id="signout-btn" onclick="signOut()" style="display:none">Sign out</button>
   </div>
 </div>
 </div>
@@ -544,13 +542,13 @@ async function authSubmit(){
   await onSignedIn(data.session.user);
 }
 async function signOut(){
-  if(!_sb) return;
-  await _sb.auth.signOut();
+  if(_sb) { try { await _sb.auth.signOut(); } catch(e){} }
   location.reload();
 }
 async function onSignedIn(user){
   _user = user;
   document.getElementById('auth-overlay').style.display = 'none';
+  document.getElementById('signout-btn').style.display = 'block';
   setSyncBadge('Loading…', 'syncing');
   const remote = await cloudPull();
   if(remote){
