@@ -395,7 +395,7 @@ input[type="time"]::-webkit-calendar-picker-indicator{filter:invert(0.5);cursor:
   <div class="sidebar-bottom">
     <button class="sb-btn accent" onclick="openAdd()" title="Add new idea (Ctrl+N)">+ Add Idea</button>
     <div class="sb-row">
-      <button class="sb-btn" onclick="exportData()">Export JSON</button>
+      <button class="sb-btn" onclick="openExport()" title="Export your ideas">Export</button>
       <label class="sb-btn" style="cursor:pointer">Import<input type="file" accept=".json" style="display:none" onchange="importData(event)"></label>
     </div>
     <button class="sb-btn" onclick="toggleDark()">Toggle dark mode</button>
@@ -556,6 +556,46 @@ input[type="time"]::-webkit-calendar-picker-indicator{filter:invert(0.5);cursor:
   </div>
 </div>
 
+<!-- Export modal -->
+<div class="modal-overlay" id="export-modal">
+  <div class="modal" style="max-width:440px">
+    <div class="modal-head">
+      <h2>Export your ideas</h2>
+      <button class="modal-x" onclick="closeModal('export-modal')">×</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:12px;color:var(--text2);margin-bottom:18px;line-height:1.55">Pick a format. Everything downloads to your device — nothing is uploaded.</p>
+
+      <div style="border:1px solid var(--border);border-radius:var(--rs);padding:14px;margin-bottom:10px">
+        <div style="font-weight:500;font-size:14px;margin-bottom:4px">JSON backup</div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:10px;line-height:1.5">Full snapshot — ideas, tags, statuses, settings. Use this to back up or import later.</div>
+        <button class="modal-btn" onclick="exportData(); closeModal('export-modal')" style="font-size:12px;padding:6px 14px">Download .json</button>
+      </div>
+
+      <div style="border:1px solid var(--border);border-radius:var(--rs);padding:14px;margin-bottom:10px">
+        <div style="font-weight:500;font-size:14px;margin-bottom:4px">Markdown — flat list</div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:10px;line-height:1.5">Every idea in one .md file, newest first. Paste into Notion, Obsidian, Word, anywhere.</div>
+        <button class="modal-btn" onclick="exportMarkdown('flat'); closeModal('export-modal')" style="font-size:12px;padding:6px 14px">Download .md</button>
+      </div>
+
+      <div style="border:1px solid var(--border);border-radius:var(--rs);padding:14px;margin-bottom:10px">
+        <div style="font-weight:500;font-size:14px;margin-bottom:4px">Markdown — grouped by tag</div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:10px;line-height:1.5">Each tag becomes a heading; ideas with multiple tags appear in every section they belong to.</div>
+        <button class="modal-btn" onclick="exportMarkdown('byTag'); closeModal('export-modal')" style="font-size:12px;padding:6px 14px">Download .md</button>
+      </div>
+
+      <div style="border:1px solid var(--border);border-radius:var(--rs);padding:14px">
+        <div style="font-weight:500;font-size:14px;margin-bottom:4px">Markdown — grouped by status</div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:10px;line-height:1.5">Each status becomes a heading — useful for printing out "Open" fragments to work on.</div>
+        <button class="modal-btn" onclick="exportMarkdown('byStatus'); closeModal('export-modal')" style="font-size:12px;padding:6px 14px">Download .md</button>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="modal-btn" onclick="closeModal('export-modal')">Close</button>
+    </div>
+  </div>
+</div>
+
 <!-- Resurface modal -->
 <div class="modal-overlay" id="resurface-modal">
   <div class="modal" style="max-width:520px">
@@ -674,7 +714,7 @@ function userCacheKey(uid){ return 'novalog_state_' + uid; }
 function clearAllLocalCaches(){
   try {
     for (const k of Object.keys(localStorage)) {
-      if (k === 'ideaTracker_v3' || k.startsWith('novalog_state_')) localStorage.removeItem(k);
+      if (k === 'ideaTracker_v3' || k.startsWith('novalog_state_') || k.startsWith('novalog_pending_')) localStorage.removeItem(k);
     }
   } catch(e){}
 }
@@ -709,17 +749,57 @@ function setSyncBadge(text, cls){
 function scheduleCloudPush(){
   if(!_user || !_sb) return;
   if(_pushTimer) clearTimeout(_pushTimer);
-  setSyncBadge('Editing…', 'syncing');
+  setSyncBadge(navigator.onLine ? 'Editing…' : 'Offline — will sync', 'syncing');
   _pushTimer = setTimeout(cloudPush, 800);
+}
+function pendingQueueKey(uid){ return 'novalog_pending_' + uid; }
+function hasPendingPush(){
+  if(!_user) return false;
+  try { return !!localStorage.getItem(pendingQueueKey(_user.id)); } catch(e){ return false; }
+}
+function queuePendingPush(){
+  if(!_user) return;
+  try { localStorage.setItem(pendingQueueKey(_user.id), JSON.stringify({ data: S, queued_at: Date.now() })); } catch(e){}
+}
+function clearPendingPush(){
+  if(!_user) return;
+  try { localStorage.removeItem(pendingQueueKey(_user.id)); } catch(e){}
 }
 async function cloudPush(){
   if(!_user || !_sb) return;
+  // If offline, queue and bail. The 'online' listener will drain it.
+  if(!navigator.onLine){
+    queuePendingPush();
+    setSyncBadge('Offline — saved locally', 'error');
+    return;
+  }
   setSyncBadge('Saving…', 'syncing');
   const payload = { user_id: _user.id, data: S, updated_at: new Date().toISOString() };
-  const { error } = await _sb.from('idea_tracker_state').upsert(payload, { onConflict: 'user_id' });
-  if(error){ console.error(error); setSyncBadge('Sync error', 'error'); }
-  else setSyncBadge('Synced ✓');
+  try {
+    const { error } = await _sb.from('idea_tracker_state').upsert(payload, { onConflict: 'user_id' });
+    if(error) throw error;
+    clearPendingPush();
+    setSyncBadge('Synced ✓');
+  } catch(err){
+    console.warn('Cloud push failed, queueing:', err);
+    queuePendingPush();
+    setSyncBadge(navigator.onLine ? 'Sync error — retrying' : 'Offline — saved locally', 'error');
+  }
 }
+async function drainPendingPush(){
+  if(!_user || !_sb) return;
+  if(!hasPendingPush()) return;
+  if(!navigator.onLine) return;
+  setSyncBadge('Syncing pending changes…', 'syncing');
+  // The queued state IS the current S (last save wrote it); just call cloudPush.
+  await cloudPush();
+}
+window.addEventListener('online', () => {
+  if(_user) drainPendingPush();
+});
+window.addEventListener('offline', () => {
+  if(_user) setSyncBadge('Offline', 'error');
+});
 async function cloudPull(){
   if(!_user || !_sb) return null;
   const { data, error } = await _sb.from('idea_tracker_state').select('data').eq('user_id', _user.id).maybeSingle();
@@ -948,6 +1028,8 @@ async function onSignedIn(user){
   }
   applyBootUI();
   render();
+  // If a previous offline session left a queued push, flush it now.
+  if(navigator.onLine) drainPendingPush();
 }
 function applyBootUI(){
   document.body.classList.toggle('dark', !!S.dark);
@@ -1527,7 +1609,7 @@ document.addEventListener('click',e=>{
 document.addEventListener('keydown',e=>{
   // Escape always closes whatever's open
   if(e.key==='Escape'){
-    closeModal('idea-modal'); closeModal('mgr-modal'); closeModal('account-modal'); closeModal('resurface-modal');
+    closeModal('idea-modal'); closeModal('mgr-modal'); closeModal('account-modal'); closeModal('resurface-modal'); closeModal('export-modal');
     closeDrop();
     return;
   }
@@ -1565,10 +1647,65 @@ function toggleDark(){
 }
 
 // ── Export / Import ───────────────────────────────────────────────────
+function openExport(){
+  if(!S.ideas || !S.ideas.length){ alert('Nothing to export yet — add some ideas first.'); return; }
+  document.getElementById('export-modal').classList.add('open');
+}
 function exportData(){
   const blob=new Blob([JSON.stringify({ideas:S.ideas,tags:S.tags,statuses:S.statuses},null,2)],{type:'application/json'});
+  downloadBlob(blob, 'novalog_backup_'+todayStr()+'.json');
+}
+function downloadBlob(blob, name){
   const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
-  a.download='idea_tracker_backup.json'; a.click();
+  a.download=name; a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href), 1000);
+}
+function todayStr(){
+  const d=new Date();
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+function ideaToMarkdown(i){
+  // i.text is plain markdown already — no transformation needed.
+  // We just attach metadata under the text.
+  const tags = i.cats.map(k => '#'+tagByKey(k).label.replace(/\s+/g,'')).join(' ');
+  const st = statusByKey(i.status);
+  const dt = i.ts ? fmtTs(i.ts) : '';
+  const chapter = i.chapter ? ` · *${i.chapter}*` : '';
+  const meta = [tags && tags, st && `Status: **${st.label}**`, dt && dt+chapter].filter(Boolean).join('  ·  ');
+  return `${i.text.trim()}\n\n_${meta}_\n\n---\n`;
+}
+function exportMarkdown(mode){
+  if(!S.ideas.length) return;
+  const sorted = [...S.ideas].sort((a,b)=>(b.ts||0)-(a.ts||0));
+  const header = `# NovaLog export\n\n*${sorted.length} idea${sorted.length!==1?'s':''} · exported ${todayStr()}*\n\n---\n\n`;
+  let body = '';
+  if(mode === 'flat'){
+    body = sorted.map(ideaToMarkdown).join('\n');
+  } else if(mode === 'byTag'){
+    S.tags.forEach(t => {
+      const items = sorted.filter(i => i.cats.includes(t.key));
+      if(!items.length) return;
+      body += `## ${t.label} (${items.length})\n\n`;
+      body += items.map(ideaToMarkdown).join('\n');
+      body += '\n';
+    });
+    const untagged = sorted.filter(i => !i.cats.length);
+    if(untagged.length){
+      body += `## Untagged (${untagged.length})\n\n`;
+      body += untagged.map(ideaToMarkdown).join('\n');
+    }
+  } else if(mode === 'byStatus'){
+    S.statuses.forEach(s => {
+      const items = sorted.filter(i => i.status === s.key);
+      if(!items.length) return;
+      body += `## ${s.label} (${items.length})\n\n`;
+      body += items.map(ideaToMarkdown).join('\n');
+      body += '\n';
+    });
+  }
+  const blob = new Blob([header + body], { type: 'text/markdown' });
+  const suffix = mode === 'flat' ? '' : '_'+mode.replace(/^by/,'by_').toLowerCase();
+  downloadBlob(blob, 'novalog'+suffix+'_'+todayStr()+'.md');
 }
 function importData(e){
   const file=e.target.files[0]; if(!file) return;
