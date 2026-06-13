@@ -100,7 +100,7 @@ input,textarea,select{font-family:inherit}
 .card-head{display:flex;align-items:flex-start;gap:8px;padding:12px 14px 8px;cursor:pointer}
 .card-text{flex:1;font-size:13.5px;line-height:1.7;color:var(--text);white-space:pre-wrap;word-break:break-word}
 .card-text.clamped{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;white-space:normal}
-.exp-btn{background:none;border:1px solid var(--border);border-radius:4px;color:var(--text3);font-size:11px;padding:2px 6px;flex-shrink:0;margin-top:2px;transition:background .12s}
+.exp-btn{background:none;border:1px solid var(--border);border-radius:4px;color:var(--text3);font-size:11px;padding:3px 6px;flex-shrink:0;margin-top:2px;transition:background .12s;display:inline-flex;align-items:center;justify-content:center;line-height:1}
 .exp-btn:hover{background:var(--surface2)}
 .card-foot{padding:6px 14px 10px;display:flex;gap:5px;align-items:center;flex-wrap:wrap;border-top:1px solid var(--border)}
 .badge{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:500;padding:2px 9px;border-radius:20px;white-space:nowrap;user-select:none}
@@ -109,7 +109,7 @@ input,textarea,select{font-family:inherit}
 .add-tag-btn{font-size:11px;padding:2px 9px;border-radius:20px;border:1px dashed var(--border2);background:none;color:var(--text3);cursor:pointer;transition:all .12s}
 .add-tag-btn:hover{color:var(--text2);border-color:var(--border2);background:var(--surface2)}
 .card-actions{margin-left:auto;display:flex;gap:5px}
-.act-btn{font-size:11px;padding:2px 9px;border-radius:20px;border:1px solid var(--border);background:none;color:var(--text3);cursor:pointer;transition:all .12s}
+.act-btn{font-size:11px;padding:3px 10px;border-radius:20px;border:1px solid var(--border);background:none;color:var(--text3);cursor:pointer;transition:all .12s;display:inline-flex;align-items:center;gap:4px;line-height:1.2}
 .act-btn:hover{background:var(--surface2);color:var(--text2)}
 
 /* ─ Table ─ */
@@ -166,7 +166,7 @@ input[type="date"]::-webkit-calendar-picker-indicator,
 input[type="time"]::-webkit-calendar-picker-indicator{filter:invert(0.5);cursor:pointer}
 .dark input[type="date"]::-webkit-calendar-picker-indicator,
 .dark input[type="time"]::-webkit-calendar-picker-indicator{filter:invert(0.7)}
-.card-dt{font-size:11px;color:var(--text3);margin-left:auto;white-space:nowrap;align-self:center}
+.card-dt{font-size:11px;color:var(--text3);margin-left:auto;white-space:nowrap;align-self:center;display:inline-flex;align-items:center;gap:4px}
 .tag-picker{display:flex;gap:6px;flex-wrap:wrap}
 .tpc{padding:5px 13px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;border:2px solid transparent;transition:all .12s;opacity:.55}
 .tpc:hover{opacity:.8}
@@ -184,9 +184,32 @@ input[type="time"]::-webkit-calendar-picker-indicator{filter:invert(0.5);cursor:
 
 /* ─ Tag/Status manager modal ─ */
 .mgr-list{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
-.mgr-item{display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface2);border-radius:var(--rs);font-size:13px}
+.mgr-item{display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--surface2);border-radius:var(--rs);font-size:13px}
+.mgr-dot-btn{background:none;border:none;padding:0;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;transition:transform .12s;flex-shrink:0}
+.mgr-dot-btn:hover{transform:scale(1.15)}
+.mgr-icn-btn{background:var(--surface);border:1px solid var(--border);padding:3px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:6px;color:var(--text2);transition:border-color .12s,color .12s;flex-shrink:0}
+.mgr-icn-btn:hover{border-color:var(--accent);color:var(--accent)}
+.mgr-icn-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.mgr-name-input{flex:1;background:transparent;border:1px solid transparent;border-radius:var(--rs);padding:4px 8px;color:var(--text);font-size:13px;outline:none;transition:border-color .12s,background .12s;min-width:0}
+.mgr-name-input:hover{border-color:var(--border)}
+.mgr-name-input:focus{border-color:var(--accent);background:var(--bg)}
+.mgr-item-cnt{font-size:11px;color:var(--text3);flex-shrink:0;white-space:nowrap}
+
+/* Icon picker grid (in mgr modal + dropdowns) */
+.icon-pick{display:grid;grid-template-columns:repeat(8,1fr);gap:6px;padding:4px 0}
+.ipick{width:30px;height:30px;border-radius:6px;border:1px solid var(--border);background:var(--surface);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;color:var(--text2);transition:transform .12s,border-color .12s,color .12s,box-shadow .12s;padding:0}
+.ipick svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.ipick:hover{border-color:var(--accent);color:var(--accent);transform:scale(1.05)}
+.ipick.sel{border-color:var(--accent);color:var(--accent);box-shadow:0 0 0 2px var(--surface),0 0 0 4px var(--accent);transform:scale(1.05)}
+
+/* Status pill — make clickable with caret */
+.status-pill-btn{cursor:pointer;border:none;background:transparent;padding:0;font:inherit;color:inherit}
+.status-pill-btn .badge{cursor:pointer}
+.badge .badge-icn{display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
+.badge .badge-icn svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.badge .caret{opacity:.55;margin-left:1px}
+.badge .caret svg{width:9px;height:9px;stroke:currentColor;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
 .mgr-item .dot{flex-shrink:0}
-.mgr-item-name{flex:1}
 .mgr-item-cnt{font-size:11px;color:var(--text3);margin-left:auto}
 .mgr-del{background:none;border:none;color:var(--text3);font-size:16px;cursor:pointer;padding:0 4px;line-height:1}
 .mgr-del:hover{color:#e55}
@@ -434,10 +457,16 @@ input[type="time"]::-webkit-calendar-picker-indicator{filter:invert(0.5);cursor:
     </div>
     <div class="modal-body">
       <div class="mgr-list" id="mgr-list"></div>
-      <div class="mgr-add-row">
-        <input id="mgr-new-name" placeholder="New name…">
-        <div class="color-pick" id="mgr-color-pick"></div>
-        <button class="modal-btn primary" onclick="mgrAdd()" style="padding:6px 14px;font-size:12px">Add</button>
+      <div style="border-top:1px solid var(--border);padding-top:14px;margin-top:6px">
+        <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;font-weight:600;margin-bottom:8px" id="mgr-add-title">Create new tag</div>
+        <input id="mgr-new-name" placeholder="Name…" style="width:100%;padding:8px 11px;border:1px solid var(--border);border-radius:var(--rs);background:var(--surface);color:var(--text);font-size:13px;outline:none;margin-bottom:10px">
+        <div style="font-size:11px;color:var(--text3);margin-bottom:6px">Colour</div>
+        <div class="color-pick" id="mgr-color-pick" style="margin-bottom:12px"></div>
+        <div id="mgr-icon-row" style="display:none">
+          <div style="font-size:11px;color:var(--text3);margin-bottom:6px">Icon</div>
+          <div class="icon-pick" id="mgr-icon-pick" style="margin-bottom:12px"></div>
+        </div>
+        <button class="modal-btn primary" onclick="mgrAdd()" style="padding:8px 16px;font-size:12px">Add</button>
       </div>
     </div>
     <div class="modal-foot">
@@ -508,8 +537,36 @@ const ICON = {
   chevUp:     '<span class="icn"><svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg></span>',
   clock:      '<span class="icn"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg></span>',
   refresh:    '<span class="icn"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><polyline points="21 3 21 8 16 8"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><polyline points="3 21 3 16 8 16"/></svg></span>',
-  searchX:    '<span class="icn"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/></svg></span>'
+  searchX:    '<span class="icn"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/></svg></span>',
+  caretDown:  '<span class="icn caret"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></span>'
 };
+
+// ── Status icon library (Lucide-style) — pickable when creating/editing a status
+// Inner SVG content only (no <svg> wrapper) — kept compact for reuse.
+const STATUS_ICONS = {
+  circle:    '<circle cx="12" cy="12" r="8"/>',
+  half:      '<circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"/>',
+  check:     '<polyline points="20 6 9 17 4 12"/>',
+  star:      '<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/>',
+  flag:      '<path d="M4 22V4c0-.6.4-1 1-1h13l-2 4 2 4H5"/><line x1="4" y1="22" x2="4" y2="15"/>',
+  flame:     '<path d="M8.5 14.5A2.5 2.5 0 0 0 11 17a4 4 0 0 0 5-4c0-2-1-3-2-4-1-2-2-3-2-5C8 5 6 9 6 12a6 6 0 0 0 6 6 4 4 0 0 0 4-4"/>',
+  bookmark:  '<path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>',
+  archive:   '<rect x="2" y="4" width="20" height="5" rx="1"/><path d="M4 9v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9"/><line x1="10" y1="13" x2="14" y2="13"/>',
+  clockIcn:  '<circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/>',
+  bolt:      '<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>',
+  heart:     '<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>',
+  eye:       '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>',
+  pencil:    '<path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4z"/>',
+  warning:   '<path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>',
+  sparkles:  '<path d="M12 3l1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5z"/><path d="M19 14l.75 2.25L22 17l-2.25.75L19 20l-.75-2.25L16 17l2.25-.75z"/>',
+  file:      '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>'
+};
+function statusIconSvg(key, size){
+  const inner = STATUS_ICONS[key] || STATUS_ICONS.circle;
+  const s = size||14;
+  return `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${inner}</svg>`;
+}
+function statusIconKey(s){ return (s && s.icon) || 'circle'; }
 
 // ── Palette for new tags/statuses ─────────────────────────────────────
 const PALETTE = [
@@ -534,8 +591,8 @@ const DEFAULT_TAGS = [
   {key:'general', label:'General', color:PALETTE[0]},
 ];
 const DEFAULT_STATUSES = [
-  {key:'open', label:'Open', color:{bg:'#e8f2fd',text:'#1653a0',border:'#3a7fd4'}},
-  {key:'done', label:'Done', color:{bg:'#eef8e8',text:'#2a6a1a',border:'#5aaa3a'}},
+  {key:'open', label:'Open', icon:'circle', color:{bg:'#e8f2fd',text:'#1653a0',border:'#3a7fd4'}},
+  {key:'done', label:'Done', icon:'check',  color:{bg:'#eef8e8',text:'#2a6a1a',border:'#5aaa3a'}},
 ];
 
 
@@ -845,7 +902,7 @@ function buildSidebar(){
   document.getElementById('nav-status-views').innerHTML = S.statuses.map(s=>{
     const cnt = S.ideas.filter(i=>i.status===s.key).length;
     const active = S.navFilter===s.key;
-    return `<button class="nav-btn ${active?'active':''}" onclick="setNav('${s.key}')"><span class="dot" style="${dotStyle(s.color)};display:inline-block;width:8px;height:8px;border-radius:50%;flex-shrink:0"></span>${esc(s.label)}<span class="cnt">${cnt}</span></button>`;
+    return `<button class="nav-btn ${active?'active':''}" onclick="setNav('${s.key}')"><span class="ico" style="color:${s.color.border}">${statusIconSvg(statusIconKey(s),15)}</span>${esc(s.label)}<span class="cnt">${cnt}</span></button>`;
   }).join('');
   document.getElementById('cat-list').innerHTML = S.tags.map(t=>{
     const cnt = S.ideas.filter(i=>i.cats.includes(t.key)).length;
@@ -860,7 +917,7 @@ function buildSidebar(){
     const cnt = S.ideas.filter(i=>i.status===s.key).length;
     const active = S.statusFilter.includes(s.key);
     return `<button class="cat-btn ${active?'active':''}" onclick="toggleStatusFilter('${s.key}')">
-      <span class="dot" style="${dotStyle(s.color)}"></span>
+      <span class="icn" style="color:${s.color.border};width:14px;height:14px">${statusIconSvg(statusIconKey(s),14)}</span>
       <span>${esc(s.label)}</span>
       <span class="cnt">${cnt}</span>
     </button>`;
@@ -873,7 +930,7 @@ function buildStats(){
   const pills = [`<div class="stat-pill"><span class="stat-num">${total}</span><span class="stat-lbl">Total</span></div>`];
   S.statuses.forEach(s=>{
     const cnt = S.ideas.filter(i=>i.status===s.key).length;
-    pills.push(`<div class="stat-pill"><span class="stat-num">${cnt}</span><span class="stat-lbl">${esc(s.label)}</span></div>`);
+    pills.push(`<div class="stat-pill"><span class="stat-num">${cnt}</span><span class="stat-lbl" style="display:inline-flex;align-items:center;gap:5px"><span class="icn" style="color:${s.color.border};width:12px;height:12px">${statusIconSvg(statusIconKey(s),12)}</span>${esc(s.label)}</span></div>`);
   });
   document.getElementById('stats-strip').innerHTML = pills.join('');
 }
@@ -882,7 +939,7 @@ function buildStats(){
 function buildActiveFilters(){
   const chips = [];
   S.catFilter.forEach(k=>{ const t=tagByKey(k); chips.push(`<span class="af-chip" style="${badgeStyle(t.color)}">${esc(t.label)}<button onclick="toggleCatFilter('${k}')">×</button></span>`); });
-  S.statusFilter.forEach(k=>{ const s=statusByKey(k); chips.push(`<span class="af-chip" style="${badgeStyle(s.color)}">${esc(s.label)}<button onclick="toggleStatusFilter('${k}')">×</button></span>`); });
+  S.statusFilter.forEach(k=>{ const s=statusByKey(k); chips.push(`<span class="af-chip" style="${badgeStyle(s.color)}"><span class="badge-icn">${statusIconSvg(statusIconKey(s),11)}</span>${esc(s.label)}<button onclick="toggleStatusFilter('${k}')">×</button></span>`); });
   const el = document.getElementById('active-filters');
   if(chips.length){
     el.innerHTML = `<span class="af-lbl">Filters:</span>${chips.join('')}<button class="act-btn" onclick="clearFilters()" style="font-size:11px;padding:2px 8px">Clear all</button>`;
@@ -901,7 +958,7 @@ function cardHtml(i){
   }).join('');
   const st = statusByKey(i.status||'unused');
   const dtStr = i.ts ? fmtTs(i.ts) : '';
-  const nextStatus = nextStatusOf(i.status);
+  const stIco = `<span class="badge-icn">${statusIconSvg(statusIconKey(st), 11)}</span>`;
   return `<div class="idea-card" id="card-${i.id}" style="border-left:3px solid ${st.color.border}">
     <div class="card-head" onclick="toggleExpand(${i.id})">
       <div class="card-text ${i.expanded?'':'clamped'}">${esc(i.text)}</div>
@@ -910,11 +967,10 @@ function cardHtml(i){
     <div class="card-foot">
       ${tagBadges}
       <button class="add-tag-btn" onclick="openDropdown(event,${i.id})">+ tag</button>
-      <span class="badge" style="${badgeStyle(st.color)}">${esc(st.label)}${i.chapter?` · <em>${esc(i.chapter)}</em>`:''}</span>
+      <button class="badge" style="${badgeStyle(st.color)};border-style:solid;border-width:1px" onclick="openStatusDropdown(event,${i.id})" title="Change status">${stIco}${esc(st.label)}${i.chapter?` · <em>${esc(i.chapter)}</em>`:''}${ICON.caretDown}</button>
       ${dtStr?`<span class="card-dt" title="Created: ${dtStr}">${ICON.clock} ${dtStr}</span>`:''}
       <div class="card-actions">
         <button class="act-btn" onclick="openEdit(${i.id})">Edit</button>
-        ${nextStatus?`<button class="act-btn" onclick="quickToggleStatus(event,${i.id})" title="Cycle status">${ICON.refresh} ${esc(nextStatus.label)}</button>`:''}
       </div>
     </div>
   </div>`;
@@ -938,10 +994,10 @@ function renderTable(list, area){
       return `<tr onclick="openEdit(${i.id})">
         <td class="td-text"><p>${esc(i.text)}</p></td>
         <td>${tags}</td>
-        <td><span class="badge" style="${badgeStyle(st.color)}">${esc(st.label)}</span></td>
+        <td><button class="badge" style="${badgeStyle(st.color)};border-style:solid;border-width:1px" onclick="event.stopPropagation();openStatusDropdown(event,${i.id})" title="Change status"><span class="badge-icn">${statusIconSvg(statusIconKey(st), 11)}</span>${esc(st.label)}${ICON.caretDown}</button></td>
         <td style="font-size:11px;color:var(--text3)">${esc(i.chapter||'')}</td>
         <td style="font-size:11px;color:var(--text3);white-space:nowrap">${dtStr}</td>
-        <td onclick="event.stopPropagation()"><button class="act-btn" onclick="quickToggleStatus(event,${i.id})" title="Cycle status">${ICON.refresh}</button></td>
+        <td onclick="event.stopPropagation()"></td>
       </tr>`;
     }).join('')}</tbody>
   </table></div>`;
@@ -997,6 +1053,23 @@ function toggleExpandAll(){
 }
 
 // ── Dropdown portal ───────────────────────────────────────────────────
+function openStatusDropdown(e,id){
+  e.stopPropagation();
+  const idea = S.ideas.find(x=>x.id===id); if(!idea) return;
+  const portal = document.getElementById('drop-portal');
+  dropState = {open:true, ideaId:id, triggerEl:e.currentTarget};
+  const rect = e.currentTarget.getBoundingClientRect();
+  portal.style.cssText = `display:block;top:${rect.bottom+window.scrollY+4}px;left:${Math.max(8,Math.min(rect.left,window.innerWidth-220))}px;min-width:200px;padding:4px`;
+  portal.innerHTML = S.statuses.map(s=>{
+    const sel = idea.status===s.key;
+    return `<div class="drop-item ${sel?'disabled':''}" onclick="setIdeaStatus(${id},'${s.key}')"><span class="dot" style="${dotStyle(s.color)}"></span><span class="icn" style="color:${s.color.border};width:14px;height:14px">${statusIconSvg(statusIconKey(s),14)}</span><span style="flex:1">${esc(s.label)}</span>${sel?'<span style="font-size:10px;color:var(--text3)">current</span>':''}</div>`;
+  }).join('');
+}
+function setIdeaStatus(id, key){
+  const i = S.ideas.find(x=>x.id===id); if(!i) return;
+  i.status = key;
+  closeDrop(); save(); render();
+}
 function openDropdown(e,id){
   e.stopPropagation();
   const idea=S.ideas.find(x=>x.id===id); if(!idea) return;
@@ -1096,7 +1169,7 @@ function buildModalPickers(){
   }).join('');
   document.getElementById('m-statuses').innerHTML=S.statuses.map(s=>{
     const sel=modalState.statusSel===s.key;
-    return `<button class="sopt ${sel?'sel':''}" style="${sel?`background:${s.color.bg};color:${s.color.text};border-color:${s.color.border}`:''}" onclick="setModalStatus('${s.key}')">${esc(s.label)}</button>`;
+    return `<button class="sopt ${sel?'sel':''}" style="${sel?`background:${s.color.bg};color:${s.color.text};border-color:${s.color.border}`:''};display:inline-flex;align-items:center;gap:5px" onclick="setModalStatus('${s.key}')"><span class="icn" style="width:13px;height:13px">${statusIconSvg(statusIconKey(s),13)}</span>${esc(s.label)}</button>`;
   }).join('');
 }
 function toggleModalTag(k){
@@ -1133,22 +1206,32 @@ function deleteIdea(){
 
 // ── Manager modal ─────────────────────────────────────────────────────
 function openMgr(type){
-  mgrState={type,colorIdx:0};
-  document.getElementById('mgr-title').textContent=type==='tag'?'Manage Tags':'Manage Statuses';
+  mgrState={type,colorIdx:0,iconKey:'circle'};
+  const isStatus = type==='status';
+  document.getElementById('mgr-title').textContent = isStatus?'Manage Statuses':'Manage Tags';
+  document.getElementById('mgr-add-title').textContent = isStatus?'Create new status':'Create new tag';
+  document.getElementById('mgr-icon-row').style.display = isStatus?'block':'none';
   document.getElementById('mgr-new-name').value='';
   buildMgrList();
   buildColorPick();
+  if(isStatus) buildAddIconPick();
   openModal('mgr-modal');
 }
 function buildMgrList(){
   const arr=mgrState.type==='tag'?S.tags:S.statuses;
+  const isStatus = mgrState.type==='status';
   document.getElementById('mgr-list').innerHTML=arr.map((item,idx)=>{
-    const cnt=mgrState.type==='tag'
-      ?S.ideas.filter(i=>i.cats.includes(item.key)).length
-      :S.ideas.filter(i=>i.status===item.key).length;
+    const cnt = isStatus
+      ? S.ideas.filter(i=>i.status===item.key).length
+      : S.ideas.filter(i=>i.cats.includes(item.key)).length;
+    const iconBtn = isStatus
+      ? `<button class="mgr-icn-btn" onclick="openMgrIconPicker(event,${idx})" title="Change icon">${statusIconSvg(statusIconKey(item), 14)}</button>`
+      : '';
+    const safeLabel = String(item.label).replace(/"/g,'&quot;');
     return `<div class="mgr-item">
-      <span class="dot" style="${dotStyle(item.color)}"></span>
-      <span class="mgr-item-name">${esc(item.label)}</span>
+      <button class="mgr-dot-btn" onclick="openMgrColorPicker(event,${idx})" title="Change colour"><span class="dot" style="${dotStyle(item.color)}"></span></button>
+      ${iconBtn}
+      <input class="mgr-name-input" value="${safeLabel}" onchange="mgrRename(${idx}, this.value)" onkeydown="if(event.key==='Enter') this.blur(); if(event.key==='Escape'){ this.value=this.defaultValue; this.blur(); }">
       <span class="mgr-item-cnt">${cnt} idea${cnt!==1?'s':''}</span>
       <button class="mgr-del" onclick="mgrDel('${item.key}',${cnt})" title="Delete">×</button>
     </div>`;
@@ -1159,15 +1242,56 @@ function buildColorPick(){
     `<span class="cpick ${i===mgrState.colorIdx?'sel':''}" style="background:${c.bg};border-color:${c.border}" onclick="pickColor(${i})" title="${c.text}"></span>`
   ).join('');
 }
+function buildAddIconPick(){
+  const cur = mgrState.iconKey;
+  document.getElementById('mgr-icon-pick').innerHTML = Object.keys(STATUS_ICONS).map(k=>
+    `<button class="ipick ${k===cur?'sel':''}" onclick="pickIcon('${k}')" title="${k}">${statusIconSvg(k, 16)}</button>`
+  ).join('');
+}
 function pickColor(i){ mgrState.colorIdx=i; buildColorPick(); }
+function pickIcon(k){ mgrState.iconKey=k; buildAddIconPick(); }
 function mgrAdd(){
   const name=document.getElementById('mgr-new-name').value.trim(); if(!name) return;
   const key=(mgrState.type==='tag'?'tag_':'st_')+Date.now();
   const color=PALETTE[mgrState.colorIdx];
   if(mgrState.type==='tag') S.tags.push({key,label:name,color});
-  else S.statuses.push({key,label:name,color});
+  else S.statuses.push({key,label:name,color,icon:mgrState.iconKey||'circle'});
   document.getElementById('mgr-new-name').value='';
   save(); buildMgrList(); render();
+}
+function mgrRename(idx, newLabel){
+  newLabel = (newLabel||'').trim();
+  if(!newLabel){ buildMgrList(); return; }
+  const arr = mgrState.type==='tag'?S.tags:S.statuses;
+  if(arr[idx].label === newLabel) return;
+  arr[idx].label = newLabel;
+  save(); buildMgrList(); render();
+}
+function openMgrColorPicker(e, idx){
+  e.stopPropagation();
+  const portal = document.getElementById('drop-portal');
+  const rect = e.currentTarget.getBoundingClientRect();
+  dropState = {open:true, ideaId:null, triggerEl:e.currentTarget};
+  portal.style.cssText = `display:block;top:${rect.bottom+window.scrollY+6}px;left:${Math.max(8,Math.min(rect.left,window.innerWidth-260))}px;min-width:auto;padding:10px`;
+  portal.innerHTML = `<div class="color-pick" style="padding:0">${PALETTE.map((c,i)=>`<span class="cpick" style="background:${c.bg};border-color:${c.border}" onclick="mgrSetColor(${idx},${i})" title="${c.text}"></span>`).join('')}</div>`;
+}
+function mgrSetColor(idx, paletteIdx){
+  const arr = mgrState.type==='tag'?S.tags:S.statuses;
+  arr[idx].color = PALETTE[paletteIdx];
+  closeDrop(); save(); buildMgrList(); render();
+}
+function openMgrIconPicker(e, idx){
+  e.stopPropagation();
+  const portal = document.getElementById('drop-portal');
+  const rect = e.currentTarget.getBoundingClientRect();
+  dropState = {open:true, ideaId:null, triggerEl:e.currentTarget};
+  portal.style.cssText = `display:block;top:${rect.bottom+window.scrollY+6}px;left:${Math.max(8,Math.min(rect.left,window.innerWidth-310))}px;min-width:auto;padding:10px;max-width:300px`;
+  const currentIcon = statusIconKey(S.statuses[idx]);
+  portal.innerHTML = `<div class="icon-pick">${Object.keys(STATUS_ICONS).map(k=>`<button class="ipick ${k===currentIcon?'sel':''}" onclick="mgrSetIcon(${idx},'${k}')" title="${k}">${statusIconSvg(k, 16)}</button>`).join('')}</div>`;
+}
+function mgrSetIcon(idx, key){
+  S.statuses[idx].icon = key;
+  closeDrop(); save(); buildMgrList(); render();
 }
 function mgrDel(key,cnt){
   const isTag=mgrState.type==='tag';
