@@ -311,6 +311,30 @@ body:not(.dark) .logo-dark{display:none}
 #install-btn{display:none;align-items:center;justify-content:center;gap:6px;font-weight:500}
 #install-btn svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 
+/* ─ EasyMDE — cosmic theming ─ */
+.EasyMDEContainer{font-family:inherit}
+.EasyMDEContainer .editor-toolbar{background:var(--surface2);border:1px solid var(--border);border-bottom:none;border-top-left-radius:var(--rs);border-top-right-radius:var(--rs);opacity:1;padding:5px 6px}
+.EasyMDEContainer .editor-toolbar a{color:var(--text2) !important;border-radius:4px;width:28px;height:28px;line-height:28px;transition:background .12s,color .12s}
+.EasyMDEContainer .editor-toolbar a:hover,.EasyMDEContainer .editor-toolbar a.active{background:var(--surface3) !important;border-color:transparent;color:var(--accent) !important}
+.EasyMDEContainer .editor-toolbar i.separator{border-color:var(--border);margin:0 4px}
+.EasyMDEContainer .CodeMirror{background:var(--surface) !important;color:var(--text) !important;border:1px solid var(--border);border-radius:0;font-family:'SF Mono',Consolas,'JetBrains Mono',monospace;font-size:13px;line-height:1.6;padding:6px 4px;min-height:180px}
+.EasyMDEContainer .CodeMirror-scroll{min-height:180px}
+.EasyMDEContainer .CodeMirror-cursor{border-left-color:var(--accent) !important}
+.EasyMDEContainer .CodeMirror-selected{background:var(--accent-bg) !important}
+.EasyMDEContainer .CodeMirror-focused .CodeMirror-selected{background:var(--accent-bg) !important}
+.EasyMDEContainer .cm-header,.EasyMDEContainer .cm-strong{color:var(--text) !important;font-weight:700}
+.EasyMDEContainer .cm-em{color:var(--text) !important;font-style:italic}
+.EasyMDEContainer .cm-link{color:var(--accent) !important}
+.EasyMDEContainer .cm-url{color:var(--brand2) !important}
+.EasyMDEContainer .cm-comment,.EasyMDEContainer .cm-formatting{color:var(--text3) !important}
+.EasyMDEContainer .editor-preview,.EasyMDEContainer .editor-preview-side{background:var(--bg2) !important;color:var(--text) !important;border:1px solid var(--border);font-family:inherit;line-height:1.65;font-size:13.5px;padding:14px 18px}
+.EasyMDEContainer .editor-preview strong,.EasyMDEContainer .editor-preview-side strong{color:var(--text);font-weight:600}
+.EasyMDEContainer .editor-preview a,.EasyMDEContainer .editor-preview-side a{color:var(--accent)}
+.EasyMDEContainer .editor-preview code,.EasyMDEContainer .editor-preview-side code{background:var(--surface2);padding:1px 5px;border-radius:4px;color:var(--brand2)}
+.EasyMDEContainer .editor-statusbar{display:none}
+.EasyMDEContainer.sided--no-fullscreen .editor-toolbar{border-bottom-left-radius:0;border-bottom-right-radius:0}
+.EasyMDEContainer .CodeMirror-fullscreen,.EasyMDEContainer .editor-preview-side{background:var(--bg) !important;z-index:1100}
+
 /* ─ Install banner (prominent, dismissable) ─ */
 .install-banner{display:none;align-items:center;gap:10px;background:linear-gradient(135deg,var(--accent) 0%,#8a8aff 100%);color:#fff;padding:10px 12px;border-radius:var(--rs);margin-bottom:10px;cursor:pointer;box-shadow:0 4px 16px rgba(102,102,255,.25);transition:transform .15s,box-shadow .15s}
 .install-banner.shown{display:flex}
@@ -395,6 +419,8 @@ body:not(.dark) .logo-dark{display:none}
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="config.js"></script>
 <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/easymde@2.18.0/dist/easymde.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/easymde@2.18.0/dist/easymde.min.js"></script>
 </head>
 <body class="dark">
 
@@ -533,8 +559,8 @@ body:not(.dark) .logo-dark{display:none}
     <div class="modal-body">
       <div class="fgrp">
         <label class="flbl">Idea / text (full, uncompressed)</label>
-        <textarea class="ftextarea" id="m-text" rows="6" placeholder="Paste or write the full idea here…"></textarea>
-        <div style="font-size:10.5px;color:var(--text3);margin-top:6px;line-height:1.5">Supports <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">**bold**</code>, <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">*italic*</code>, <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">`code`</code>, and <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">[[Link to another idea]]</code></div>
+        <textarea class="ftextarea" id="m-text" rows="6"></textarea>
+        <div style="font-size:10.5px;color:var(--text3);margin-top:4px;line-height:1.5">Toolbar above. Shortcuts: <strong>Ctrl+B</strong> bold, <strong>Ctrl+I</strong> italic, <strong>Ctrl+L</strong> list, <strong>Ctrl+P</strong> preview. Also supports <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">[[Link to another idea]]</code></div>
       </div>
       <div class="fgrp">
         <label class="flbl">Date &amp; time</label>
@@ -1682,24 +1708,68 @@ function closeMobileSidebar(){
 }
 
 // ── Idea modal ────────────────────────────────────────────────────────
+let _mde = null;
+function getMDE(){
+  if(_mde) return _mde;
+  if(typeof EasyMDE === 'undefined') return null; // CDN still loading
+  _mde = new EasyMDE({
+    element: document.getElementById('m-text'),
+    spellChecker: false,
+    autofocus: false,
+    status: false,
+    placeholder: 'Paste or write the full idea here…',
+    minHeight: '180px',
+    forceSync: true,
+    autoDownloadFontAwesome: true,
+    toolbar: [
+      'bold', 'italic', 'heading', '|',
+      'quote', 'unordered-list', 'ordered-list', 'code', '|',
+      'preview', 'side-by-side', 'fullscreen', '|',
+      'guide'
+    ],
+    shortcuts: {
+      toggleBold: 'Ctrl-B',
+      toggleItalic: 'Ctrl-I',
+      toggleHeadingSmaller: 'Ctrl-H',
+      toggleUnorderedList: 'Ctrl-L',
+      toggleCodeBlock: 'Ctrl-Alt-C',
+      togglePreview: 'Ctrl-P',
+      drawLink: 'Ctrl-K',
+    },
+    previewRender: (plainText) => mdInline(plainText),
+  });
+  return _mde;
+}
+function mdeSetValue(v){
+  const mde = getMDE();
+  if(mde) mde.value(v || '');
+  else document.getElementById('m-text').value = v || '';
+}
+function mdeGetValue(){
+  const mde = getMDE();
+  return mde ? mde.value() : document.getElementById('m-text').value;
+}
+function mdeFocus(){
+  const mde = getMDE();
+  if(mde && mde.codemirror) mde.codemirror.focus();
+  else document.getElementById('m-text').focus();
+}
 function openAdd(){
   const now = nowTs();
   modalState={mode:'add',id:null,tagSel:new Set([S.tags[0]?.key||'devotion']),statusSel:S.statuses[1]?.key||'unused'};
   document.getElementById('modal-title').textContent='Add Idea';
-  document.getElementById('m-text').value='';
   document.getElementById('m-chapter').value='';
   document.getElementById('m-date').value=tsToDateVal(now);
   document.getElementById('m-time').value=tsToTimeVal(now);
   document.getElementById('m-delete-btn').style.display='none';
   buildModalPickers();
   openModal('idea-modal');
-  setTimeout(()=>document.getElementById('m-text').focus(),80);
+  setTimeout(()=>{ mdeSetValue(''); mdeFocus(); }, 80);
 }
 function openEdit(id){
   const i=S.ideas.find(x=>x.id===id); if(!i) return;
   modalState={mode:'edit',id,tagSel:new Set(i.cats),statusSel:i.status||'unused'};
   document.getElementById('modal-title').textContent='Edit Idea';
-  document.getElementById('m-text').value=i.text;
   document.getElementById('m-chapter').value=i.chapter||'';
   const ts = i.ts || nowTs();
   document.getElementById('m-date').value=tsToDateVal(ts);
@@ -1707,6 +1777,7 @@ function openEdit(id){
   document.getElementById('m-delete-btn').style.display='inline-block';
   buildModalPickers();
   openModal('idea-modal');
+  setTimeout(()=>{ mdeSetValue(i.text); mdeFocus(); }, 80);
 }
 function buildModalPickers(){
   document.getElementById('m-tags').innerHTML=S.tags.map(t=>{
@@ -1727,8 +1798,8 @@ function toggleModalTag(k){
 }
 function setModalStatus(k){ modalState.statusSel=k; buildModalPickers(); }
 function saveIdea(){
-  const text=document.getElementById('m-text').value.trim();
-  if(!text){ document.getElementById('m-text').focus(); return; }
+  const text=mdeGetValue().trim();
+  if(!text){ mdeFocus(); return; }
   const chapter=document.getElementById('m-chapter').value.trim()||undefined;
   const cats=[...modalState.tagSel];
   const status=modalState.statusSel||S.statuses[1]?.key||'unused';
