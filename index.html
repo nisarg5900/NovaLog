@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>NovaLog — Where ideas are born</title>
-<meta name="description" content="A quiet place to capture, organise, and revisit the ideas you're still becoming. Sync across all your devices.">
+<title>NovaLog — A home for the ideas your book is still becoming</title>
+<meta name="description" content="A quiet workspace for writers. Capture passages the moment they arrive, tag them, and watch your unfinished story take shape.">
 <link rel="icon" type="image/svg+xml" href="assets/novalog-icon.svg">
 <style>
 :root{
@@ -13,133 +13,208 @@
   --surface:#12121c;
   --surface2:#1a1a26;
   --border:#23233a;
+  --border2:#34344a;
   --text:#f0eff7;
   --text2:#b8b4c8;
   --text3:#6e6a82;
   --brand:#6666FF;
   --brand2:#8a8aff;
+  --brand3:#a8a8ff;
   --brand-dim:rgba(102,102,255,.18);
+  --brand-glow:rgba(102,102,255,.32);
   --pink:rgba(220,100,200,.16);
   --cyan:rgba(100,180,255,.14);
 }
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{background:var(--bg);color:var(--text);font-family:'Inter',-apple-system,'Segoe UI',system-ui,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.55;overflow-x:hidden}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Inter',-apple-system,'Segoe UI',system-ui,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.55;overflow-x:hidden}
 a{color:inherit;text-decoration:none}
 
-/* ─ Nebula background ─ */
-.cosmos{position:fixed;inset:0;z-index:-1;overflow:hidden;background:var(--bg)}
+/* ─ Cosmos background ─ */
+.cosmos{position:fixed;inset:0;z-index:-2;overflow:hidden;background:var(--bg)}
 .cosmos::before{content:"";position:absolute;width:1100px;height:1100px;left:50%;top:-180px;transform:translateX(-50%);background:radial-gradient(circle at 50% 50%, var(--brand-dim) 0%, transparent 55%);filter:blur(40px)}
-.cosmos::after{content:"";position:absolute;width:900px;height:900px;left:-200px;top:600px;background:radial-gradient(circle at 50% 50%, var(--pink) 0%, transparent 60%);filter:blur(60px)}
-.cosmos .glow2{position:absolute;width:700px;height:700px;right:-150px;top:1400px;background:radial-gradient(circle at 50% 50%, var(--cyan) 0%, transparent 60%);filter:blur(60px)}
-.stars{position:absolute;inset:0;opacity:.5;background-image:radial-gradient(1px 1px at 20% 30%, #fff, transparent),radial-gradient(1px 1px at 40% 70%, #ddd, transparent),radial-gradient(1px 1px at 70% 20%, #fff, transparent),radial-gradient(1px 1px at 85% 80%, #ccc, transparent),radial-gradient(1px 1px at 10% 90%, #fff, transparent),radial-gradient(1px 1px at 60% 40%, #eee, transparent),radial-gradient(2px 2px at 30% 50%, #fff, transparent),radial-gradient(1px 1px at 90% 10%, #fff, transparent);background-size:600px 600px,800px 800px,500px 500px,700px 700px,650px 650px,750px 750px,900px 900px,550px 550px}
+.cosmos::after{content:"";position:absolute;width:900px;height:900px;left:-200px;top:700px;background:radial-gradient(circle at 50% 50%, var(--pink) 0%, transparent 60%);filter:blur(60px)}
+.cosmos .glow2{position:absolute;width:700px;height:700px;right:-150px;top:1700px;background:radial-gradient(circle at 50% 50%, var(--cyan) 0%, transparent 60%);filter:blur(60px)}
+.cosmos .glow3{position:absolute;width:800px;height:800px;left:50%;top:2900px;transform:translateX(-50%);background:radial-gradient(circle at 50% 50%, var(--brand-dim) 0%, transparent 55%);filter:blur(50px)}
+
+/* Stars — three layers, slow drift + twinkle */
+.stars{position:absolute;inset:0;pointer-events:none}
+.stars-layer{position:absolute;inset:0;animation:drift 240s linear infinite}
+.stars-layer.s1{background-image:radial-gradient(1.2px 1.2px at 20% 30%, #fff 50%, transparent),radial-gradient(1px 1px at 40% 70%, #fff 50%, transparent),radial-gradient(1.5px 1.5px at 70% 20%, #fff 50%, transparent),radial-gradient(1px 1px at 85% 80%, #fff 50%, transparent),radial-gradient(1.2px 1.2px at 10% 90%, #fff 50%, transparent);background-size:550px 550px;opacity:.7;animation:drift 200s linear infinite,twinkle 6s ease-in-out infinite}
+.stars-layer.s2{background-image:radial-gradient(1px 1px at 30% 50%, #c8c5e0 50%, transparent),radial-gradient(0.8px 0.8px at 60% 40%, #c8c5e0 50%, transparent),radial-gradient(1.2px 1.2px at 90% 10%, #c8c5e0 50%, transparent),radial-gradient(1px 1px at 15% 65%, #c8c5e0 50%, transparent);background-size:700px 700px;opacity:.5;animation:drift 340s linear infinite,twinkle 9s ease-in-out infinite .8s}
+.stars-layer.s3{background-image:radial-gradient(0.8px 0.8px at 50% 20%, #a8a8ff 50%, transparent),radial-gradient(1px 1px at 80% 60%, #a8a8ff 50%, transparent),radial-gradient(0.6px 0.6px at 25% 85%, #a8a8ff 50%, transparent);background-size:900px 900px;opacity:.4;animation:drift 460s linear infinite,twinkle 12s ease-in-out infinite 1.6s}
+@keyframes drift{from{transform:translate3d(0,0,0)}to{transform:translate3d(-400px,-200px,0)}}
+@keyframes twinkle{0%,100%{opacity:.4}50%{opacity:1}}
+
+/* Mouse-following nebula glow */
+.cursor-glow{position:fixed;pointer-events:none;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle at 50% 50%, var(--brand-glow) 0%, transparent 65%);transform:translate3d(-50%,-50%,0);left:50%;top:30%;z-index:-1;filter:blur(40px);opacity:0;transition:opacity .8s ease-out;mix-blend-mode:screen}
+.cursor-glow.on{opacity:1}
 
 /* ─ Layout ─ */
 .wrap{max-width:1100px;margin:0 auto;padding:0 24px}
 
 /* ─ Nav ─ */
-nav{padding:22px 0;display:flex;align-items:center;justify-content:space-between}
+nav{padding:22px 0;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;backdrop-filter:blur(12px);background:rgba(7,7,13,.6);z-index:50;border-bottom:1px solid transparent;transition:border-color .3s}
+nav.scrolled{border-bottom-color:var(--border)}
 .brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:15px;letter-spacing:.2px}
-.brand img{width:28px;height:28px}
+.brand img{width:28px;height:28px;transition:transform .4s cubic-bezier(.34,1.56,.64,1)}
+.brand:hover img{transform:rotate(12deg) scale(1.08)}
 nav .links{display:flex;gap:24px;align-items:center;font-size:13px;color:var(--text2)}
+nav .links a{transition:color .15s}
 nav .links a:hover{color:var(--text)}
-.cta-sm{padding:8px 16px;background:var(--brand);color:#fff;border-radius:8px;font-weight:500;font-size:13px;transition:transform .15s,box-shadow .15s}
-.cta-sm:hover{transform:translateY(-1px);box-shadow:0 8px 24px var(--brand-dim)}
+.cta-sm{padding:8px 16px;background:var(--brand);color:#fff !important;border-radius:8px;font-weight:500;font-size:13px;transition:transform .15s,box-shadow .15s}
+.cta-sm:hover{transform:translateY(-1px);box-shadow:0 8px 24px var(--brand-glow)}
 
 /* ─ Hero ─ */
-.hero{padding:100px 0 90px;text-align:center;position:relative}
-.hero .badge{display:inline-block;padding:5px 12px;border:1px solid var(--border);border-radius:20px;font-size:11px;color:var(--text2);margin-bottom:24px;background:rgba(255,255,255,.02);backdrop-filter:blur(8px)}
-.hero .badge .dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--brand);margin-right:6px;vertical-align:middle;box-shadow:0 0 8px var(--brand)}
-.hero h1{font-size:clamp(40px,7vw,76px);line-height:1.05;font-weight:700;letter-spacing:-1.5px;margin-bottom:22px;background:linear-gradient(180deg,#fff 0%,#c8c5e0 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.hero h1 .accent{background:linear-gradient(135deg,var(--brand) 0%,#b48aff 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.hero .sub{font-size:clamp(15px,1.6vw,19px);color:var(--text2);max-width:580px;margin:0 auto 38px;line-height:1.6}
+.hero{padding:80px 0 60px;text-align:center;position:relative}
+.hero .badge{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;border:1px solid var(--border);border-radius:20px;font-size:11.5px;color:var(--text2);margin-bottom:28px;background:rgba(255,255,255,.02);backdrop-filter:blur(8px)}
+.hero .badge .dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--brand);box-shadow:0 0 12px var(--brand);animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 12px var(--brand)}50%{opacity:.5;box-shadow:0 0 20px var(--brand)}}
+.hero h1{font-size:clamp(42px,7vw,80px);line-height:1.02;font-weight:700;letter-spacing:-1.8px;margin-bottom:24px;background:linear-gradient(180deg,#fff 0%,#c8c5e0 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero h1 .accent{background:linear-gradient(135deg,var(--brand) 0%,#c4a8ff 50%,#ff9ed2 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-size:200% 200%;animation:gradientShift 8s ease-in-out infinite}
+@keyframes gradientShift{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+.hero .sub{font-size:clamp(15px,1.6vw,19px);color:var(--text2);max-width:580px;margin:0 auto 36px;line-height:1.65}
 .hero .ctas{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
-.cta{padding:14px 28px;border-radius:10px;font-size:14px;font-weight:500;transition:transform .15s,box-shadow .15s;cursor:pointer;display:inline-flex;align-items:center;gap:8px;border:none}
+.cta{padding:14px 28px;border-radius:10px;font-size:14px;font-weight:500;transition:transform .15s,box-shadow .15s,border-color .15s,background .15s;cursor:pointer;display:inline-flex;align-items:center;gap:8px;border:none}
 .cta.primary{background:var(--brand);color:#fff;box-shadow:0 8px 32px var(--brand-dim)}
-.cta.primary:hover{transform:translateY(-1px);box-shadow:0 12px 40px rgba(102,102,255,.32)}
+.cta.primary:hover{transform:translateY(-2px);box-shadow:0 14px 44px var(--brand-glow)}
 .cta.ghost{background:transparent;color:var(--text);border:1px solid var(--border)}
-.cta.ghost:hover{border-color:var(--brand);background:rgba(102,102,255,.05)}
+.cta.ghost:hover{border-color:var(--brand);background:rgba(102,102,255,.06);transform:translateY(-2px)}
 
-/* ─ Preview shot ─ */
-.preview{margin-top:72px;perspective:1200px}
-.preview-frame{position:relative;border-radius:14px;border:1px solid var(--border);overflow:hidden;background:var(--surface);box-shadow:0 30px 80px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.03) inset;transform:rotateX(2deg)}
+/* ─ Preview frame ─ */
+.preview{margin-top:56px;perspective:1500px}
+.preview-frame{position:relative;border-radius:14px;border:1px solid var(--border);overflow:hidden;background:var(--surface);box-shadow:0 30px 80px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.03) inset;transform:rotateX(3deg);transition:transform .5s}
+.preview:hover .preview-frame{transform:rotateX(0deg)}
 .preview-frame::before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at top, var(--brand-dim) 0%, transparent 50%);pointer-events:none;z-index:1}
 .preview-bar{display:flex;gap:6px;padding:12px 16px;border-bottom:1px solid var(--border);background:var(--surface2)}
 .preview-bar span{width:11px;height:11px;border-radius:50%;background:#2a2a3a}
-.preview-body{padding:40px 24px;min-height:300px;display:grid;grid-template-columns:200px 1fr;gap:20px;text-align:left}
+.preview-body{padding:32px 24px;min-height:280px;display:grid;grid-template-columns:200px 1fr;gap:20px;text-align:left}
 .preview-side{border-right:1px solid var(--border);padding-right:16px}
-.preview-side div{padding:7px 9px;font-size:12px;color:var(--text3);border-radius:6px;margin-bottom:3px}
-.preview-side div.act{background:var(--brand-dim);color:var(--brand2)}
-.preview-card{padding:14px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;margin-bottom:10px;font-size:12px}
+.preview-side .label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;padding:0 4px}
+.preview-side div.tag-row{padding:7px 9px;font-size:12px;color:var(--text3);border-radius:6px;margin-bottom:3px;transition:background .2s}
+.preview-side div.tag-row.act{background:var(--brand-dim);color:var(--brand2)}
+.preview-card{padding:14px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;margin-bottom:10px;font-size:12px;transition:border-color .3s,transform .3s}
+.preview-card:hover{border-color:var(--brand);transform:translateX(4px)}
 .preview-card .tags{display:flex;gap:5px;margin-bottom:8px}
 .preview-card .tags span{font-size:9px;padding:2px 7px;border-radius:10px;background:var(--brand-dim);color:var(--brand2)}
-.preview-card p{color:var(--text2);font-size:12px;line-height:1.5}
+.preview-card p{color:var(--text2);font-size:12px;line-height:1.55}
 
 /* ─ Sections ─ */
-section{padding:90px 0;position:relative}
-.eyebrow{font-size:12px;color:var(--brand2);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:14px;font-weight:500}
-h2{font-size:clamp(28px,4vw,42px);font-weight:700;letter-spacing:-.5px;margin-bottom:18px;line-height:1.15}
-.lead{font-size:16px;color:var(--text2);max-width:580px;margin-bottom:48px}
+section{padding:72px 0;position:relative}
+.eyebrow{font-size:11px;color:var(--brand2);text-transform:uppercase;letter-spacing:2px;margin-bottom:14px;font-weight:500;display:inline-flex;align-items:center;gap:8px}
+.eyebrow::before{content:"";width:24px;height:1px;background:var(--brand2)}
+h2{font-size:clamp(28px,4.2vw,44px);font-weight:700;letter-spacing:-.6px;margin-bottom:18px;line-height:1.12;background:linear-gradient(180deg,#fff 0%,#d8d4e8 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.lead{font-size:16px;color:var(--text2);max-width:600px;margin-bottom:44px;line-height:1.65}
+
+/* ─ Story section ─ */
+.story{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
+.story-text p{color:var(--text2);font-size:15px;line-height:1.75;margin-bottom:14px}
+.story-text p strong{color:var(--text);font-weight:500}
+.story-text .sig{display:flex;align-items:center;gap:10px;margin-top:24px;font-size:13px;color:var(--text3)}
+.story-text .sig::before{content:"";width:32px;height:1px;background:var(--border2)}
+.story-card{position:relative;padding:36px 32px;background:linear-gradient(180deg,var(--surface) 0%,var(--bg2) 100%);border:1px solid var(--border);border-radius:18px;font-family:'Georgia','Times New Roman',serif;font-size:17px;line-height:1.7;color:var(--text2);font-style:italic}
+.story-card::before{content:"\201C";position:absolute;top:-8px;left:18px;font-size:80px;font-family:Georgia,serif;color:var(--brand);opacity:.5;line-height:1}
+.story-card .meta{font-style:normal;font-family:'Inter',sans-serif;margin-top:18px;display:flex;gap:6px;font-size:11px}
+.story-card .meta span{padding:2px 8px;background:var(--brand-dim);color:var(--brand2);border-radius:10px}
 
 /* ─ Features ─ */
-.features{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px}
-.feat{padding:28px;border:1px solid var(--border);border-radius:14px;background:linear-gradient(180deg,var(--surface) 0%,var(--bg2) 100%);transition:border-color .2s,transform .2s}
-.feat:hover{border-color:var(--brand);transform:translateY(-2px)}
-.feat-ico{width:36px;height:36px;border-radius:8px;background:var(--brand-dim);display:flex;align-items:center;justify-content:center;color:var(--brand2);font-size:18px;margin-bottom:18px}
-.feat h3{font-size:17px;font-weight:600;margin-bottom:8px}
-.feat p{font-size:13.5px;color:var(--text2);line-height:1.6}
+.features{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.feat{padding:26px;border:1px solid var(--border);border-radius:14px;background:linear-gradient(180deg,var(--surface) 0%,var(--bg2) 100%);transition:border-color .25s,transform .25s,box-shadow .25s;position:relative;overflow:hidden}
+.feat::before{content:"";position:absolute;top:-100%;left:-100%;width:200%;height:200%;background:radial-gradient(circle, var(--brand-dim) 0%, transparent 50%);opacity:0;transition:opacity .4s, transform .4s;pointer-events:none}
+.feat:hover{border-color:var(--brand2);transform:translateY(-3px);box-shadow:0 20px 50px rgba(0,0,0,.3)}
+.feat:hover::before{opacity:1;transform:translate(20%,20%)}
+.feat-ico{width:38px;height:38px;border-radius:9px;background:var(--brand-dim);display:flex;align-items:center;justify-content:center;color:var(--brand3);font-size:18px;margin-bottom:16px;position:relative;transition:transform .3s}
+.feat:hover .feat-ico{transform:rotate(8deg) scale(1.08)}
+.feat h3{font-size:16px;font-weight:600;margin-bottom:6px;position:relative}
+.feat p{font-size:13.5px;color:var(--text2);line-height:1.6;position:relative}
 
 /* ─ Steps ─ */
-.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:24px;margin-top:20px}
-.step{position:relative;padding-top:8px}
-.step-num{font-size:48px;font-weight:700;line-height:1;color:transparent;-webkit-text-stroke:1px var(--brand);margin-bottom:14px}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:24px;margin-top:16px;counter-reset:step}
+.step{position:relative;padding:24px;border-radius:12px;border:1px solid transparent;transition:border-color .25s,background .25s}
+.step:hover{border-color:var(--border);background:rgba(255,255,255,.01)}
+.step-num{font-size:42px;font-weight:700;line-height:1;color:transparent;-webkit-text-stroke:1px var(--brand);margin-bottom:14px;font-variant-numeric:tabular-nums}
 .step h3{font-size:16px;font-weight:600;margin-bottom:6px}
-.step p{font-size:13.5px;color:var(--text2)}
+.step p{font-size:13.5px;color:var(--text2);line-height:1.6}
 
 /* ─ FAQ ─ */
 .faq{display:grid;gap:8px;max-width:780px}
-.faq-item{border:1px solid var(--border);border-radius:10px;background:var(--surface);overflow:hidden}
+.faq-item{border:1px solid var(--border);border-radius:10px;background:var(--surface);overflow:hidden;transition:border-color .2s}
+.faq-item:hover{border-color:var(--border2)}
+.faq-item[open]{border-color:var(--brand)}
 .faq-q{padding:18px 22px;font-weight:500;font-size:14.5px;cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center}
 .faq-q::-webkit-details-marker{display:none}
-.faq-q::after{content:"+";color:var(--brand2);font-size:18px;font-weight:300}
-.faq-item[open] .faq-q::after{content:"−"}
+.faq-q::after{content:"+";color:var(--brand2);font-size:20px;font-weight:300;transition:transform .3s}
+.faq-item[open] .faq-q::after{content:"−";transform:rotate(180deg)}
 .faq-a{padding:0 22px 18px;font-size:13.5px;color:var(--text2);line-height:1.65}
 
 /* ─ Final CTA ─ */
-.final{text-align:center;padding:120px 0 90px}
+.final{text-align:center;padding:100px 0 80px}
 .final-card{max-width:680px;margin:0 auto;padding:60px 40px;border:1px solid var(--border);border-radius:20px;background:linear-gradient(135deg,var(--surface) 0%,var(--bg2) 100%);position:relative;overflow:hidden}
-.final-card::before{content:"";position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle at 50% 0%, var(--brand-dim) 0%, transparent 50%);pointer-events:none}
+.final-card::before{content:"";position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle at 50% 0%, var(--brand-glow) 0%, transparent 50%);pointer-events:none;animation:rotateBg 20s linear infinite}
+@keyframes rotateBg{from{transform:rotate(0)}to{transform:rotate(360deg)}}
 .final-card > *{position:relative}
 .final-card h2{margin-bottom:14px}
 .final-card p{color:var(--text2);margin-bottom:32px;font-size:15px}
 
 /* ─ Footer ─ */
-footer{padding:40px 0 60px;border-top:1px solid var(--border);font-size:13px;color:var(--text3);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;margin-top:40px}
+footer{padding:36px 0 50px;border-top:1px solid var(--border);font-size:13px;color:var(--text3);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;margin-top:32px}
 footer a:hover{color:var(--text2)}
 footer .ftr-links{display:flex;gap:22px}
 
-@media(max-width:640px){
-  .hero{padding:60px 0 70px}
-  section{padding:60px 0}
+/* ─ Reveal-on-scroll ─ */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .8s ease-out, transform .8s ease-out}
+.reveal.in{opacity:1;transform:translateY(0)}
+.reveal-delay-1{transition-delay:.1s}
+.reveal-delay-2{transition-delay:.2s}
+.reveal-delay-3{transition-delay:.3s}
+
+/* ─ Scroll-to-top FAB ─ */
+.to-top{position:fixed;bottom:24px;right:24px;width:46px;height:46px;border-radius:50%;background:var(--surface);border:1px solid var(--border2);color:var(--text);font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transform:translateY(20px);transition:opacity .3s,transform .3s,box-shadow .2s,border-color .2s,background .2s;z-index:100;backdrop-filter:blur(12px)}
+.to-top.show{opacity:1;pointer-events:auto;transform:translateY(0)}
+.to-top:hover{border-color:var(--brand);background:var(--brand);color:#fff;box-shadow:0 8px 24px var(--brand-glow)}
+.to-top svg{transition:transform .25s}
+.to-top:hover svg{transform:translateY(-2px)}
+
+@media(max-width:760px){
+  .hero{padding:50px 0 50px}
+  section{padding:56px 0}
   .preview-body{grid-template-columns:1fr;padding:20px}
-  .preview-side{border-right:none;border-bottom:1px solid var(--border);padding-bottom:12px;padding-right:0}
+  .preview-side{border-right:none;border-bottom:1px solid var(--border);padding-bottom:12px;padding-right:0;display:flex;gap:6px;align-items:center;overflow-x:auto}
+  .preview-side .label{display:none}
+  .preview-side div.tag-row{margin-bottom:0;white-space:nowrap;font-size:11px;padding:5px 9px}
   nav .links a:not(.cta-sm){display:none}
+  .story{grid-template-columns:1fr;gap:32px}
+  .story-card{font-size:15px}
+  .final{padding:70px 0 60px}
+  .final-card{padding:44px 24px}
+  .to-top{bottom:16px;right:16px;width:42px;height:42px}
 }
 </style>
 </head>
 <body>
 
-<div class="cosmos"><div class="stars"></div><div class="glow2"></div></div>
+<div class="cosmos">
+  <div class="stars">
+    <div class="stars-layer s1"></div>
+    <div class="stars-layer s2"></div>
+    <div class="stars-layer s3"></div>
+  </div>
+  <div class="glow2"></div>
+  <div class="glow3"></div>
+</div>
+<div class="cursor-glow" id="cursor-glow"></div>
 
 <div class="wrap">
 
-<nav>
+<nav id="nav">
   <a href="/" class="brand">
     <img src="assets/novalog-icon.svg" alt="">
     <span>NovaLog</span>
   </a>
   <div class="links">
+    <a href="#story">Story</a>
     <a href="#features">Features</a>
-    <a href="#how">How it works</a>
+    <a href="#how">How</a>
     <a href="#faq">FAQ</a>
     <a href="https://github.com/nisarg5900/NovaLog" target="_blank" rel="noopener">GitHub</a>
     <a href="app/" class="cta-sm">Open app →</a>
@@ -147,24 +222,24 @@ footer .ftr-links{display:flex;gap:22px}
 </nav>
 
 <header class="hero">
-  <div class="badge"><span class="dot"></span> Free while in early access</div>
-  <h1>Where ideas are<br><span class="accent">born</span>.</h1>
-  <p class="sub">A quiet place to capture the half-formed thoughts, the lines you don't want to lose, the threads you're still becoming. Tag them, revisit them, watch them grow.</p>
-  <div class="ctas">
-    <a href="app/" class="cta primary">Open NovaLog →</a>
+  <div class="badge reveal in"><span class="dot"></span> Free while in early access</div>
+  <h1 class="reveal in">Your unfinished<br><span class="accent">story</span> has a home.</h1>
+  <p class="sub reveal in reveal-delay-1">A quiet workspace for writers — for the lines that arrive at 2am, the passages you can't lose, the fragments your book is still becoming.</p>
+  <div class="ctas reveal in reveal-delay-2">
+    <a href="app/" class="cta primary">Start writing →</a>
     <a href="https://github.com/nisarg5900/NovaLog" target="_blank" rel="noopener" class="cta ghost">View on GitHub</a>
   </div>
 
-  <div class="preview">
+  <div class="preview reveal">
     <div class="preview-frame">
       <div class="preview-bar"><span></span><span></span><span></span></div>
       <div class="preview-body">
         <div class="preview-side">
-          <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;padding:0 4px">Tags</div>
-          <div class="act">● Longing</div>
-          <div>● Faith</div>
-          <div>● Identity</div>
-          <div>● Philosophy</div>
+          <div class="label">Tags</div>
+          <div class="tag-row act">● Longing</div>
+          <div class="tag-row">● Faith</div>
+          <div class="tag-row">● Identity</div>
+          <div class="tag-row">● Memory</div>
         </div>
         <div>
           <div class="preview-card">
@@ -173,7 +248,7 @@ footer .ftr-links{display:flex;gap:22px}
           </div>
           <div class="preview-card">
             <div class="tags"><span>Faith</span></div>
-            <p>Where we didn't ask for anything while praying, just say hi, embrace the presence.</p>
+            <p>Where we didn't ask for anything while praying, just say hi — embrace the presence.</p>
           </div>
           <div class="preview-card">
             <div class="tags"><span>Identity</span></div>
@@ -185,100 +260,118 @@ footer .ftr-links{display:flex;gap:22px}
   </div>
 </header>
 
+<section id="story">
+  <div class="eyebrow reveal">The story</div>
+  <h2 class="reveal">Built because I kept<br>losing my own lines.</h2>
+  <div class="story" style="margin-top:32px">
+    <div class="story-text reveal">
+      <p>A few years ago I started writing my first book — a quiet, sprawling thing about love, faith, and the people we don't get to keep. <strong>It took me three years.</strong></p>
+      <p>The hardest part wasn't the writing. It was that the ideas kept arriving when I wasn't writing. On walks, in the shower, at 2am with the phone screen lighting up my face. I'd open Notes, type something half-cooked, and never see it again.</p>
+      <p>By year two, I had hundreds of fragments scattered across Notes, Keep, screenshots, voice memos, and an embarrassing number of receipts. Some of them were the best lines in the book. <strong>Some I never found again.</strong></p>
+      <p>So I built NovaLog — a single place where every fragment has a home, can be tagged by theme, and marked the moment it lands in the manuscript. The app is yours now. I hope it keeps your lines safer than I kept mine.</p>
+      <div class="sig">Nisarg · Maker, NovaLog</div>
+    </div>
+    <div class="story-card reveal reveal-delay-1">
+      We don't marry a compatible person — compatibility is an achievement of love. We're all looking for someone who likes the same music, who orders the same coffee, who thinks exactly like us. That's not compatibility. That's similarity.
+      <div class="meta"><span>Philosophy</span><span>Used in Ch. 7</span></div>
+    </div>
+  </div>
+</section>
+
 <section id="features">
-  <div class="eyebrow">Built for thinking</div>
-  <h2>A workspace for the<br>unfinished.</h2>
-  <p class="lead">Ideas don't arrive complete. NovaLog is built around that — small, fast, and forgiving.</p>
+  <div class="eyebrow reveal">Built for the long form</div>
+  <h2 class="reveal">Designed around the way<br>ideas actually arrive.</h2>
+  <p class="lead reveal reveal-delay-1">Not in tidy outlines. In fragments, in the wrong order, three years apart. NovaLog meets them there.</p>
   <div class="features">
-    <div class="feat">
+    <div class="feat reveal">
       <div class="feat-ico">✦</div>
-      <h3>Capture in seconds</h3>
-      <p>One field, one click. No friction between the spark and the note. Add tags later, or never.</p>
+      <h3>Capture in two taps</h3>
+      <p>One field, one click, saved to the cloud. The friction between the spark and the note is gone.</p>
     </div>
-    <div class="feat">
+    <div class="feat reveal reveal-delay-1">
       <div class="feat-ico">◇</div>
-      <h3>Three ways to see</h3>
-      <p>Cards for browsing, table for scanning, kanban for moving ideas from <em>raw</em> to <em>used</em>.</p>
+      <h3>Tag by theme</h3>
+      <p>Group fragments by motif, chapter, character, mood — whatever your book is actually about.</p>
     </div>
-    <div class="feat">
+    <div class="feat reveal reveal-delay-2">
       <div class="feat-ico">⟡</div>
-      <h3>Tags that mean something</h3>
-      <p>Build your own taxonomy — themes, chapters, moods, projects. Colour-coded, searchable.</p>
+      <h3>Mark when used</h3>
+      <p>Move a line into your manuscript and flip it from <em>open</em> to <em>done</em>. Watch your book fill up.</p>
     </div>
-    <div class="feat">
+    <div class="feat reveal">
       <div class="feat-ico">↺</div>
-      <h3>Sync, everywhere</h3>
-      <p>Sign in once. Your ideas follow you — phone, laptop, library computer at 2am.</p>
+      <h3>Sync everywhere</h3>
+      <p>Phone at 2am, laptop the next morning, library on a Sunday. Same login, same notes, no friction.</p>
     </div>
-    <div class="feat">
+    <div class="feat reveal reveal-delay-1">
       <div class="feat-ico">◐</div>
-      <h3>Dark by default</h3>
-      <p>Soft on the eyes for late nights. Light mode is there too, if the sun ever wins.</p>
+      <h3>Three ways to see it</h3>
+      <p>Cards to browse, table to scan, kanban to move ideas from <em>raw</em> to <em>written</em>.</p>
     </div>
-    <div class="feat">
+    <div class="feat reveal reveal-delay-2">
       <div class="feat-ico">↧</div>
-      <h3>Your data, exportable</h3>
-      <p>One click to a JSON file. No lock-in, no walled garden. Take it with you if you leave.</p>
+      <h3>Your words, exportable</h3>
+      <p>One click to JSON. No lock-in. Take everything with you whenever you want.</p>
     </div>
   </div>
 </section>
 
 <section id="how">
-  <div class="eyebrow">How it works</div>
-  <h2>Sign up.<br>Start writing.</h2>
+  <div class="eyebrow reveal">How it works</div>
+  <h2 class="reveal">Sign up.<br>Start writing.</h2>
   <div class="steps">
-    <div class="step">
+    <div class="step reveal">
       <div class="step-num">01</div>
       <h3>Create an account</h3>
       <p>Email and password. No credit card, no setup, no onboarding tour.</p>
     </div>
-    <div class="step">
+    <div class="step reveal reveal-delay-1">
       <div class="step-num">02</div>
-      <h3>Drop in your ideas</h3>
-      <p>Paste a passage, type a line, tag it however you want. NovaLog auto-saves to the cloud.</p>
+      <h3>Drop in your fragments</h3>
+      <p>Paste a line, tag it, leave it. NovaLog auto-saves as you go.</p>
     </div>
-    <div class="step">
+    <div class="step reveal reveal-delay-2">
       <div class="step-num">03</div>
       <h3>Open it anywhere</h3>
-      <p>Same URL, same login, every device. Your nebula of ideas, always within reach.</p>
+      <p>Same URL, same login, every device. Your book's nebula, always within reach.</p>
     </div>
   </div>
 </section>
 
 <section id="faq">
-  <div class="eyebrow">FAQ</div>
-  <h2>Questions you might<br>be holding.</h2>
-  <div class="faq">
-    <details class="faq-item">
+  <div class="eyebrow reveal">FAQ</div>
+  <h2 class="reveal">Questions you might<br>be holding.</h2>
+  <div class="faq" style="margin-top:32px">
+    <details class="faq-item reveal">
       <summary class="faq-q">Is it really free?</summary>
-      <div class="faq-a">Yes — and it'll stay free while NovaLog is in early access. If a paid tier comes later (think: more features, team sharing), the basics stay free.</div>
+      <div class="faq-a">Yes — and it stays free during early access. If a paid tier comes later (more features, team sharing), the basics will always be free.</div>
     </details>
-    <details class="faq-item">
+    <details class="faq-item reveal">
+      <summary class="faq-q">I'm not writing a book. Can I still use it?</summary>
+      <div class="faq-a">Absolutely. NovaLog was born from a book, but the model — capture, tag, mark when used — fits anything: a screenplay, a thesis, a music album, a Substack queue, a research project. Use the language that fits you.</div>
+    </details>
+    <details class="faq-item reveal">
       <summary class="faq-q">Who can see my ideas?</summary>
-      <div class="faq-a">Only you. Every idea is stored against your account and protected by row-level security on the database. Even the developer can't browse your notes.</div>
+      <div class="faq-a">Only you. Every fragment is stored against your account, protected by row-level security on the database. Even the developer can't browse your notes.</div>
     </details>
-    <details class="faq-item">
+    <details class="faq-item reveal">
       <summary class="faq-q">Can I export my data?</summary>
-      <div class="faq-a">Yes. In the app sidebar, click Export JSON — you get a full backup of your ideas, tags, and statuses in a single file. Import works the same way.</div>
+      <div class="faq-a">Yes. In the app sidebar, click Export JSON — a full backup of your ideas, tags, and statuses in one file. Import works the same way.</div>
     </details>
-    <details class="faq-item">
+    <details class="faq-item reveal">
       <summary class="faq-q">Can I delete my account?</summary>
-      <div class="faq-a">Yes, fully. Account → Danger zone → Delete my account. Your data is wiped permanently within seconds — there's no soft-delete or shadow archive.</div>
+      <div class="faq-a">Yes, completely. Account → Danger zone → Delete my account. Your data is wiped permanently within seconds — no soft-delete, no shadow archive.</div>
     </details>
-    <details class="faq-item">
+    <details class="faq-item reveal">
       <summary class="faq-q">Is the code open source?</summary>
-      <div class="faq-a">The frontend is public on <a href="https://github.com/nisarg5900/NovaLog" target="_blank" rel="noopener" style="color:var(--brand2)">GitHub</a>. You can host your own copy, fork it, or just read how it works.</div>
-    </details>
-    <details class="faq-item">
-      <summary class="faq-q">Who built this?</summary>
-      <div class="faq-a">Hi — I'm Nisarg. I built NovaLog because I was tired of losing ideas in Notes apps and Google Keep. Feedback welcome: <a href="mailto:nisarg6900@gmail.com" style="color:var(--brand2)">nisarg6900@gmail.com</a>.</div>
+      <div class="faq-a">The frontend is public on <a href="https://github.com/nisarg5900/NovaLog" target="_blank" rel="noopener" style="color:var(--brand2)">GitHub</a>. Read it, fork it, host your own copy.</div>
     </details>
   </div>
 </section>
 
 <section class="final">
-  <div class="final-card">
-    <h2>Your ideas are<br>waiting for a home.</h2>
+  <div class="final-card reveal">
+    <h2>The next line is<br>arriving soon.</h2>
     <p>Free. No credit card. Two clicks to start.</p>
     <a href="app/" class="cta primary">Open NovaLog →</a>
   </div>
@@ -294,6 +387,54 @@ footer .ftr-links{display:flex;gap:22px}
 </footer>
 
 </div>
+
+<!-- Scroll to top -->
+<button class="to-top" id="to-top" onclick="scrollToTop()" aria-label="Scroll to top">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+</button>
+
+<script>
+// ── Mouse-following nebula glow (desktop only) ───────────────────────
+const glow = document.getElementById('cursor-glow');
+let glowEnabled = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+if (glowEnabled) {
+  let mx = window.innerWidth / 2, my = window.innerHeight / 3;
+  let gx = mx, gy = my;
+  document.addEventListener('mousemove', (e) => {
+    mx = e.clientX; my = e.clientY;
+    glow.classList.add('on');
+  });
+  document.addEventListener('mouseleave', () => glow.classList.remove('on'));
+  function tick() {
+    gx += (mx - gx) * 0.08;
+    gy += (my - gy) * 0.08;
+    glow.style.left = gx + 'px';
+    glow.style.top = gy + 'px';
+    requestAnimationFrame(tick);
+  }
+  tick();
+}
+
+// ── Reveal on scroll ─────────────────────────────────────────────────
+const reveals = document.querySelectorAll('.reveal');
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+}, { threshold: 0.15, rootMargin: '0px 0px -60px 0px' });
+reveals.forEach(r => { if (!r.classList.contains('in')) io.observe(r); });
+
+// ── Sticky-nav border on scroll + Scroll-to-top visibility ───────────
+const nav = document.getElementById('nav');
+const toTop = document.getElementById('to-top');
+function onScroll() {
+  const y = window.scrollY;
+  nav.classList.toggle('scrolled', y > 20);
+  toTop.classList.toggle('show', y > 500);
+}
+window.addEventListener('scroll', onScroll, { passive: true });
+onScroll();
+
+function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
+</script>
 
 </body>
 </html>
