@@ -597,41 +597,32 @@ const DEFAULT_STATUSES = [
 
 
 // ── State ─────────────────────────────────────────────────────────────
-let S = loadState();
+// Boot empty. The signed-in user's state is loaded from cloud (or
+// per-user cache) inside onSignedIn — never from a shared localStorage
+// key that could bleed across accounts.
 let dropState = {open:false, ideaId:null, triggerEl:null};
 let modalState = {mode:'add', id:null, tagSel:new Set(), statusSel:null};
 let mgrState = {type:'tag', colorIdx:0};
 let allExpanded = false;
 
-function loadState(){
+function userCacheKey(uid){ return 'novalog_state_' + uid; }
+function clearAllLocalCaches(){
   try {
-    const saved = localStorage.getItem('ideaTracker_v3');
-    if(saved){
-      const d = JSON.parse(saved);
-      d.tags.forEach(t=>{ if(!t.color) t.color=PALETTE[0]; });
-      d.statuses.forEach(s=>{ if(!s.color) s.color=PALETTE[3]; });
-      // Backfill ts for any ideas loaded from older saves
-      const base = 1583020800000;
-      d.ideas.forEach((idea,idx)=>{ if(!idea.ts) idea.ts = base + idx*1000; });
-      return d;
+    for (const k of Object.keys(localStorage)) {
+      if (k === 'ideaTracker_v3' || k.startsWith('novalog_state_')) localStorage.removeItem(k);
     }
   } catch(e){}
-  return {
-    ideas: [],
-    tags: JSON.parse(JSON.stringify(DEFAULT_TAGS)),
-    statuses: JSON.parse(JSON.stringify(DEFAULT_STATUSES)),
-    navFilter:'all',
-    catFilter: [],
-    statusFilter: [],
-    view:'cards',
-    dark: true,
-    nextId: 1,
-  };
+}
+function cacheLocalForCurrentUser(){
+  if(!_user) return;
+  try { localStorage.setItem(userCacheKey(_user.id), JSON.stringify(S)); } catch(e){}
 }
 function save(){
-  try { localStorage.setItem('ideaTracker_v3', JSON.stringify(S)); } catch(e){}
+  cacheLocalForCurrentUser();
   scheduleCloudPush();
 }
+
+let S; // assigned by bootstrap / onSignedIn
 
 // ── Cloud sync (Supabase) ─────────────────────────────────────────────
 let _sb = null, _user = null, _pushTimer = null, _authMode = 'signin';
@@ -728,8 +719,8 @@ async function authSubmit(){
 }
 async function signOut(){
   if(_sb) { try { await _sb.auth.signOut(); } catch(e){} }
-  // Wipe cached state so the next person on this browser doesn't see it.
-  try { localStorage.removeItem('ideaTracker_v3'); } catch(e){}
+  // Wipe ALL cached state so no leftover bleeds to the next session.
+  clearAllLocalCaches();
   location.reload();
 }
 function openAccount(){
@@ -766,7 +757,7 @@ async function deleteAccount(){
   if(sure !== 'DELETE') return;
   const { error } = await _sb.rpc('delete_my_account');
   if(error){ showAccMsg('Could not delete: ' + error.message, 'err'); return; }
-  try { localStorage.removeItem('ideaTracker_v3'); } catch(e){}
+  clearAllLocalCaches();
   try { await _sb.auth.signOut(); } catch(e){}
   alert('Account deleted.');
   location.reload();
@@ -792,27 +783,32 @@ async function onSignedIn(user){
   document.getElementById('account-email').textContent = user.email || '(no email)';
   setSyncBadge('Loading…', 'syncing');
 
-  // SECURITY: reset in-memory state to defaults before doing anything.
-  // S may currently hold a previous user's data (loaded from this
-  // browser's localStorage at boot). Without this reset, the previous
-  // user's notes would be pushed into a fresh account's cloud row on
-  // first sign-in.
+  // SECURITY: always start from a clean slate. Any other user's data
+  // sitting in S or in legacy localStorage must not bleed across.
   S = freshState();
-  try { localStorage.removeItem('ideaTracker_v3'); } catch(e){}
+  try { localStorage.removeItem('ideaTracker_v3'); } catch(e){} // legacy key
+
+  // Optional: warm-paint from THIS user's own cache if present.
+  try {
+    const cached = localStorage.getItem(userCacheKey(user.id));
+    if(cached){
+      const d = JSON.parse(cached);
+      if(d && Array.isArray(d.ideas) && Array.isArray(d.tags) && Array.isArray(d.statuses)) S = d;
+    }
+  } catch(e){}
 
   const remote = await cloudPull();
   if(remote){
     S = remote;
-    // Backfill fields that older payloads might not have
     if(!S.tags) S.tags = JSON.parse(JSON.stringify(DEFAULT_TAGS));
     if(!S.statuses) S.statuses = JSON.parse(JSON.stringify(DEFAULT_STATUSES));
     if(!S.ideas) S.ideas = [];
-    try { localStorage.setItem('ideaTracker_v3', JSON.stringify(S)); } catch(e){}
+    cacheLocalForCurrentUser();
     setSyncBadge('Synced ✓');
   } else {
     // First sign-in for this account — push the fresh defaults to cloud.
     setSyncBadge('Initialising…', 'syncing');
-    try { localStorage.setItem('ideaTracker_v3', JSON.stringify(S)); } catch(e){}
+    cacheLocalForCurrentUser();
     await cloudPush();
   }
   applyBootUI();
@@ -826,9 +822,16 @@ function applyBootUI(){
   });
 }
 async function bootstrap(){
+  // Always start from a clean slate — S is intentionally undefined
+  // at module load so no localStorage value (potentially from a
+  // different account) can leak in.
+  S = freshState();
+
   const sb = sbClient();
   if(!sb){
-    // Local-only fallback: no cloud, just run as before.
+    // Local-only fallback: no cloud, no auth — local cache only.
+    // Still namespaced (using an 'anon' id) so it doesn't collide
+    // with any signed-in user's cache.
     setSyncBadge('Local only', 'error');
     applyBootUI(); render(); return;
   }
