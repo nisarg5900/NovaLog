@@ -103,18 +103,21 @@ input,textarea,select{font-family:inherit}
 .cards-grid{display:flex;flex-direction:column;gap:9px}
 .idea-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);transition:box-shadow .15s,border-color .15s}
 .idea-card:hover{border-color:var(--border2);box-shadow:var(--shadow)}
-.card-head{display:flex;align-items:flex-start;gap:8px;padding:12px 14px 8px;cursor:pointer}
+.card-head{display:flex;align-items:flex-start;gap:10px;padding:12px 14px 8px;cursor:pointer}
+.card-head-meta{display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0}
 .card-text{flex:1;font-size:13.5px;line-height:1.7;color:var(--text);white-space:pre-wrap;word-break:break-word}
 .card-text.clamped{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;white-space:normal}
 .exp-btn{background:none;border:1px solid var(--border);border-radius:4px;color:var(--text3);font-size:11px;padding:3px 6px;flex-shrink:0;margin-top:2px;transition:background .12s;display:inline-flex;align-items:center;justify-content:center;line-height:1}
 .exp-btn:hover{background:var(--surface2)}
-.card-foot{padding:6px 14px 10px;display:flex;gap:5px;align-items:center;flex-wrap:wrap;border-top:1px solid var(--border)}
+.card-foot{padding:8px 14px 10px;display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;border-top:1px solid var(--border)}
+.card-foot-left{display:flex;gap:5px;align-items:center;flex-wrap:wrap;flex:1;min-width:0}
+.card-foot-right{display:flex;gap:6px;align-items:center;flex-shrink:0;margin-left:auto}
 .badge{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:500;padding:2px 9px;border-radius:20px;white-space:nowrap;user-select:none}
 .badge .bx{cursor:pointer;opacity:.6;font-size:12px;line-height:1}
 .badge .bx:hover{opacity:1}
 .add-tag-btn{font-size:11px;padding:2px 9px;border-radius:20px;border:1px dashed var(--border2);background:none;color:var(--text3);cursor:pointer;transition:all .12s}
 .add-tag-btn:hover{color:var(--text2);border-color:var(--border2);background:var(--surface2)}
-.card-actions{margin-left:auto;display:flex;gap:5px}
+.card-actions{display:flex;gap:5px}
 .act-btn{font-size:11px;padding:3px 10px;border-radius:20px;border:1px solid var(--border);background:none;color:var(--text3);cursor:pointer;transition:all .12s;display:inline-flex;align-items:center;gap:4px;line-height:1.2}
 .act-btn:hover{background:var(--surface2);color:var(--text2)}
 
@@ -172,7 +175,7 @@ input[type="date"]::-webkit-calendar-picker-indicator,
 input[type="time"]::-webkit-calendar-picker-indicator{filter:invert(0.5);cursor:pointer}
 .dark input[type="date"]::-webkit-calendar-picker-indicator,
 .dark input[type="time"]::-webkit-calendar-picker-indicator{filter:invert(0.7)}
-.card-dt{font-size:11px;color:var(--text3);margin-left:auto;white-space:nowrap;align-self:center;display:inline-flex;align-items:center;gap:4px}
+.card-dt{font-size:10.5px;color:var(--text3);white-space:nowrap;display:inline-flex;align-items:center;gap:4px;line-height:1}
 .tag-picker{display:flex;gap:6px;flex-wrap:wrap}
 .tpc{padding:5px 13px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;border:2px solid transparent;transition:all .12s;opacity:.55}
 .tpc:hover{opacity:.8}
@@ -307,6 +310,15 @@ body:not(.dark) .logo-dark{display:none}
 /* ─ Install button (better visual weight) ─ */
 #install-btn{display:none;align-items:center;justify-content:center;gap:6px;font-weight:500}
 #install-btn svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* ─ Install banner (prominent, dismissable) ─ */
+.install-banner{display:none;align-items:center;gap:10px;background:linear-gradient(135deg,var(--accent) 0%,#8a8aff 100%);color:#fff;padding:10px 12px;border-radius:var(--rs);margin-bottom:10px;cursor:pointer;box-shadow:0 4px 16px rgba(102,102,255,.25);transition:transform .15s,box-shadow .15s}
+.install-banner.shown{display:flex}
+.install-banner:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(102,102,255,.35)}
+.install-banner svg{flex-shrink:0;width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.install-banner-text{flex:1;min-width:0;line-height:1.3;font-size:12.5px}
+.install-banner-dismiss{flex-shrink:0;background:rgba(255,255,255,.18);border:none;color:#fff;cursor:pointer;font-size:16px;padding:0;width:22px;height:22px;border-radius:50%;line-height:1;display:inline-flex;align-items:center;justify-content:center;transition:background .12s}
+.install-banner-dismiss:hover{background:rgba(255,255,255,.32)}
 
 /* ─ Profile button (sidebar bottom) ─ */
 .profile-btn{display:none;align-items:center;gap:10px;width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:var(--rs);background:var(--surface);color:var(--text);cursor:pointer;text-align:left;transition:background .12s,border-color .12s;font:inherit}
@@ -455,6 +467,11 @@ body:not(.dark) .logo-dark{display:none}
   <div class="cat-list" id="status-list"></div>
 
   <div class="sidebar-bottom">
+    <div class="install-banner" id="install-banner" onclick="triggerInstall()">
+      <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      <div class="install-banner-text"><div style="font-weight:600">Install NovaLog</div><div style="font-weight:400;opacity:.85;font-size:11px;margin-top:1px">Quick access from your home screen</div></div>
+      <button class="install-banner-dismiss" onclick="event.stopPropagation();dismissInstallBanner()" aria-label="Dismiss">×</button>
+    </div>
     <button class="sb-btn accent" onclick="openAdd()" title="Add new idea (press N)">+ Add Idea</button>
     <div class="sync-badge" id="sync-badge"></div>
     <button class="profile-btn" id="profile-btn" onclick="openSettings()" style="display:none">
@@ -911,7 +928,7 @@ async function cloudPush(){
     const { error } = await _sb.from('idea_tracker_state').upsert(payload, { onConflict: 'user_id' });
     if(error) throw error;
     clearPendingPush();
-    setSyncBadge('Synced ✓');
+    setSyncBadge('Synced');
   } catch(err){
     console.warn('Cloud push failed, queueing:', err);
     queuePendingPush();
@@ -1246,7 +1263,7 @@ async function onSignedIn(user){
     if(!S.ideas) S.ideas = [];
     if(!S.profile) S.profile = { firstName:'', lastName:'', username:'' };
     cacheLocalForCurrentUser();
-    setSyncBadge('Synced ✓');
+    setSyncBadge('Synced');
   } else {
     // First sign-in for this account — apply pending signup profile + push.
     if(_pendingSignupProfile){
@@ -1484,14 +1501,18 @@ function cardHtml(i){
   return `<div class="idea-card" id="card-${i.id}" style="border-left:3px solid ${st.color.border}">
     <div class="card-head" onclick="toggleExpand(${i.id})">
       <div class="card-text ${i.expanded?'':'clamped'}">${mdInline(i.text)}</div>
-      <button class="exp-btn">${i.expanded?ICON.chevUp:ICON.chevDown}</button>
+      <div class="card-head-meta">
+        ${dtStr?`<span class="card-dt" title="Created: ${dtStr}">${ICON.clock} ${dtStr}</span>`:''}
+        <button class="exp-btn">${i.expanded?ICON.chevUp:ICON.chevDown}</button>
+      </div>
     </div>
     <div class="card-foot">
-      ${tagBadges}
-      <button class="add-tag-btn" onclick="openDropdown(event,${i.id})">+ tag</button>
-      <button class="badge" style="${badgeStyle(st.color)};border-style:solid;border-width:1px" onclick="openStatusDropdown(event,${i.id})" title="Change status">${stIco}${esc(st.label)}${i.chapter?` · <em>${esc(i.chapter)}</em>`:''}${ICON.caretDown}</button>
-      ${dtStr?`<span class="card-dt" title="Created: ${dtStr}">${ICON.clock} ${dtStr}</span>`:''}
-      <div class="card-actions">
+      <div class="card-foot-left">
+        ${tagBadges}
+        <button class="add-tag-btn" onclick="openDropdown(event,${i.id})">+ tag</button>
+      </div>
+      <div class="card-foot-right">
+        <button class="badge" style="${badgeStyle(st.color)};border-style:solid;border-width:1px" onclick="openStatusDropdown(event,${i.id})" title="Change status">${stIco}${esc(st.label)}${i.chapter?` · <em>${esc(i.chapter)}</em>`:''}${ICON.caretDown}</button>
         <button class="act-btn" onclick="openEdit(${i.id})">Edit</button>
       </div>
     </div>
@@ -1982,24 +2003,33 @@ if ('serviceWorker' in navigator) {
   });
 }
 let _deferredInstall = null;
+function isInstallDismissed(){
+  try { return localStorage.getItem('novalog_install_dismissed') === '1'; } catch(e){ return false; }
+}
+function updateInstallBanner(){
+  const banner = document.getElementById('install-banner');
+  if(!banner) return;
+  banner.classList.toggle('shown', !!_deferredInstall && !isInstallDismissed());
+}
+function dismissInstallBanner(){
+  try { localStorage.setItem('novalog_install_dismissed', '1'); } catch(e){}
+  updateInstallBanner();
+}
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
   _deferredInstall = e;
-  const btn = document.getElementById('install-btn');
-  if (btn) btn.style.display = 'block';
+  updateInstallBanner();
 });
 async function triggerInstall(){
   if (!_deferredInstall) return;
   _deferredInstall.prompt();
   const { outcome } = await _deferredInstall.userChoice;
-  _deferredInstall = null;
-  const btn = document.getElementById('install-btn');
-  if (btn) btn.style.display = 'none';
+  if(outcome === 'accepted') _deferredInstall = null;
+  updateInstallBanner();
 }
 window.addEventListener('appinstalled', () => {
   _deferredInstall = null;
-  const btn = document.getElementById('install-btn');
-  if (btn) btn.style.display = 'none';
+  updateInstallBanner();
 });
 
 // Handle PWA shortcut URLs (?action=new / ?action=resurface)

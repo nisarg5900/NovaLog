@@ -6,24 +6,27 @@
   "scope": "/NovaLog/app/",
   "display": "standalone",
   "orientation": "any",
-  "background_color": "#07070d",
+  "background_color": "#6666FF",
   "theme_color": "#6666FF",
   "icons": [
-    { "src": "../assets/novalog-icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
-    { "src": "../assets/novalog-icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "maskable" }
+    { "src": "../assets/novalog-icon.svg",          "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "../assets/novalog-icon-maskable.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "maskable" },
+    { "src": "../assets/novalog-icon-maskable.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "monochrome" }
   ],
   "shortcuts": [
     {
       "name": "New idea",
       "short_name": "Add",
       "description": "Capture a new fragment",
-      "url": "/NovaLog/app/?action=new"
+      "url": "/NovaLog/app/?action=new",
+      "icons": [{ "src": "../assets/novalog-icon.svg", "sizes": "any", "type": "image/svg+xml" }]
     },
     {
       "name": "Resurface",
       "short_name": "Resurface",
       "description": "Pull up a forgotten idea",
-      "url": "/NovaLog/app/?action=resurface"
+      "url": "/NovaLog/app/?action=resurface",
+      "icons": [{ "src": "../assets/novalog-icon.svg", "sizes": "any", "type": "image/svg+xml" }]
     }
   ]
 }
