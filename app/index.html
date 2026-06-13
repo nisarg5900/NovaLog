@@ -252,6 +252,14 @@ input[type="time"]::-webkit-calendar-picker-indicator{filter:invert(0.5);cursor:
 .sync-badge{font-size:10px;color:var(--text3);padding:2px 6px;border-radius:10px;background:var(--surface2);margin-left:6px}
 .sync-badge.syncing{color:var(--accent)}
 .sync-badge.error{color:#a02020}
+
+/* ─ Scroll-to-top FAB ─ */
+.to-top{position:fixed;bottom:20px;right:20px;width:42px;height:42px;border-radius:50%;background:var(--surface);border:1px solid var(--border2);color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transform:translateY(16px);transition:opacity .25s,transform .25s,box-shadow .2s,border-color .2s,background .2s,color .2s;z-index:90;backdrop-filter:blur(10px)}
+.to-top.show{opacity:1;pointer-events:auto;transform:translateY(0)}
+.to-top:hover{border-color:var(--accent);background:var(--accent);color:#fff;box-shadow:0 6px 20px rgba(102,102,255,.35)}
+.to-top svg{transition:transform .2s}
+.to-top:hover svg{transform:translateY(-2px)}
+@media(max-width:640px){.to-top{bottom:14px;right:14px;width:40px;height:40px}}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="config.js"></script>
@@ -470,6 +478,11 @@ input[type="time"]::-webkit-calendar-picker-indicator{filter:invert(0.5);cursor:
     </div>
   </div>
 </div>
+
+<!-- Scroll to top -->
+<button class="to-top" id="to-top" onclick="scrollContentToTop()" aria-label="Scroll to top">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+</button>
 
 <script>
 // ── Palette for new tags/statuses ─────────────────────────────────────
@@ -1184,6 +1197,20 @@ function importData(e){
   r.readAsText(file);
   e.target.value='';
 }
+
+// ── Scroll-to-top FAB ──────────────────────────────────────────────────
+function scrollContentToTop(){
+  const el = document.querySelector('.content');
+  if(el) el.scrollTo({ top: 0, behavior: 'smooth' });
+}
+(function(){
+  const content = document.querySelector('.content');
+  const fab = document.getElementById('to-top');
+  if(!content || !fab) return;
+  content.addEventListener('scroll', () => {
+    fab.classList.toggle('show', content.scrollTop > 400);
+  }, { passive: true });
+})();
 
 // ── Init ──────────────────────────────────────────────────────────────
 bootstrap();
