@@ -5,5 +5,5 @@ window.SUPABASE_CONFIG = {
   // Paste your hCaptcha SITE KEY here (the public one from hcaptcha.com).
   // The SECRET key stays in Supabase only — never put it here.
   // Leave as "" to disable captcha on the client.
-  hcaptchaSiteKey: ""
+  hcaptchaSiteKey: "5ed81d64-0082-4aa4-97ec-01a8aff06404"
 };
