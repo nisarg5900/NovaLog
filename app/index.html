@@ -728,6 +728,8 @@ async function authSubmit(){
 }
 async function signOut(){
   if(_sb) { try { await _sb.auth.signOut(); } catch(e){} }
+  // Wipe cached state so the next person on this browser doesn't see it.
+  try { localStorage.removeItem('ideaTracker_v3'); } catch(e){}
   location.reload();
 }
 function openAccount(){
@@ -769,6 +771,19 @@ async function deleteAccount(){
   alert('Account deleted.');
   location.reload();
 }
+function freshState(){
+  return {
+    ideas: [],
+    tags: JSON.parse(JSON.stringify(DEFAULT_TAGS)),
+    statuses: JSON.parse(JSON.stringify(DEFAULT_STATUSES)),
+    navFilter: 'all',
+    catFilter: [],
+    statusFilter: [],
+    view: 'cards',
+    dark: true,
+    nextId: 1,
+  };
+}
 async function onSignedIn(user){
   _user = user;
   document.getElementById('auth-overlay').style.display = 'none';
@@ -776,6 +791,15 @@ async function onSignedIn(user){
   accBtn.style.display = 'block';
   document.getElementById('account-email').textContent = user.email || '(no email)';
   setSyncBadge('Loading…', 'syncing');
+
+  // SECURITY: reset in-memory state to defaults before doing anything.
+  // S may currently hold a previous user's data (loaded from this
+  // browser's localStorage at boot). Without this reset, the previous
+  // user's notes would be pushed into a fresh account's cloud row on
+  // first sign-in.
+  S = freshState();
+  try { localStorage.removeItem('ideaTracker_v3'); } catch(e){}
+
   const remote = await cloudPull();
   if(remote){
     S = remote;
@@ -786,8 +810,9 @@ async function onSignedIn(user){
     try { localStorage.setItem('ideaTracker_v3', JSON.stringify(S)); } catch(e){}
     setSyncBadge('Synced ✓');
   } else {
-    // First sign-in — push whatever local state exists (incl. seed ideas)
+    // First sign-in for this account — push the fresh defaults to cloud.
     setSyncBadge('Initialising…', 'syncing');
+    try { localStorage.setItem('ideaTracker_v3', JSON.stringify(S)); } catch(e){}
     await cloudPush();
   }
   applyBootUI();
