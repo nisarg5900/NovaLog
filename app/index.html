@@ -277,6 +277,34 @@ input[type="time"]::-webkit-calendar-picker-indicator{filter:invert(0.5);cursor:
 .sync-badge.syncing{color:var(--accent)}
 .sync-badge.error{color:#a02020}
 
+/* ─ Idea-text inline markdown ─ */
+.card-text strong, .k-card-text strong, .td-text strong{font-weight:600;color:var(--text)}
+.card-text em, .k-card-text em, .td-text em{font-style:italic}
+.card-text code, .k-card-text code, .td-text code{background:var(--surface2);padding:1px 5px;border-radius:4px;font-size:.92em;font-family:'SF Mono',Consolas,monospace}
+.idea-link{color:var(--accent);cursor:pointer;text-decoration:none;border-bottom:1px dashed var(--accent);font-weight:500}
+.idea-link:hover{background:var(--accent-bg);border-bottom-style:solid}
+.idea-link.orphan{color:var(--text3);border-bottom-color:var(--text3);cursor:help}
+.idea-link.orphan:hover{background:none}
+
+/* ─ Resurface widget ─ */
+.resurface-btn{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:var(--rs);border:1px solid var(--border);background:var(--surface);color:var(--text2);font-size:12px;cursor:pointer;white-space:nowrap;transition:all .12s;flex-shrink:0}
+.resurface-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-bg)}
+.resurface-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.resurface-strip{background:linear-gradient(135deg,var(--accent-bg) 0%,var(--surface) 100%);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;margin-bottom:14px;display:flex;flex-wrap:wrap;gap:14px;align-items:flex-start}
+.resurface-col{flex:1;min-width:240px}
+.resurface-lbl{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--accent);margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.resurface-lbl svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.resurface-text{font-size:13px;color:var(--text);line-height:1.55;cursor:pointer;padding:8px 0;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;transition:color .12s}
+.resurface-text:hover{color:var(--accent)}
+.resurface-meta{display:flex;gap:8px;align-items:center;font-size:11px;color:var(--text3);margin-top:6px}
+.resurface-actions{display:flex;gap:6px;margin-top:8px}
+.resurface-mini-btn{font-size:11px;padding:3px 9px;border:1px solid var(--border);background:var(--surface);color:var(--text2);border-radius:14px;cursor:pointer;transition:all .12s;display:inline-flex;align-items:center;gap:4px}
+.resurface-mini-btn:hover{border-color:var(--accent);color:var(--accent)}
+.resurface-mini-btn svg{width:10px;height:10px;stroke:currentColor;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.resurface-empty{font-size:12px;color:var(--text3);font-style:italic;padding:8px 0}
+.idea-card.highlight{box-shadow:0 0 0 2px var(--accent),0 8px 32px var(--brand-dim,rgba(102,102,255,.25));animation:pulse-once .8s ease-out}
+@keyframes pulse-once{0%{box-shadow:0 0 0 0 var(--accent)}100%{box-shadow:0 0 0 2px var(--accent),0 8px 32px var(--brand-dim,rgba(102,102,255,.25))}}
+
 /* ─ Icons ─ */
 .icn{display:inline-flex;align-items:center;justify-content:center;vertical-align:middle;flex-shrink:0}
 .icn svg{display:block;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
@@ -390,6 +418,7 @@ input[type="time"]::-webkit-calendar-picker-indicator{filter:invert(0.5);cursor:
       <option value="by-status">Group by status</option>
     </select>
     <button class="expand-all-btn" id="exp-all-btn" onclick="toggleExpandAll()">Expand all</button>
+    <button class="resurface-btn" onclick="openResurface()" title="Resurface forgotten ideas"><svg viewBox="0 0 24 24"><path d="M12 3l1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5z"/><path d="M19 14l.75 2.25L22 17l-2.25.75L19 20l-.75-2.25L16 17l2.25-.75z"/></svg>Resurface</button>
     <div class="view-grp">
       <button class="vbtn active" id="vb-cards" title="Cards" onclick="setView('cards')" style="display:flex;align-items:center;justify-content:center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="4" rx="1"/><rect x="3" y="10" width="18" height="4" rx="1"/><rect x="3" y="16" width="18" height="4" rx="1"/></svg></button>
       <button class="vbtn" id="vb-table" title="Table" onclick="setView('table')" style="display:flex;align-items:center;justify-content:center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="1"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="4" x2="9" y2="20"/></svg></button>
@@ -419,6 +448,7 @@ input[type="time"]::-webkit-calendar-picker-indicator{filter:invert(0.5);cursor:
       <div class="fgrp">
         <label class="flbl">Idea / text (full, uncompressed)</label>
         <textarea class="ftextarea" id="m-text" rows="6" placeholder="Paste or write the full idea here…"></textarea>
+        <div style="font-size:10.5px;color:var(--text3);margin-top:6px;line-height:1.5">Supports <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">**bold**</code>, <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">*italic*</code>, <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">`code`</code>, and <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">[[Link to another idea]]</code></div>
       </div>
       <div class="fgrp">
         <label class="flbl">Date &amp; time</label>
@@ -515,6 +545,34 @@ input[type="time"]::-webkit-calendar-picker-indicator{filter:invert(0.5);cursor:
     <div class="modal-foot">
       <button class="modal-btn" onclick="signOut()" style="margin-right:auto">Sign out</button>
       <button class="modal-btn" onclick="closeModal('account-modal')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Resurface modal -->
+<div class="modal-overlay" id="resurface-modal">
+  <div class="modal" style="max-width:520px">
+    <div class="modal-head">
+      <h2 style="display:flex;align-items:center;gap:8px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5z"/><path d="M19 14l.75 2.25L22 17l-2.25.75L19 20l-.75-2.25L16 17l2.25-.75z"/></svg>Resurface</h2>
+      <button class="modal-x" onclick="closeModal('resurface-modal')">×</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:12px;color:var(--text2);margin-bottom:18px;line-height:1.5">Lines you forgot you wrote. A nudge back to your unfinished story.</p>
+      <div class="resurface-strip" id="resurface-onthisday-wrap" style="display:none">
+        <div class="resurface-col" style="min-width:auto">
+          <div class="resurface-lbl"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg><span id="resurface-otd-title">On this day</span></div>
+          <div id="resurface-otd-list"></div>
+        </div>
+      </div>
+      <div class="resurface-strip">
+        <div class="resurface-col" style="min-width:auto">
+          <div class="resurface-lbl"><svg viewBox="0 0 24 24"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></svg>Random pick</div>
+          <div id="resurface-random"></div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="modal-btn" onclick="closeModal('resurface-modal')">Close</button>
     </div>
   </div>
 </div>
@@ -723,6 +781,76 @@ async function signOut(){
   clearAllLocalCaches();
   location.reload();
 }
+// ── Resurface (random + on-this-day) ──────────────────────────────────
+function onThisDayIdeas(){
+  if(!S || !S.ideas || !S.ideas.length) return [];
+  const now = new Date();
+  const todayKey = now.getMonth()+'-'+now.getDate();
+  const yearNow = now.getFullYear();
+  return S.ideas.filter(i => {
+    if(!i.ts) return false;
+    const d = new Date(i.ts);
+    return d.getMonth()+'-'+d.getDate() === todayKey && d.getFullYear() !== yearNow;
+  }).sort((a,b) => (b.ts||0) - (a.ts||0));
+}
+function pickRandomIdea(excludeId){
+  if(!S || !S.ideas || !S.ideas.length) return null;
+  if(S.ideas.length === 1) return S.ideas[0];
+  const pool = excludeId != null ? S.ideas.filter(i => i.id !== excludeId) : S.ideas;
+  return pool[Math.floor(Math.random()*pool.length)];
+}
+function renderResurfaceRandom(currentId){
+  const idea = pickRandomIdea(currentId);
+  const slot = document.getElementById('resurface-random');
+  if(!idea){
+    slot.innerHTML = '<div class="resurface-empty">No ideas yet. Add one and shuffle back here.</div>';
+    return;
+  }
+  const dt = idea.ts ? fmtTs(idea.ts) : '';
+  const tagPills = idea.cats.slice(0,3).map(k => {
+    const t = tagByKey(k);
+    return `<span class="badge" style="${badgeStyle(t.color)};font-size:10px;padding:1px 7px">${esc(t.label)}</span>`;
+  }).join(' ');
+  slot.innerHTML = `
+    <div class="resurface-text" onclick="openIdeaFromResurface(${idea.id})" title="Open this idea">${mdInline(idea.text)}</div>
+    <div class="resurface-meta">${tagPills}${dt?`<span style="margin-left:auto">${dt}</span>`:''}</div>
+    <div class="resurface-actions">
+      <button class="resurface-mini-btn" onclick="renderResurfaceRandom(${idea.id})"><svg viewBox="0 0 24 24"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></svg>Shuffle</button>
+      <button class="resurface-mini-btn" onclick="openIdeaFromResurface(${idea.id})">Open →</button>
+    </div>`;
+}
+function renderResurfaceOnThisDay(){
+  const list = onThisDayIdeas();
+  const wrap = document.getElementById('resurface-onthisday-wrap');
+  if(!list.length){ wrap.style.display = 'none'; return; }
+  wrap.style.display = '';
+  const slot = document.getElementById('resurface-otd-list');
+  document.getElementById('resurface-otd-title').textContent = `On this day (${list.length})`;
+  slot.innerHTML = list.map(i => {
+    const d = new Date(i.ts);
+    const yearsAgo = new Date().getFullYear() - d.getFullYear();
+    return `<div style="padding:8px 0;border-bottom:1px solid var(--border)">
+      <div class="resurface-text" onclick="openIdeaFromResurface(${i.id})" style="-webkit-line-clamp:2">${mdInline(i.text)}</div>
+      <div class="resurface-meta">${yearsAgo} year${yearsAgo!==1?'s':''} ago · ${fmtTs(i.ts)}</div>
+    </div>`;
+  }).join('');
+  // remove last border
+  const last = slot.lastElementChild; if(last) last.style.borderBottom = 'none';
+}
+function openResurface(){
+  if(!S || !S.ideas || !S.ideas.length){
+    alert('Add a few ideas first — Resurface needs something to dig up.');
+    return;
+  }
+  renderResurfaceOnThisDay();
+  renderResurfaceRandom();
+  document.getElementById('resurface-modal').classList.add('open');
+}
+function openIdeaFromResurface(id){
+  closeModal('resurface-modal');
+  openEdit(id);
+}
+
 function openAccount(){
   if(!_user) return;
   document.getElementById('acc-current-email').textContent = _user.email || '(no email)';
@@ -846,6 +974,42 @@ async function bootstrap(){
 
 // ── Helpers ───────────────────────────────────────────────────────────
 function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// Minimal safe markdown — escapes first, then applies inline tags.
+// Supports **bold**, *italic*, `code`, [[Idea title]] links.
+function mdInline(text){
+  if(!text) return '';
+  // Extract [[links]] BEFORE escaping so titles stay clean.
+  const links = [];
+  let raw = String(text).replace(/\[\[([^\]]+)\]\]/g, (m, title) => {
+    const i = links.length; links.push(title.trim()); return `L${i}`;
+  });
+  let s = esc(raw)
+    .replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>')
+    .replace(/(?<!\w)\*([^*\n]+)\*(?!\w)/g, '<em>$1</em>')
+    .replace(/`([^`\n]+)`/g, '<code>$1</code>');
+  s = s.replace(/L(\d+)/g, (m, i) => {
+    const title = links[+i];
+    const target = findLinkedIdea(title);
+    const safeTitle = esc(title);
+    if(target) return `<a class="idea-link" onclick="event.stopPropagation();openEdit(${target.id})">${safeTitle}</a>`;
+    return `<span class="idea-link orphan" title="No matching idea found">${safeTitle}</span>`;
+  });
+  return s;
+}
+function findLinkedIdea(title){
+  if(!title || !S || !S.ideas) return null;
+  const t = title.toLowerCase().trim();
+  // Exact-chapter match wins
+  let m = S.ideas.find(i => (i.chapter||'').toLowerCase() === t);
+  if(m) return m;
+  // Then prefix match on the first ~60 chars of idea text
+  m = S.ideas.find(i => (i.text||'').toLowerCase().trim().startsWith(t.slice(0,60)));
+  if(m) return m;
+  // Then substring contains
+  m = S.ideas.find(i => (i.text||'').toLowerCase().includes(t));
+  return m || null;
+}
 function tagByKey(k){ return S.tags.find(t=>t.key===k)||{key:k,label:k,color:PALETTE[0]}; }
 function statusByKey(k){ return S.statuses.find(s=>s.key===k)||{key:k,label:k,color:PALETTE[3]}; }
 function nextStatusOf(k){
@@ -989,7 +1153,7 @@ function cardHtml(i){
   const stIco = `<span class="badge-icn">${statusIconSvg(statusIconKey(st), 11)}</span>`;
   return `<div class="idea-card" id="card-${i.id}" style="border-left:3px solid ${st.color.border}">
     <div class="card-head" onclick="toggleExpand(${i.id})">
-      <div class="card-text ${i.expanded?'':'clamped'}">${esc(i.text)}</div>
+      <div class="card-text ${i.expanded?'':'clamped'}">${mdInline(i.text)}</div>
       <button class="exp-btn">${i.expanded?ICON.chevUp:ICON.chevDown}</button>
     </div>
     <div class="card-foot">
@@ -1020,7 +1184,7 @@ function renderTable(list, area){
       const tags=i.cats.map(k=>{const t=tagByKey(k);return `<span class="badge" style="${badgeStyle(t.color)};font-size:10px;padding:1px 7px">${esc(t.label)}</span>`;}).join(' ');
       const dtStr = i.ts ? fmtTs(i.ts) : '—';
       return `<tr onclick="openEdit(${i.id})">
-        <td class="td-text"><p>${esc(i.text)}</p></td>
+        <td class="td-text"><p>${mdInline(i.text)}</p></td>
         <td>${tags}</td>
         <td><button class="badge" style="${badgeStyle(st.color)};border-style:solid;border-width:1px" onclick="event.stopPropagation();openStatusDropdown(event,${i.id})" title="Change status"><span class="badge-icn">${statusIconSvg(statusIconKey(st), 11)}</span>${esc(st.label)}${ICON.caretDown}</button></td>
         <td style="font-size:11px;color:var(--text3)">${esc(i.chapter||'')}</td>
@@ -1046,7 +1210,7 @@ function renderKanban(list, area){
       <div class="k-cards">${cards.map(i=>{
         const st=statusByKey(i.status);
         return `<div class="k-card" onclick="openEdit(${i.id})" style="border-left:3px solid ${st.color.border}">
-          <div class="k-card-text">${esc(i.text)}</div>
+          <div class="k-card-text">${mdInline(i.text)}</div>
           <div class="k-card-tags">${i.cats.map(k=>{const t2=tagByKey(k);return `<span class="badge" style="${badgeStyle(t2.color)};font-size:10px;padding:1px 6px">${esc(t2.label)}</span>`;}).join('')}</div>
         </div>`;
       }).join('')}</div>
