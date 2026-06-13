@@ -283,6 +283,31 @@ input[type="time"]::-webkit-calendar-picker-indicator{filter:invert(0.5);cursor:
 .sync-badge.syncing{color:var(--accent)}
 .sync-badge.error{color:#a02020}
 
+/* ─ Theme-aware logo swap ─ */
+.logo-light{display:none}
+body:not(.dark) .logo-light{display:block}
+body:not(.dark) .logo-dark{display:none}
+
+/* ─ Sync icon ─ */
+.sync-badge{display:inline-flex;align-items:center;justify-content:center;gap:5px;font-size:10.5px;color:var(--text3);padding:5px 8px;border-radius:10px;background:transparent;margin:0;border:1px solid transparent}
+.sync-badge svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.sync-badge.syncing{color:var(--accent)}
+.sync-badge.syncing svg{animation:spin 1.2s linear infinite}
+.sync-badge.error{color:#d77}
+@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+
+/* ─ Stats strip alignment ─ */
+.stats-strip{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.stat-pill{background:var(--surface);border:1px solid var(--border);border-radius:var(--rs);padding:8px 14px;display:inline-flex;gap:8px;align-items:center}
+.stat-num{font-size:18px;font-weight:600;color:var(--text);line-height:1}
+.stat-lbl{font-size:11.5px;color:var(--text2);display:inline-flex;align-items:center;gap:5px;line-height:1}
+.stat-lbl .icn{display:inline-flex;align-items:center;justify-content:center}
+.stat-lbl .icn svg{width:11px !important;height:11px !important}
+
+/* ─ Install button (better visual weight) ─ */
+#install-btn{display:none;align-items:center;justify-content:center;gap:6px;font-weight:500}
+#install-btn svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
 /* ─ Idea-text inline markdown ─ */
 .card-text strong, .k-card-text strong, .td-text strong{font-weight:600;color:var(--text)}
 .card-text em, .k-card-text em, .td-text em{font-style:italic}
@@ -367,7 +392,8 @@ input[type="time"]::-webkit-calendar-picker-indicator{filter:invert(0.5);cursor:
 <div class="sidebar" id="sidebar">
 <div class="sidebar-inner">
   <div class="sidebar-head" style="display:flex;align-items:center;gap:10px">
-    <img src="../assets/novalog-icon.svg" alt="" style="width:28px;height:28px;flex-shrink:0">
+    <img class="logo-dark" src="../assets/novalog-icon.svg" alt="" style="width:28px;height:28px;flex-shrink:0">
+    <img class="logo-light" src="../assets/novalog-icon-light.svg" alt="" style="width:28px;height:28px;flex-shrink:0">
     <div>
       <h1>NovaLog</h1>
       <p>Where ideas are born</p>
@@ -393,13 +419,13 @@ input[type="time"]::-webkit-calendar-picker-indicator{filter:invert(0.5);cursor:
   <div class="cat-list" id="status-list"></div>
 
   <div class="sidebar-bottom">
-    <button class="sb-btn accent" onclick="openAdd()" title="Add new idea (Ctrl+N)">+ Add Idea</button>
+    <button class="sb-btn accent" onclick="openAdd()" title="Add new idea (press N)">+ Add Idea</button>
     <div class="sb-row">
       <button class="sb-btn" onclick="openExport()" title="Export your ideas">Export</button>
       <label class="sb-btn" style="cursor:pointer">Import<input type="file" accept=".json" style="display:none" onchange="importData(event)"></label>
     </div>
     <button class="sb-btn" onclick="toggleDark()">Toggle dark mode</button>
-    <button class="sb-btn" id="install-btn" onclick="triggerInstall()" style="display:none;background:var(--accent-bg);color:var(--accent);border-color:var(--accent)">⤓ Install NovaLog</button>
+    <button class="sb-btn" id="install-btn" onclick="triggerInstall()" style="background:var(--accent-bg);color:var(--accent);border-color:var(--accent)"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Install NovaLog</button>
     <div class="sync-badge" id="sync-badge" style="text-align:center;padding:6px;margin:0">Loading…</div>
     <button class="sb-btn" id="account-btn" onclick="openAccount()" style="display:none;text-align:left;padding:8px 10px">
       <div style="font-size:11px;color:var(--text3);margin-bottom:1px">Account</div>
@@ -415,7 +441,7 @@ input[type="time"]::-webkit-calendar-picker-indicator{filter:invert(0.5);cursor:
     <button class="toggle-sidebar-btn" onclick="toggleSidebar()" title="Toggle sidebar"><span class="icn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></span></button>
     <div class="search-box">
       <span class="icn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text3)"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
-      <input type="text" id="search" placeholder="Search ideas… (Ctrl+K)" oninput="render()">
+      <input type="text" id="search" placeholder="Search ideas… (/ or Ctrl+K)" oninput="render()">
     </div>
     <select class="sort-sel" id="sort-sel" onchange="render()">
       <option value="newest">Newest first</option>
@@ -424,8 +450,8 @@ input[type="time"]::-webkit-calendar-picker-indicator{filter:invert(0.5);cursor:
       <option value="za">Z → A</option>
       <option value="by-status">Group by status</option>
     </select>
-    <button class="expand-all-btn" id="exp-all-btn" onclick="toggleExpandAll()">Expand all</button>
-    <button class="resurface-btn" onclick="openResurface()" title="Resurface forgotten ideas (Ctrl+Shift+R)"><svg viewBox="0 0 24 24"><path d="M12 3l1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5z"/><path d="M19 14l.75 2.25L22 17l-2.25.75L19 20l-.75-2.25L16 17l2.25-.75z"/></svg>Resurface</button>
+    <button class="expand-all-btn" id="exp-all-btn" onclick="toggleExpandAll()" style="display:none">Expand all</button>
+    <button class="resurface-btn" onclick="openResurface()" title="Resurface forgotten ideas (press R)"><svg viewBox="0 0 24 24"><path d="M12 3l1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5z"/><path d="M19 14l.75 2.25L22 17l-2.25.75L19 20l-.75-2.25L16 17l2.25-.75z"/></svg>Resurface</button>
     <div class="view-grp">
       <button class="vbtn active" id="vb-cards" title="Cards" onclick="setView('cards')" style="display:flex;align-items:center;justify-content:center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="4" rx="1"/><rect x="3" y="10" width="18" height="4" rx="1"/><rect x="3" y="16" width="18" height="4" rx="1"/></svg></button>
       <button class="vbtn" id="vb-table" title="Table" onclick="setView('table')" style="display:flex;align-items:center;justify-content:center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="1"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="4" x2="9" y2="20"/></svg></button>
@@ -743,7 +769,8 @@ function sbClient(){
 function setSyncBadge(text, cls){
   const el = document.getElementById('sync-badge');
   if(!el) return;
-  el.textContent = text;
+  const syncIcon = `<svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><polyline points="21 3 21 8 16 8"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><polyline points="3 21 3 16 8 16"/></svg>`;
+  el.innerHTML = `${syncIcon}<span>${text}</span>`;
   el.className = 'sync-badge' + (cls ? ' ' + cls : '');
 }
 function scheduleCloudPush(){
@@ -1037,6 +1064,8 @@ function applyBootUI(){
     const btn = document.getElementById('vb-'+x);
     if(btn) btn.classList.toggle('active',S.view===x);
   });
+  const expBtn = document.getElementById('exp-all-btn');
+  if(expBtn) expBtn.style.display = (S.view === 'cards') ? 'inline-flex' : 'none';
 }
 async function bootstrap(){
   // Always start from a clean slate — S is intentionally undefined
@@ -1397,6 +1426,9 @@ function toggleStatusFilter(k){
 function setView(v){
   S.view=v;
   ['cards','table','kanban'].forEach(x=>{ document.getElementById('vb-'+x).classList.toggle('active',x===v); });
+  // Expand All only makes sense in cards view
+  const expBtn = document.getElementById('exp-all-btn');
+  if(expBtn) expBtn.style.display = (v === 'cards') ? 'inline-flex' : 'none';
   save(); render();
 }
 
@@ -1613,30 +1645,23 @@ document.addEventListener('keydown',e=>{
     closeDrop();
     return;
   }
-  // Don't trigger shortcuts while typing in a field
   const target = e.target;
   const isTyping = target && (target.tagName==='INPUT' || target.tagName==='TEXTAREA' || target.isContentEditable);
 
-  // Ctrl/Cmd+K → focus search (works from anywhere)
-  if((e.metaKey||e.ctrlKey) && e.key==='k'){
+  // Ctrl/Cmd+K → focus search (browsers don't bind this — safe)
+  if((e.metaKey||e.ctrlKey) && e.key==='k' && !e.shiftKey){
     e.preventDefault(); document.getElementById('search')?.focus();
     return;
   }
-  // Ctrl/Cmd+N → quick add. Works even while typing if a modifier is held.
-  if((e.metaKey||e.ctrlKey) && (e.key==='n' || e.key==='N')){
-    e.preventDefault(); if(_user || !sbClient()) openAdd();
-    return;
-  }
-  // Ctrl/Cmd+Shift+R → resurface
-  if((e.metaKey||e.ctrlKey) && e.shiftKey && (e.key==='r' || e.key==='R')){
-    e.preventDefault(); openResurface();
-    return;
-  }
-  // Single-key shortcuts only fire outside typing contexts
-  if(isTyping) return;
-  if(e.key==='/' && !e.metaKey && !e.ctrlKey){
-    e.preventDefault(); document.getElementById('search')?.focus();
-  }
+
+  // Single-key shortcuts only fire when NOT typing in a field.
+  // Avoids conflicts with browser Ctrl/Cmd+N (new tab/window) and
+  // Ctrl+Shift+R (hard reload).
+  if(isTyping || e.metaKey || e.ctrlKey || e.altKey) return;
+
+  if(e.key==='/'){ e.preventDefault(); document.getElementById('search')?.focus(); return; }
+  if(e.key==='n' || e.key==='N'){ e.preventDefault(); if(_user || !sbClient()) openAdd(); return; }
+  if(e.key==='r' || e.key==='R'){ e.preventDefault(); openResurface(); return; }
 });
 
 // ── Dark mode ─────────────────────────────────────────────────────────
