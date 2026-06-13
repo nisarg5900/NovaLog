@@ -1,0 +1,1214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Idea Tracker — Unfinished Story</title>
+<style>
+:root{
+  --bg:#faf9f7;--surface:#fff;--surface2:#f3f1ee;--surface3:#ece9e4;
+  --border:#e4e0da;--border2:#ccc8c0;
+  --text:#1a1714;--text2:#6b6560;--text3:#a09a93;
+  --accent:#c4784a;--accent-bg:#fdf0e8;--accent-text:#7a3c18;
+  --used-border:#4a7fc4;--unused-border:#5a9e6f;
+  --shadow:0 2px 12px rgba(0,0,0,.08);
+  --r:10px;--rs:6px;
+}
+.dark{
+  --bg:#131210;--surface:#1e1c19;--surface2:#272420;--surface3:#302d29;
+  --border:#3a3630;--border2:#4a4540;
+  --text:#f0ece6;--text2:#a09a90;--text3:#6a6460;
+  --accent:#e0946a;--accent-bg:#2e2018;--accent-text:#f0b888;
+  --used-border:#5a8fd4;--unused-border:#6aae7f;
+  --shadow:0 2px 12px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);overflow:hidden}
+button{font-family:inherit;cursor:pointer}
+input,textarea,select{font-family:inherit}
+
+/* ─ Layout ─ */
+.app{display:flex;height:100vh;overflow:hidden;position:relative}
+.sidebar{width:240px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;transition:width .2s,transform .2s;z-index:10}
+.sidebar.collapsed{width:0;border-right:none}
+.sidebar-inner{width:240px;min-width:240px;display:flex;flex-direction:column;height:100%;overflow-y:auto}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:10px 14px;display:flex;gap:8px;align-items:center;flex-shrink:0;flex-wrap:wrap}
+.content{flex:1;overflow-y:auto;padding:16px}
+
+/* ─ Sidebar ─ */
+.sidebar-head{padding:14px 14px 10px;border-bottom:1px solid var(--border);flex-shrink:0}
+.sidebar-head h1{font-size:14px;font-weight:600;color:var(--text)}
+.sidebar-head p{font-size:11px;color:var(--text3);margin-top:2px}
+.sidebar-sec{padding:10px 10px 2px}
+.sidebar-sec-lbl{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--text3);padding:0 4px;margin-bottom:4px;display:flex;justify-content:space-between;align-items:center}
+.sidebar-sec-lbl button{font-size:10px;color:var(--accent);background:none;border:none;cursor:pointer;padding:0}
+.nav-btn{display:flex;align-items:center;gap:7px;width:100%;padding:6px 8px;border-radius:var(--rs);border:none;background:none;color:var(--text2);font-size:13px;cursor:pointer;text-align:left;transition:background .12s}
+.nav-btn:hover{background:var(--surface2)}
+.nav-btn.active{background:var(--accent-bg);color:var(--accent);font-weight:500}
+.nav-btn .ico{width:16px;text-align:center;font-size:13px}
+.nav-btn .cnt{margin-left:auto;font-size:11px;background:var(--surface2);color:var(--text3);padding:1px 6px;border-radius:10px}
+.nav-btn.active .cnt{background:var(--accent-bg);color:var(--accent)}
+.cat-list{display:flex;flex-direction:column;gap:1px;padding:0 10px 6px}
+.cat-btn{display:flex;align-items:center;gap:7px;width:100%;padding:5px 8px;border-radius:var(--rs);border:none;background:none;color:var(--text2);font-size:12px;cursor:pointer;text-align:left;transition:background .12s}
+.cat-btn:hover{background:var(--surface2)}
+.cat-btn.active{background:var(--surface3);color:var(--text);font-weight:500}
+.dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.cat-btn .cnt{margin-left:auto;font-size:11px;color:var(--text3)}
+.sidebar-bottom{padding:10px 12px 14px;margin-top:auto;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:6px}
+.sb-btn{padding:7px;border-radius:var(--rs);border:1px solid var(--border);background:var(--surface);color:var(--text2);font-size:12px;cursor:pointer;text-align:center;width:100%;transition:background .12s}
+.sb-btn:hover{background:var(--surface2);color:var(--text)}
+.sb-btn.accent{background:var(--accent);color:#fff;border-color:var(--accent);font-weight:500}
+.sb-btn.accent:hover{opacity:.9}
+.sb-row{display:flex;gap:6px}
+.sb-row .sb-btn{flex:1}
+
+/* ─ Topbar ─ */
+.toggle-sidebar-btn{background:none;border:1px solid var(--border);border-radius:var(--rs);padding:6px 10px;color:var(--text2);font-size:16px;line-height:1;flex-shrink:0}
+.toggle-sidebar-btn:hover{background:var(--surface2)}
+.search-box{flex:1;min-width:120px;display:flex;align-items:center;gap:7px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--rs);padding:6px 11px}
+.search-box input{border:none;background:none;color:var(--text);font-size:13px;flex:1;outline:none;min-width:0}
+.search-box input::placeholder{color:var(--text3)}
+.tb-btn{padding:6px 12px;border-radius:var(--rs);border:1px solid var(--border);background:var(--surface);color:var(--text2);font-size:12px;cursor:pointer;white-space:nowrap;transition:all .12s;flex-shrink:0}
+.tb-btn:hover{background:var(--surface2);color:var(--text)}
+.view-grp{display:flex;border:1px solid var(--border);border-radius:var(--rs);overflow:hidden;flex-shrink:0}
+.vbtn{padding:5px 9px;border:none;background:none;color:var(--text3);cursor:pointer;font-size:14px;transition:background .12s}
+.vbtn:hover{background:var(--surface2)}
+.vbtn.active{background:var(--surface2);color:var(--text)}
+.sort-sel{padding:5px 8px;border:1px solid var(--border);border-radius:var(--rs);background:var(--surface);color:var(--text);font-size:12px;outline:none;flex-shrink:0}
+.expand-all-btn{padding:6px 10px;border-radius:var(--rs);border:1px solid var(--border);background:var(--surface);color:var(--text2);font-size:12px;cursor:pointer;flex-shrink:0}
+.expand-all-btn:hover{background:var(--surface2)}
+
+/* ─ Stats ─ */
+.stats-strip{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.stat-pill{background:var(--surface);border:1px solid var(--border);border-radius:var(--rs);padding:7px 14px;display:flex;gap:7px;align-items:baseline}
+.stat-num{font-size:18px;font-weight:600}
+.stat-lbl{font-size:11px;color:var(--text2)}
+
+/* ─ Active filters ─ */
+.active-filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;align-items:center}
+.af-lbl{font-size:11px;color:var(--text3)}
+.af-chip{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:500;border:1px solid var(--border2);background:var(--surface2);color:var(--text2)}
+.af-chip button{background:none;border:none;cursor:pointer;color:var(--text3);font-size:13px;padding:0;line-height:1}
+
+/* ─ Cards ─ */
+.cards-grid{display:flex;flex-direction:column;gap:9px}
+.idea-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);transition:box-shadow .15s,border-color .15s}
+.idea-card:hover{border-color:var(--border2);box-shadow:var(--shadow)}
+.idea-card.used{border-left:3px solid var(--used-border)}
+.idea-card.unused{border-left:3px solid var(--unused-border)}
+.card-head{display:flex;align-items:flex-start;gap:8px;padding:12px 14px 8px;cursor:pointer}
+.card-text{flex:1;font-size:13.5px;line-height:1.7;color:var(--text);white-space:pre-wrap;word-break:break-word}
+.card-text.clamped{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;white-space:normal}
+.exp-btn{background:none;border:1px solid var(--border);border-radius:4px;color:var(--text3);font-size:11px;padding:2px 6px;flex-shrink:0;margin-top:2px;transition:background .12s}
+.exp-btn:hover{background:var(--surface2)}
+.card-foot{padding:6px 14px 10px;display:flex;gap:5px;align-items:center;flex-wrap:wrap;border-top:1px solid var(--border)}
+.badge{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:500;padding:2px 9px;border-radius:20px;white-space:nowrap;user-select:none}
+.badge .bx{cursor:pointer;opacity:.6;font-size:12px;line-height:1}
+.badge .bx:hover{opacity:1}
+.add-tag-btn{font-size:11px;padding:2px 9px;border-radius:20px;border:1px dashed var(--border2);background:none;color:var(--text3);cursor:pointer;transition:all .12s}
+.add-tag-btn:hover{color:var(--text2);border-color:var(--border2);background:var(--surface2)}
+.card-actions{margin-left:auto;display:flex;gap:5px}
+.act-btn{font-size:11px;padding:2px 9px;border-radius:20px;border:1px solid var(--border);background:none;color:var(--text3);cursor:pointer;transition:all .12s}
+.act-btn:hover{background:var(--surface2);color:var(--text2)}
+
+/* ─ Table ─ */
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead th{text-align:left;padding:8px 12px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.6px;color:var(--text3);border-bottom:1px solid var(--border);white-space:nowrap;cursor:pointer;user-select:none}
+thead th:hover{color:var(--text2)}
+tbody tr{border-bottom:1px solid var(--border);cursor:pointer}
+tbody tr:hover{background:var(--surface2)}
+tbody td{padding:9px 12px;vertical-align:top}
+.td-text{max-width:400px}
+.td-text p{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.5}
+
+/* ─ Kanban ─ */
+.kanban-wrap{display:flex;gap:12px;overflow-x:auto;padding-bottom:8px;align-items:flex-start}
+.k-col{min-width:200px;width:210px;flex-shrink:0}
+.k-col-head{font-size:12px;font-weight:600;color:var(--text2);margin-bottom:8px;padding:0 2px;display:flex;justify-content:space-between}
+.k-col-head .kc{font-size:11px;font-weight:400;color:var(--text3)}
+.k-cards{display:flex;flex-direction:column;gap:7px}
+.k-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rs);padding:9px 11px;font-size:12px;line-height:1.55;color:var(--text);cursor:pointer;transition:box-shadow .12s;overflow:hidden;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical}
+.k-card:hover{box-shadow:var(--shadow)}
+.k-card.used{border-left:3px solid var(--used-border)}
+.k-card-tags{margin-top:5px;display:flex;gap:3px;flex-wrap:wrap;-webkit-line-clamp:unset;display:flex}
+
+/* ─ Dropdown portal ─ */
+#drop-portal{position:fixed;z-index:9999;background:var(--surface);border:1px solid var(--border2);border-radius:var(--rs);padding:4px;min-width:190px;box-shadow:0 6px 20px rgba(0,0,0,.18);display:none;max-height:300px;overflow-y:auto}
+.drop-item{padding:6px 10px;border-radius:4px;font-size:12.5px;cursor:pointer;color:var(--text);display:flex;align-items:center;gap:8px}
+.drop-item:hover{background:var(--surface2)}
+.drop-item.disabled{opacity:.35;pointer-events:none}
+.drop-sep{height:1px;background:var(--border);margin:3px 0}
+.drop-new-input{padding:5px 10px;display:flex;gap:6px;align-items:center}
+.drop-new-input input{flex:1;padding:4px 7px;border:1px solid var(--border);border-radius:4px;background:var(--surface2);color:var(--text);font-size:12px;outline:none}
+.drop-new-input button{padding:4px 8px;border-radius:4px;border:none;background:var(--accent);color:#fff;font-size:11px}
+
+/* ─ Modal ─ */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:2000;display:none;align-items:center;justify-content:center;padding:16px}
+.modal-overlay.open{display:flex}
+.modal{background:var(--surface);border-radius:14px;width:100%;max-width:600px;max-height:92vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+.modal-head{padding:18px 22px 14px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.modal-head h2{font-size:15px;font-weight:600}
+.modal-x{background:none;border:none;color:var(--text3);font-size:22px;cursor:pointer;padding:0;line-height:1}
+.modal-body{padding:18px 22px}
+.modal-foot{padding:12px 22px 18px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end}
+.fgrp{margin-bottom:14px}
+.flbl{font-size:12px;font-weight:500;color:var(--text2);display:block;margin-bottom:6px}
+.ftextarea{width:100%;min-height:110px;padding:10px 12px;border:1px solid var(--border);border-radius:var(--rs);background:var(--surface2);color:var(--text);font-size:13.5px;line-height:1.7;resize:vertical;outline:none;transition:border-color .15s}
+.ftextarea:focus{border-color:var(--accent)}
+.finput{width:100%;padding:7px 12px;border:1px solid var(--border);border-radius:var(--rs);background:var(--surface2);color:var(--text);font-size:13px;outline:none;transition:border-color .15s}
+.finput:focus{border-color:var(--accent)}
+.datetime-row{display:flex;gap:8px;flex-wrap:wrap}
+.datetime-row .finput{flex:1;min-width:140px}
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="time"]::-webkit-calendar-picker-indicator{filter:invert(0.5);cursor:pointer}
+.dark input[type="date"]::-webkit-calendar-picker-indicator,
+.dark input[type="time"]::-webkit-calendar-picker-indicator{filter:invert(0.7)}
+.card-dt{font-size:11px;color:var(--text3);margin-left:auto;white-space:nowrap;align-self:center}
+.tag-picker{display:flex;gap:6px;flex-wrap:wrap}
+.tpc{padding:5px 13px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;border:2px solid transparent;transition:all .12s;opacity:.55}
+.tpc:hover{opacity:.8}
+.tpc.sel{opacity:1;border-color:currentColor !important}
+.status-row{display:flex;gap:8px;flex-wrap:wrap}
+.sopt{flex:1;min-width:100px;padding:8px 10px;border-radius:var(--rs);border:1.5px solid var(--border);background:none;color:var(--text2);font-size:13px;cursor:pointer;text-align:center;transition:all .12s}
+.sopt:hover{border-color:var(--border2);background:var(--surface2)}
+.sopt.sel{font-weight:500}
+.modal-btn{padding:7px 18px;border-radius:var(--rs);border:1px solid var(--border);background:var(--surface);color:var(--text2);font-size:13px;cursor:pointer;transition:all .12s}
+.modal-btn:hover{background:var(--surface2)}
+.modal-btn.primary{background:var(--accent);color:#fff;border-color:var(--accent);font-weight:500}
+.modal-btn.primary:hover{opacity:.9}
+.modal-btn.danger{background:#e55;color:#fff;border-color:#e55}
+.modal-btn.danger:hover{opacity:.9}
+
+/* ─ Tag/Status manager modal ─ */
+.mgr-list{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+.mgr-item{display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface2);border-radius:var(--rs);font-size:13px}
+.mgr-item .dot{flex-shrink:0}
+.mgr-item-name{flex:1}
+.mgr-item-cnt{font-size:11px;color:var(--text3);margin-left:auto}
+.mgr-del{background:none;border:none;color:var(--text3);font-size:16px;cursor:pointer;padding:0 4px;line-height:1}
+.mgr-del:hover{color:#e55}
+.mgr-add-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.mgr-add-row input{flex:1;min-width:120px;padding:6px 10px;border:1px solid var(--border);border-radius:var(--rs);background:var(--surface);color:var(--text);font-size:13px;outline:none}
+.mgr-add-row input:focus{border-color:var(--accent)}
+.color-pick{display:flex;gap:6px;flex-wrap:wrap}
+.cpick{width:22px;height:22px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:border-color .12s}
+.cpick.sel{border-color:var(--text)}
+
+/* ─ Empty ─ */
+.empty{text-align:center;padding:50px 20px;color:var(--text3);font-size:14px}
+.empty-ico{font-size:36px;margin-bottom:10px}
+
+/* ─ Scrollbar ─ */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+
+/* ─ Mobile overlay ─ */
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:9}
+@media(max-width:640px){
+  body{overflow:auto}
+  .app{flex-direction:column;height:auto;overflow:auto}
+  .sidebar{position:fixed;top:0;left:0;height:100%;z-index:10;transform:translateX(-100%);width:260px!important;transition:transform .2s}
+  .sidebar.mobile-open{transform:translateX(0)}
+  .sidebar-overlay{display:block}
+  .sidebar.collapsed{transform:translateX(-100%)}
+  .main{min-height:100vh}
+  .content{overflow-y:visible}
+  .body{overflow:visible}
+  .topbar{position:sticky;top:0;z-index:8}
+  .kanban-wrap{flex-direction:column}
+  .k-col{width:100%;min-width:0}
+  table{font-size:12px}
+}
+</style>
+</head>
+<body>
+
+<div class="app" id="app">
+
+<!-- Sidebar overlay for mobile -->
+<div class="sidebar-overlay" id="sb-overlay" style="display:none" onclick="closeMobileSidebar()"></div>
+
+<!-- Sidebar -->
+<div class="sidebar" id="sidebar">
+<div class="sidebar-inner">
+  <div class="sidebar-head">
+    <h1>📖 Idea Tracker</h1>
+    <p>Unfinished Story</p>
+  </div>
+
+  <div class="sidebar-sec">
+    <div class="sidebar-sec-lbl">Views</div>
+    <div style="display:flex;flex-direction:column;gap:1px">
+      <button class="nav-btn active" id="nav-all" onclick="setNav('all')"><span class="ico">📋</span>All Ideas<span class="cnt" id="cnt-all">0</span></button>
+      <button class="nav-btn" id="nav-used" onclick="setNav('used')"><span class="ico">✅</span>Used in book<span class="cnt" id="cnt-used">0</span></button>
+      <button class="nav-btn" id="nav-unused" onclick="setNav('unused')"><span class="ico">💡</span>Not yet used<span class="cnt" id="cnt-unused">0</span></button>
+    </div>
+  </div>
+
+  <div class="sidebar-sec" style="margin-top:4px">
+    <div class="sidebar-sec-lbl">By Category <button onclick="openMgr('tag')">Manage</button></div>
+  </div>
+  <div class="cat-list" id="cat-list"></div>
+
+  <div class="sidebar-sec" style="margin-top:4px">
+    <div class="sidebar-sec-lbl">By Status <button onclick="openMgr('status')">Manage</button></div>
+  </div>
+  <div class="cat-list" id="status-list"></div>
+
+  <div class="sidebar-bottom">
+    <button class="sb-btn accent" onclick="openAdd()">+ Add Idea</button>
+    <div class="sb-row">
+      <button class="sb-btn" onclick="exportData()">Export JSON</button>
+      <label class="sb-btn" style="cursor:pointer">Import<input type="file" accept=".json" style="display:none" onchange="importData(event)"></label>
+    </div>
+    <button class="sb-btn" onclick="toggleDark()">Toggle dark mode</button>
+  </div>
+</div>
+</div>
+
+<!-- Main -->
+<div class="main">
+  <div class="topbar">
+    <button class="toggle-sidebar-btn" onclick="toggleSidebar()" title="Toggle sidebar">☰</button>
+    <div class="search-box">
+      <span style="color:var(--text3);font-size:13px">🔍</span>
+      <input type="text" id="search" placeholder="Search ideas… (Ctrl+K)" oninput="render()">
+    </div>
+    <select class="sort-sel" id="sort-sel" onchange="render()">
+      <option value="newest">Newest first</option>
+      <option value="oldest">Oldest first</option>
+      <option value="az">A → Z</option>
+      <option value="za">Z → A</option>
+      <option value="used-first">Used first</option>
+      <option value="unused-first">Unused first</option>
+    </select>
+    <button class="expand-all-btn" id="exp-all-btn" onclick="toggleExpandAll()">Expand all</button>
+    <div class="view-grp">
+      <button class="vbtn active" id="vb-cards" title="Cards" onclick="setView('cards')">≡</button>
+      <button class="vbtn" id="vb-table" title="Table" onclick="setView('table')">⊞</button>
+      <button class="vbtn" id="vb-kanban" title="Kanban" onclick="setView('kanban')">⬛</button>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="stats-strip" id="stats-strip"></div>
+    <div class="active-filters" id="active-filters"></div>
+    <div id="main-area"></div>
+  </div>
+</div>
+</div>
+
+<!-- Tag dropdown portal -->
+<div id="drop-portal"></div>
+
+<!-- Idea modal -->
+<div class="modal-overlay" id="idea-modal">
+  <div class="modal">
+    <div class="modal-head">
+      <h2 id="modal-title">Add Idea</h2>
+      <button class="modal-x" onclick="closeModal('idea-modal')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="fgrp">
+        <label class="flbl">Idea / text (full, uncompressed)</label>
+        <textarea class="ftextarea" id="m-text" rows="6" placeholder="Paste or write the full idea here…"></textarea>
+      </div>
+      <div class="fgrp">
+        <label class="flbl">Date &amp; time</label>
+        <div class="datetime-row">
+          <input class="finput" type="date" id="m-date">
+          <input class="finput" type="time" id="m-time" step="1">
+        </div>
+      </div>
+      <div class="fgrp">
+        <label class="flbl">Chapter / note (optional)</label>
+        <input class="finput" id="m-chapter" placeholder="e.g. Ch 3, or 'for the ending'">
+      </div>
+      <div class="fgrp">
+        <label class="flbl">Tags <span style="font-size:11px;color:var(--text3)">(click to toggle — must keep at least one)</span></label>
+        <div class="tag-picker" id="m-tags"></div>
+      </div>
+      <div class="fgrp">
+        <label class="flbl">Status</label>
+        <div class="status-row" id="m-statuses"></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="modal-btn danger" id="m-delete-btn" onclick="deleteIdea()" style="display:none;margin-right:auto">Delete idea</button>
+      <button class="modal-btn" onclick="closeModal('idea-modal')">Cancel</button>
+      <button class="modal-btn primary" onclick="saveIdea()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Tag/Status manager modal -->
+<div class="modal-overlay" id="mgr-modal">
+  <div class="modal" style="max-width:460px">
+    <div class="modal-head">
+      <h2 id="mgr-title">Manage Tags</h2>
+      <button class="modal-x" onclick="closeModal('mgr-modal')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="mgr-list" id="mgr-list"></div>
+      <div class="mgr-add-row">
+        <input id="mgr-new-name" placeholder="New name…">
+        <div class="color-pick" id="mgr-color-pick"></div>
+        <button class="modal-btn primary" onclick="mgrAdd()" style="padding:6px 14px;font-size:12px">Add</button>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="modal-btn" onclick="closeModal('mgr-modal')">Done</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Palette for new tags/statuses ─────────────────────────────────────
+const PALETTE = [
+  {bg:'#f0eeff',text:'#4a36b8',border:'#7c69d4'},
+  {bg:'#fef0ea',text:'#aa3c1a',border:'#d9622e'},
+  {bg:'#e8f7ef',text:'#1a7047',border:'#3aaa70'},
+  {bg:'#e8f2fd',text:'#1653a0',border:'#3a7fd4'},
+  {bg:'#fef8e8',text:'#8a5c10',border:'#d49a2a'},
+  {bg:'#fdeef4',text:'#992050',border:'#d45a84'},
+  {bg:'#eef8e8',text:'#2a6a1a',border:'#5aaa3a'},
+  {bg:'#f4f3f0',text:'#5a5550',border:'#aaa090'},
+  {bg:'#fff0f0',text:'#aa1a1a',border:'#e05050'},
+  {bg:'#f0f8ff',text:'#1a5a8a',border:'#50a0e0'},
+  {bg:'#fff8f0',text:'#8a4a0a',border:'#e0901a'},
+  {bg:'#f8f0ff',text:'#7a1a9a',border:'#c050e0'},
+];
+
+// ── Default data ──────────────────────────────────────────────────────
+const DEFAULT_TAGS = [
+  {key:'devotion',   label:'Devotion & love',     color:PALETTE[0]},
+  {key:'loss',       label:'Loss & grief',         color:PALETTE[1]},
+  {key:'longing',    label:'Longing & waiting',    color:PALETTE[5]},
+  {key:'memory',     label:'Memory & moments',     color:PALETTE[2]},
+  {key:'faith',      label:'Faith & spirituality', color:PALETTE[3]},
+  {key:'philosophy', label:'Philosophy of love',   color:PALETTE[4]},
+  {key:'future',     label:'Future & dreams',      color:PALETTE[6]},
+  {key:'identity',   label:'Identity & growth',    color:PALETTE[7]},
+];
+const DEFAULT_STATUSES = [
+  {key:'used',   label:'Used in book',  color:{bg:'#e8f2fd',text:'#1653a0',border:'#3a7fd4'}},
+  {key:'unused', label:'Not yet used',  color:{bg:'#eef8e8',text:'#2a6a1a',border:'#5aaa3a'}},
+];
+
+const RAW_IDEAS = [
+  {id:1,ts:1583020800000,text:`Where we didn't ask for anything while praying, just say hi, embrace the presence`,cats:['faith'],status:'used',chapter:'Ch 1'},
+  {id:2,ts:1583020801000,text:`My existing relationship ended, unexpectedly in a few months. My girlfriend at the time, suddenly one day told me that she wanted to breakup with me, she didn't tell me why, she didn't explain. We were together for over 3 years. Although when we fell in love, we were young around 18 – 19 right after our school. People say that, it is expected that young love doesn't stay for long but for me I felt things deeply, I wanted it to last. But as much as I wanted to hold it, I couldn't. I didn't get any closure from her, I begged her for months, to give me a chance to change things the way she wanted but, nothing I would do could make her stay. A lot of things happened in the same period, like all the pain in the entire world was pushed on my heart all at once. I couldn't get over her I started stalking her social media profiles, made fake accounts and requested to follow her, and after a few days, when she accepted the request of one of my fake accounts, I could see images of her with her ex-boyfriend, which were taken 1 day after our breakup, which made things clearer that I was being cheated on.`,cats:['loss','identity'],status:'used',chapter:'Ch 3'},
+  {id:3,ts:1583020802000,text:`Fears
+
+Fear of becoming the person you'd hate once,
+
+Fear of seeing her married to someone else.
+
+Fears of unanswered prayers`,cats:['longing','faith'],status:'unused'},
+  {id:4,ts:1583020803000,text:`She once told me, It's about the person you think of when you are doing your favourite thing, but I didn't realise when she became the one about whom I think when I'm doing absolutely anything`,cats:['devotion','longing'],status:'unused'},
+  {id:5,ts:1583020804000,text:`We were seeing each other since college and everytime we'd go out, with friends, for dinner or lunch, I'd purposefully sit on a seat next to her or opposite to her`,cats:['memory','devotion'],status:'used',chapter:'Ch 6'},
+  {id:6,ts:1583020805000,text:`The more I try to understand, the more I realize how much I don't.
+The mist in the mountains hides the path beyond, and though the river runs clear, its depths remain unknown.
+I chased crumbling stones and followed rippling echoes, thinking I had climbed far enough to see it all.
+But some paths never reveal their destination — and some currents never show what they carry.
+I was greeted with silence. And maybe... that silence holds the space where the hurt of not knowing and the hope to see further quietly meet.`,cats:['philosophy','longing'],status:'unused'},
+  {id:7,ts:1583020806000,text:`Till today I give myself false hopes when she posts a cryptic story on Instagram, whether it is meant for me.`,cats:['longing'],status:'unused'},
+  {id:8,ts:1583020807000,text:`Don't know if you're truly happy where you are and but I think what led here was the fact that you were anxious attached, and I was being avoidant, you grew the fear that I would leave you someday, and so you prepared yourself for that, grew distant. I remember when we fought, you said that you believe I'd leave once my mom finds me a suitor.`,cats:['identity','loss'],status:'unused'},
+  {id:9,ts:1583020808000,text:`Just like Jim waited for Pam, I would wait for her`,cats:['longing','devotion'],status:'unused'},
+  {id:10,ts:1583020809000,text:`The black thread around her ankle, her cute little toenails, never would I have ever imagined that I'd fall in love with her feet. I called them cute feet and would Address them as if they had their own personality, I'd ask her how are cute feet and she'd send me a picture. That picture would make my day.`,cats:['memory','devotion'],status:'unused'},
+  {id:11,ts:1583020810000,text:`The way I used to adjust the mirrors on my scooter to see her, while she was sitting behind me.`,cats:['memory'],status:'unused'},
+  {id:12,ts:1583020811000,text:`After experiencing life she left me at where she picked me up.`,cats:['loss'],status:'unused'},
+  {id:13,ts:1583020812000,text:`I Don't know what is yet to come, but if I can't have you in this lifetime, I want to ask you out right now for the next one. Even if we're frogs cows or birds, I'd still fall for you.`,cats:['longing','devotion'],status:'unused'},
+  {id:14,ts:1583020813000,text:`D'Arline,
+
+I adore you, sweetheart.
+
+Know how much you like to hear that but I don't only write because you like it – I write it because it makes me warm all over inside to write it to you.
+
+It is such a terribly long time since I last wrote to you almost two years but I know you'll excuse me because you understand how I am, stubborn and realistic; and I thought there was no sense to writing.
+
+But now I know my darling wife that it is right to do what I have delayed in doing, and that I have done so much in the past. I want to tell you I love you. I want to love you. I always will love you.
+
+I find it hard to understand in my mind what it means to love you after you are dead but I still want to comfort and take care of you – and I want you to love me and care for me. I want to have problems to discuss with you – I want to do little projects with you.
+
+When you were sick you worried because you could not give me something that you wanted to and thought I needed. You needn't have worried. Just as I told you then there was no real need because I loved you in so many ways so much. And now it is clearly even more true you can give me nothing now yet I love you so that you stand in my way of loving anyone else but I want you to stand there. You, dead, are so much better than anyone else alive.
+
+I know you will assure me that I am foolish and that you want me to have full happiness and don't want to be in my way. I'll bet you are surprised that I don't even have a girlfriend (except you, sweetheart) after two years. But you can't help it, darling, nor can I – I don't understand it, for I have met many girls and very nice ones and I don't want to remain alone but in two or three meetings they all seem ashes. You only are left to me. You are real.
+
+My darling wife, I do adore you.
+I love my wife. My wife is dead.
+Rich.
+
+PS Please excuse my not mailing this but I don't know your new address.
+
+(Richard Feynman's letter to his deceased wife — a parallel to unexpressed, impossible love)`,cats:['devotion','philosophy'],status:'unused'},
+  {id:15,ts:1583020814000,text:`Manifest the feeling and not the person`,cats:['philosophy','faith'],status:'unused'},
+  {id:16,ts:1583020815000,text:`She used to tell me no PDA and then I saw her pictures kissing some other guy on Navratri grounds full of People. Holding hands on a public railway station`,cats:['loss'],status:'unused'},
+  {id:17,ts:1583020816000,text:`I never loved her for what she did for me. I loved her for everything she was, her imperfections, and her everything`,cats:['devotion'],status:'used',chapter:'Ch 8'},
+  {id:18,ts:1583020817000,text:`The moment you realize that your mind is getting distracted, is where you have the power to bring it back to what you want to focus it on. It is away from you until the moment it is not in your conscious. Chanting helps me bring back my consciousness to where I want to focus it. Doesn't mean I am able to suppress my feelings of what I feel for her, I am just able to hold it more consciously, I don't want to be mad in love, I want to love madly, being conscious of what I choose, why I choose and why I fight for it.`,cats:['faith','identity'],status:'unused'},
+  {id:19,ts:1583020818000,text:`when i was eight, i asked my dad if he hated my mom, and i didn't understand why you'd stay at a table that made you want to leave, and when i got older, i wanted to leave my boyfriend for the exact same feeling because once we started living together it started to annoy me that he'd leave his hair all over the sink every morning, he'd tell the exact same stories every time we passed the same street, he'd take forever to respond to my texts and i just got this sense that i was starting to pull away... and that's when i called my dad. he said those things are parts of the person you love, and suddenly i was eight again — my mom wasn't chewing loudly to push me away, she was just comfortable being herself. and that's when i realized i had mistaken closeness for a reason to leave. because i didn't understand that all this time... my boyfriend's hair in the sink was also just a piece of my best friend, his same old stories were little windows into his past. it was just... what love looks like up close. and fifteen years later, my dad still hears my mom chew loudly — but every single night, he sits down anyway. because loving someone is staying at the table.`,cats:['philosophy'],status:'unused'},
+  {id:20,ts:1583020819000,text:`What if your person is also waiting for you, what if right now they are focused on their career, they're rushing to the gym, maybe they're finishing a book, or looking for a new car, maybe they're moving apartments, or planning a trip and eventually, after going through all of the lessons that you both have to go through, you will finally meet, you'll get a house and call it a home, you'll get a cat or maybe two and you will complete one another and after some more time while you're on the sofa in front of a fireplace with hot chocolate or whatever it is that you two both drink you're going to realize why things came together exactly the way they did.`,cats:['future','faith'],status:'unused'},
+  {id:21,ts:1583020820000,text:`The price of loving someone very much is never loving anyone again. There's a kind of love that doesn't just break your heart it rewires it after that every new person feels like a shadow of what you once had no one tells you that sometimes love doesn't end with goodbye it ends with a version of you that's forever changed you smile you date you try but deep down you know that full reckless surrender of your soul you can't give it again so you protect what's left you keep walls up you stay cautious, you say I'm fine when you're not, because once you have loved that deeply and lost your heart learns to guard itself forever maybe that's the real prize not the tears or the memories but the quiet realization that no one else will ever get to see that version of you that loved without fear.`,cats:['loss','identity'],status:'unused'},
+  {id:22,ts:1583020821000,text:`Maybe I'd never be able to explain it, about how much I love you, not by this book, not by my voice or by my actions, I couldn't explain it to you, then I have very low hopes for this naïve world to understand my love for you, here is where people call touch as attraction, talking on phone as connection, and spending time together as attachment, I've loved you beyond what can be perceived. I've loved you without seeing you, I've loved you beyond touch, I have loved you through the air that you passed through. If I close my eyes I can feel you right next to me`,cats:['devotion'],status:'unused'},
+  {id:23,ts:1583020822000,text:`i'm a stubborn and chaotic person so it's hard for people to get that i like things done a certain way so i thought i needed to date someone who aligned with my interests, goals, and lifestyle but when i dated someone who didn't, what kept together was understanding the difference between... someone who just understands you and someone who wants to understand you because... early on he didn't understand why i loved coffee so much or why i'd paint until 3am... but then one day we were just walking and i saw this flower and without thinking, i stopped and immediately the panic kicked in: oh no, i'm doing it again, I'm being annoying... but he stopped, he pulled out his phone and he just asked what kind is it? why do you like this one? and i just stood there staring at him thinking. he didn't care about the flower he cared about me caring. and that's when i realized he was treating my curiosity not as an interruption to the walk but as the point of it. he hated coffee, but every morning before my classes, he'd walk across campus to bring me a cup. he didn't paint, but he'd sit for hours watching me work until 2am. he didn't get why i was so into flowers, but he'd stop every time to ask me about them. because he wasn't pursuing understanding so that one day he'd finally "get it" — he was pursuing understanding because that's what love is. love isn't about the destination of being understood, it's about someone choosing, every single day, to try to understand you.`,cats:['philosophy','devotion'],status:'unused'},
+  {id:24,ts:1583020823000,text:`No one gives up on something they want to keep in life.
+Agar use wapis ana hi hota toh woh jata hi nahi`,cats:['philosophy','loss'],status:'unused'},
+  {id:25,ts:1583020824000,text:`I need you to know that whatever happens, It was worth it for me, being with you, loving you, it was all worth it`,cats:['devotion'],status:'unused'},
+  {id:26,ts:1583020825000,text:`As much as I hate you for doing what you did to me, and my feelings, you've created a space in my heart that's yours alone.
+If you ever find yourself lost come and find me. No one could ever fill or reach your space in my heart. No matter what happens, that space will always belong to you.`,cats:['longing','devotion'],status:'unused'},
+  {id:27,ts:1583020826000,text:`MAN BHR JAYE VO MOH
+MAN BHAR AYE WOH PREM
+AKARSHAN HO WOH MOH
+SAMARPAN HO WOH PREM
+
+(Attachment is attachment. Devotion is love. Attraction is attachment. Surrender is love.)`,cats:['philosophy','devotion'],status:'unused'},
+  {id:28,ts:1583020827000,text:`I wanted to marry her, speaking for hours on phone, or listening to her for hours, listening to her family problems and how she wanted to run away from home all I could do is listen, because that's what she wanted me to do. We would talk about how we should get married, was it a joke? Not for me, she even told me how talking to me makes her feel like she's home and when things got difficult for me she did what she said, ran away from home.`,cats:['loss','devotion'],status:'unused'},
+  {id:29,ts:1583020828000,text:`"Shauk se todo dil mera, Mujhe kya hairan karoge. Tum hi toh rehte ho esme, Apna hi ghar veeran karoge."`,cats:['devotion','loss'],status:'unused'},
+  {id:30,ts:1583020829000,text:`Had that amazing feeling of being in love, but I was unable to express it enough, and now that I've known how to express, I will never have that feeling ever again.`,cats:['identity','loss'],status:'unused'},
+  {id:31,ts:1583020830000,text:`We convince ourselves that letting go is strength, that silence is healing, and that distance will somehow quiet what lives inside us. But the soul does not forget what it recognizes. You can distract the mind, stay busy, smile through the day, even choose no contact, yet the heart still whispers their name in quiet moments. It hurts because the connection was real. Because some bonds are not meant to be erased, only understood. And letting go of someone your soul still reaches for feels like betraying a part of yourself.`,cats:['longing','philosophy'],status:'unused'},
+  {id:32,ts:1583020831000,text:`And in the end it's all about luck. You can change yourself completely for that one person, do everything in your power to make them smile, to make them feel loved but if you are not the person they truly want, nothing will ever be enough.
+
+You'll keep trying, hoping they'll see through your worth, but love doesn't work that way. It's not earned through effort, it's felt through connection.
+
+Sometimes, no matter how genuine your intentions are, it still won't be you.
+
+That's the cruel beauty of love, it teaches you devotion, patience, and heartbreak all at once.
+
+And when it's over you realize that sometimes, love isn't lost because you didn't try hard enough, but because destiny had other plans.`,cats:['philosophy','loss'],status:'unused'},
+  {id:33,ts:1583020832000,text:`Human emotions are so unique that the peak of happiness is crying, the peak of sadness is laughing and the peak of anger is silence.`,cats:['philosophy'],status:'unused'},
+  {id:34,ts:1583020833000,text:`I told God about you, about the way you live in my thoughts even when I try to forget, about how loving you feels heavier than it should. I spoke your name through tears, not asking for miracles, just asking for the pain to ease a little. I cried the kind of cry that has no sound, the kind that comes from loving someone more than they know, more than they ever will. And somewhere between my prayers and my tears, I realized… even God knows how much you mattered to me.`,cats:['faith','longing'],status:'unused'},
+  {id:35,ts:1583020834000,text:`I still park my scooter at the same spot near the temple`,cats:['memory','longing'],status:'used',chapter:'Ch 1'},
+  {id:36,ts:1583020835000,text:`Marry the person that loves you, not the person you love and nothing can go wrong between y'all. Love is about being with someone who chooses you again and again. That's the kind of love that lasts, that feels like home, that stays.`,cats:['philosophy'],status:'unused'},
+  {id:37,ts:1583020836000,text:`YEARNING:
+To want somebody/something very much, especially something that you cannot have
+
+The nights are the hardest, aren't they? When everything goes quiet, and their absence feels louder than ever. You can't help but wonder if they're missing you too. It's okay to miss them. It's okay to feel the weight of that emptiness. But remember — this feeling doesn't define you. You are still whole, even if it doesn't feel like it. It's okay to let it hurt. And then, when the tears stop, remember — you are enough, even without them`,cats:['longing'],status:'unused'},
+  {id:38,ts:1583020837000,text:`Having no contact with the person you're still in love with, who, at one point in time, sent you texts that would make your heart melt. And now, you can only love them in silence from a distance, slowly being forced to close a chapter you never wanted to end. It feels like carrying the weight of unsaid words and unfulfilled dreams, as memories become your only companions. You replay those moments, knowing they'll never come back, yet clinging to them because letting go feels like losing a part of yourself.`,cats:['longing','loss'],status:'unused'},
+  {id:39,ts:1583020838000,text:`If I get a chance to find you again in this lifetime, this time I won't even close my eyes, I'm afraid to lose you before even finding you again`,cats:['longing','devotion'],status:'unused'},
+  {id:40,ts:1583020839000,text:`Someone on my bus wore your shampoo today. I drove 3 extra stations to feel you a little longer.
+
+It's strange, how pain becomes the place you visit just to feel them again.`,cats:['longing','memory'],status:'unused'},
+  {id:41,ts:1583020840000,text:`So the biggest thing eventually you have to do with grief is forgive them for leaving you, and forgive yourself for whatever you couldn't express while they were there.`,cats:['loss','identity'],status:'unused'},
+  {id:42,ts:1583020841000,text:`You were the best Hello the worst goodbye and the biggest what if that I will question for the rest of my life`,cats:['loss'],status:'unused'},
+  {id:43,ts:1583020842000,text:`Can I be the poem and not the poet? The admired and not the admirer? The captured and not the capturer? The written and not the writer? The loved and not the lover?
+
+Can I?
+
+For once in life
+
+Be the wish and not the wisher, be the yearn and not the yearner.
+
+I've lived as the poet, the admirer, the lover, the writer, the wisher, the yearner.
+
+But for once… Can I be the moon, and not the moonstruck?`,cats:['identity'],status:'unused'},
+  {id:44,ts:1583020843000,text:`I hope when the soil covers my chest one day, it doesn't feel as heavy as my heart did when I had to go away from you.`,cats:['loss','longing'],status:'unused'},
+  {id:45,ts:1583020844000,text:`If someone can smoke knowing it destroys their lungs, what's wrong with loving someone, even knowing there's no chance?`,cats:['philosophy','longing'],status:'unused'},
+  {id:46,ts:1583020845000,text:`Oh! to be naked in front of someone. No, I don't mean, stripping off your clothes. That's easy, but rather your armor, with which you protect yourself, to break down the walls which were built too high for anyone to climb. To let someone see the parts of yourself that you conceal. The scars you hide, the secrets you swallow, the fears that race through your mind. To be completely you with someone. To be seen without an act. To be loved for your existence and not your performance. This is an ode to authenticity in love, not the cinematic kind but the grounding one. That lets you show up messy, honest, real. This is not your typical love story. It's a privilege of being you, with someone.`,cats:['identity','devotion'],status:'unused'},
+  {id:47,ts:1583020846000,text:`The right attention from a wrong person during a lonely time can trick you into believing they're the one.`,cats:['philosophy','loss'],status:'unused'},
+  {id:48,ts:1583020847000,text:`The darker the night,
+The brighter the stars,
+the deeper the grief,
+the closer is God!`,cats:['faith','loss'],status:'unused'},
+  {id:49,ts:1583020848000,text:`Rule Book:
+- If we are dating, we are dating to get married.
+- We don't have to text 24/7, but great if we do.
+- If you're busy, let me know so I don't feel ignored.
+- I'll trust you, till you give me a reason not to.
+- If I did something that upset you, let me know so I can fix it.
+- If we fight, we will always make up through talking it out.
+- If you cheat, I'm gone immediately.
+- Help/support wherever and whenever possible both ways.
+- Let me meet your friends, you can meet mine too.
+- Let God be the center of our relationship.`,cats:['philosophy','faith'],status:'unused'},
+  {id:50,ts:1583020849000,text:`For all of our small day trips across mumbai, when it was time to drop her home, I'd instinctively drive my scooter slow, just so that I could spend a little time extra with her. I'd wait at her society entrance, until she disappeared inside the building after dropping her. I wouldn't want my eyes to miss a single second they could witness her.`,cats:['memory','devotion'],status:'used',chapter:'Ch 5'},
+  {id:51,ts:1583020850000,text:`Somehow, after you, my eyes will never be a part of my smile.`,cats:['loss'],status:'unused'},
+  {id:52,ts:1583020851000,text:`Loving as Action Vs Loving as feeling?
+
+Love, as in the feeling alone is not enough. Love as in action, the willingness to find the colour, the balance. Willingness to love someone how they want to be loved. Willingness to show up and be loving even though you feel the least loving yourself. People would say I'd die for my partner; I love them more than anything in the entire world. But would you put your phone down, and listen to them when they're telling you about their day? Would you take their hand when you're walking down the sidewalk. Would you notice their mood, when they come home after a bad day at work? Would you find the time to stop and ask them about it? Would you remember the little things, they said they care about? That's love as an action. Love only as a feeling will be fleeting if we don't follow it through or follow it up with action.`,cats:['philosophy','devotion'],status:'unused'},
+  {id:53,ts:1583020852000,text:`When you mature, you realize that a relationship can work and actually be fixed in almost any situation. It just takes both of you to actually want it to work and correct what you're doing that is hurting your partner. Most relationships end because one person was willing to fix things, but the other one wasn't.`,cats:['philosophy','loss'],status:'unused'},
+  {id:54,ts:1583020853000,text:`You know what's funny?
+I kept blaming "circumstances"…
+Kept convincing myself that maybe love loses to timing, distance, life – all that poetic nonsense.
+But today it finally hit me:
+Love never loses to circumstances.
+People do.
+Because when you truly love someone, you fight the circumstance.
+You text even when life is heavy.
+You show up even when you're tired.
+You make time even when the world is pulling you apart.
+But when someone stops choosing you
+The excuses suddenly get louder than the feelings.
+And I guess that's where we are now.
+Circumstances didn't fail us.
+You just stopped choosing me.
+And I'm the only one still pretending it's fate`,cats:['philosophy','loss'],status:'unused'},
+  {id:55,ts:1583020854000,text:`If I could be Doctor Strange, I wouldn't travel the multiverse for power or knowledge. I'd travel it for her. I'd step through glowing portals into a thousand different realities, not to change fate, but to prove something constant — that in every universe, in every possible version of existence, my heart still chooses her.
+
+I'd find the worlds where we met earlier, and the ones where we almost missed each other. The ones where we're strangers passing on a street corner, and the ones where we've grown old together. I'd stand in each reality and show her, in a million different ways, how deeply I love her — through quiet moments, through laughter, through sacrifice, through unwavering presence.
+
+And after seeing every version of what could be, I'd return to this universe — the one we're in now — and love her even harder. Because out of infinite possibilities, this is the reality where I get to choose her, and that's the only magic I'd ever need.
+
+And maybe that's what "I love you 3000" really means. Not just a number, not just a line from Avengers: Endgame, but a love that stretches beyond measurement. A love that doesn't stop at forever — it multiplies.`,cats:['devotion'],status:'unused'},
+  {id:56,ts:1583020855000,text:`It's the kind of love that waits patiently, the way Jim Halpert loved Pam Beesly in The Office — quietly, consistently, without demanding perfection or perfect timing.
+
+It believes in destiny, too — the way Ted Mosby believed in finding "the one" in How I Met Your Mother.
+
+And it's the kind of love that believes in partnership — steady, resilient, tested and still standing. The kind shared by Marshall Eriksen and Lily Aldrin. They grew up together. Fought, forgave, stumbled, and chose each other again.
+
+And then there's love that grows through contrast — like Leonard Hofstadter and Penny in The Big Bang Theory — opposites learning to meet in the middle. Or the carefully unfolding devotion of Sheldon Cooper and Amy Farrah Fowler, where love was patient, intentional, almost scientific — and yet deeply transformative.
+
+So maybe love is all of it at once. The multiverse certainty of choosing her in every reality. The patience to wait across timelines. The belief in destiny's design. The resilience to stay and grow side by side.
+
+Not just once. Not just by chance. But deliberately, faithfully — 3000 times over.`,cats:['devotion','philosophy'],status:'unused'},
+  {id:57,ts:1583020856000,text:`Introduce Karma as something because of which I found her`,cats:['faith'],status:'unused'},
+  {id:58,ts:1583020857000,text:`Ever happened that you start loving something because your person loves you loving that thing? I liked cats, yes but she loved me loving cats, even though she didn't like them herself, she knew I liked cats and she would purposefully send me cat videos, gifs, memes and stickers. And without even realizing a memory of something she sent would pop in my head every time I saw a cat.`,cats:['memory','devotion'],status:'unused'},
+  {id:59,ts:1583020858000,text:`I Didn't know when my amazon, blinkit addresses changed to hers.`,cats:['memory'],status:'unused'},
+  {id:60,ts:1583020859000,text:`Id stare at random books, even though I'd not know what is what genre, more than staring the books, I'd stare at her, the enthusiasm with which she'd pick books, the research that she has already put in to what book she wants to read. The glow in her eyes if she finds what she was looking for and the frown on her face when she'd not get what she wants.`,cats:['memory','devotion'],status:'unused'},
+  {id:61,ts:1583020860000,text:`Wrote her initial "D" with stones near Pangong lake`,cats:['memory'],status:'unused'},
+  {id:62,ts:1583020861000,text:`Small signs from God — handkerchief, flower, belpatra`,cats:['faith'],status:'unused'},
+  {id:63,ts:1583020862000,text:`When I know the smallest of her things from what shampoo she uses, to what nail paint she applies, the way she uses her contact lenses a little beyond their expiry and the way she calls elastic hairbands as "rubbers".`,cats:['memory','devotion'],status:'unused'},
+  {id:64,ts:1583020863000,text:`She started the Instagram cricket page @cric_crazy on 24th April, 2022. I remember because I noted the date in my Google Keep. Not because I thought I'd forget it. But because it felt significant. Like watching someone you love step into a version of themselves they'd been afraid to claim. I saved the date the way other people save anniversaries, as if her milestones were mine to commemorate too.`,cats:['memory','devotion'],status:'used',chapter:'Ch 7'},
+  {id:65,ts:1583020864000,text:`The secret Instagram collections: "Our Wedding" (37 videos), "Our Home", "Travel Destinations" (100+ items). Built an entire future in private folders. Never shared. Never spoken.
+
+In our next life, I'd have the courage to show them to her.`,cats:['future','longing'],status:'used',chapter:'Ch 7'},
+  {id:66,ts:1583020865000,text:`She had this list where she kept the top three people of her life, her parents, her sister and the next she said was me.`,cats:['devotion','memory'],status:'unused'},
+  {id:67,ts:1583020866000,text:`The "Our Wedding" folder began as a joke I was playing on myself. Her question from that first video never left me: "You'd do this for me?" — not quite a question, not quite a demand, somewhere in between.
+
+The ring box video — a small 3D printed case with a mechanism built into its lid, engineered so that when you opened it, the lid split apart slowly, deliberately, like something being revealed rather than just uncovered. I watched the video three times. That was the one that made me sit with myself. Because you don't save a ring box unless you're imagining what goes inside it. And you don't imagine what goes inside it unless you're imagining who you're opening it for.
+
+The folder had thirty-seven videos the last time I checked. She never knew it existed. She never knew she started it.`,cats:['future','devotion'],status:'used',chapter:'Ch 7'},
+  {id:68,ts:1583020867000,text:`"Our Home" was built around a single thing she said once, almost in passing. That she wanted a house full of books. Not a shelf — a house. Floor-to-ceiling, every room, books the way other people have furniture.
+
+I saved images of libraries first. Then reading corners near windows with the right kind of lamp — warm, not harsh, the kind that makes evening feel intentional. Then wooden floors because I had a feeling she'd want wooden floors. Then, beside all of it, I added pictures of computer setups. My side of the imagined room. Where I would sit.
+
+I knew her preferences for a home we never discussed building. I knew which lamp she would choose. I somehow knew she'd want the books organized by colour, not author, just so that the room looks pretty.`,cats:['future','memory'],status:'used',chapter:'Ch 7'},
+  {id:69,ts:1583020868000,text:`That wrapper of Dairy Milk still sits in my wallet. Alongside it, three of her photographs I had borrowed over time — small versions of her I could carry with me.`,cats:['memory','devotion'],status:'used',chapter:'Ch 6'},
+  {id:70,ts:1583020869000,text:`Maybe the three magical words are not I Love You, they're just I Will Stay.`,cats:['philosophy','devotion'],status:'unused'},
+  {id:71,ts:1583020870000,text:`The farewell T-shirt — Friends sign each other's names on T-shirts, for each one of my friends who signed my T-shirt I would intentionally ask them to sign in a different place other than my chest area, near my heart, because I wanted her to sign it there, and I did. That same T-shirt with her name on it still stares at me, although it is folded and ironed, her name signed on the chest area is visible through. All I do is touch it and keep it back.`,cats:['memory','devotion'],status:'unused'},
+  {id:72,ts:1583020871000,text:`Soren Kierkegaard (Danish Philosopher) — the two ways of existing: aesthetic and ethical. The aesthetic lives for the highs, peak experiences, but is eventually haunted by a hollow deep boredom because they're always chasing a feeling designed to fade. The ethical life is defined by commitment; it is the decision to stay when the feeling is gone, it is the understanding that the most profound parts of being human don't happen in the honeymoon phase, it happens in the thousandth hour of the mundane.
+
+Most of us don't leave because we found someone better — we leave because we don't want to face the version of ourselves that the relationship is exposing. A long-term relationship is a relentless mirror. It reflects your insecurity, your pettiness, your need for control and your avoidance patterns. Leaving resets the game. Staying forces you to evolve.
+
+Most people are more comfortable changing their partner than changing their own patterns.
+
+Choosing to remain becomes a radical statement. It is saying: I'm not looking for a better version of you — I'm looking for a deeper version of us.`,cats:['philosophy'],status:'unused'},
+  {id:73,ts:1583020872000,text:`You can be the prettiest shade of blue, but it wouldn't matter if they like baby pink!
+
+(I gifted her a baby pink coffee mug, all my hand written texts to her were in baby pink)`,cats:['loss','memory'],status:'unused'},
+  {id:74,ts:1583020873000,text:`She sent "if I go on a war with you, I'll destroy my own world"
+
+How paradoxical of her to understand and misunderstand me at the same time, it drives me crazy, maybe I'm inside her head, but I'm utterly incapable of being in her life. We were like best friends in the dark, and now total strangers in the light. It's the closest I've been to anyone and yet it feels like I'm yelling at her from the moon.`,cats:['loss','devotion'],status:'unused'},
+  {id:75,ts:1583020874000,text:`Holi scene — to be written`,cats:['memory'],status:'unused'},
+  {id:76,ts:1583020875000,text:`Last week a wedding card got delivered to my home, it was lying on the TV cabinet, I didn't notice it at first, but after walking by it 3 times, it caught my eye, it was in Gujarati, and I can't read Gujarati very fluently, it takes time, but I can manage reading it. I read the name and it said Dhwani (ધ઼વ઼ની), for two seconds it felt like someone poured a bucket of ice water over my head and my body shivered my thoughts froze in place.`,cats:['loss','memory'],status:'unused'},
+  {id:77,ts:1583020876000,text:`Funny that we never know which moments will become our core memories, we spend our whole life trying to orchestrate these perfect moments, cinematic moments, the kiss in the rain, the grand gestures, but then it'll be a random Tuesday, standing in front of a street vendor, waiting for him to give you your dosa order, her laughing at something random with her mouth full, and we don't know it yet but we'll be thinking about that exact laugh on our death bed.`,cats:['philosophy','memory'],status:'unused'},
+  {id:78,ts:1583020877000,text:`Promise me if I don't win this mental health battle, you'll remember me for who I was and not who I turned into.`,cats:['identity'],status:'unused'},
+  {id:79,ts:1583020878000,text:`My mom came in my room suddenly at 2AM just to check on me randomly. And she found me crying. I couldn't explain it to her why I was crying. The world knows that I have been fixing myself, feeling good about myself trying to forget the past and trying to move forward. But only I know the nights. Only I know what I am. How much I feel and the tears I shed every single day.
+
+I couldn't lie to her she kept on asking for 20 mins and then she gave up until next morning, when I eventually had to tell her. I told her that I was missing her. She didn't dismiss my feelings she sat with me, and tried to make me understand that, one day I will have to move ahead, that I didn't give up on her, she chose to get away from me, and no matter what I do, wouldn't bring her back.
+
+I heard her words, but who will make my heart understand? Or how will my heart explain how it yearns for her. Why no other person feels the same. Why no other feeling matches the one I got when she messaged me.`,cats:['identity','longing'],status:'unused'},
+  {id:80,ts:1583020879000,text:`I recently realised on one of my insurances I put her name as a claimant.`,cats:['memory','devotion'],status:'unused'},
+  {id:81,ts:1583020880000,text:`The day she sent me a picture of her carrying Harshiv, it brought a tear to my eye, I could see the mother of our children, holding our kid. The glitter in eye, the softness in her touch, I could see through the videos and pictures she shared.`,cats:['future','devotion'],status:'unused'},
+  {id:82,ts:1583020881000,text:`If everything is given by Him, then my desire to be yours must be given by Him too. God, if I'm meant to be alone please take away the desire to be loved`,cats:['faith','longing'],status:'unused'},
+  {id:83,ts:1583020882000,text:`Her birthday (May 2022) — I had planned to send her a poem before she woke up. I had pictured her picking up her phone in those first groggy moments of the morning and finding it already there, waiting for her. But before I could send it, she had already texted me good morning.
+
+The poem:
+"You made me see the world like I've never seen before. You made me think in the way like I've never thought before. You made me smile like I've never smiled before. You've been there — Like a shade on a sunny day, Like a ray of light in dark, Like hope in despair, Like a flower in a world of thorns, Like peace to chaos. I'd never want to have a feeling of not having you beside, And promise to stay by you when you feel low inside. All we do is figure out our lives, I want you by my side while we figure out ours."
+
+In the evening, I went to her. I brought ice cream. No grand gesture. Just the poem, the ice cream, and the fact of being there.`,cats:['memory','devotion'],status:'unused'},
+  {id:84,ts:1583020883000,text:`Why it hit her hard when I mentioned that I didn't like certain guys she went out with — she was facing that guilt in the moment that she had already done something really bad, and I had no clue about what was to come. I was just trying to express my feeling which I had buried deep inside me, with the fear of losing something that was so precious to me.`,cats:['loss'],status:'unused'},
+  {id:85,ts:1583020884000,text:`An entire cycle of seasons have changed without me being able to talk to her.`,cats:['longing'],status:'unused'},
+  {id:86,ts:1583020885000,text:`What if I don't want to heal? Maybe because this pain is the last bond that I have with her.`,cats:['longing','identity'],status:'unused'},
+  {id:87,ts:1583020886000,text:`She wasn't the Love of my Life she was my whole life shaped as love`,cats:['devotion'],status:'unused'},
+  {id:88,ts:1583020887000,text:`It is impossible to offer someone the heart which I don't have with me anymore.`,cats:['loss','identity'],status:'unused'},
+  {id:89,ts:1583020888000,text:`Maybe we have this obsession of chasing something that is not written for us. Do we think that we know something that God doesn't? Maybe we think that if we suffer enough the universe will finally owe us the prize. We will keep saying that we almost had it, but what if we were not even close? Cheers to everyone who still dreams.`,cats:['faith','philosophy'],status:'unused'},
+  {id:90,ts:1583020889000,text:`So what was she like, She felt like all the love I have ever poured out into the world, finally finding its way back to me. Wrapped up in human form. A loud reminder that everything happens for a reason. For all the care I've given. And one of my favourite past times is to watch her while she's not looking. To see her in a state of full self, to feel lucky for the circumstances in which we met. She makes me believe in something else, like stars or wishing wells, that it is possible to be falling while also being held. She feels like listening to my favourite song for the first time, not knowing it is about to be my favourite.`,cats:['devotion'],status:'unused'},
+  {id:91,ts:1583020890000,text:`Why do I see her forehead when I close my eyes? Like as if I were to fill her mang with sindoor? Why does her hair parting line appears so clear as if I could distinguish even her forehead from a million others.`,cats:['devotion','longing'],status:'unused'},
+  {id:92,ts:1583020891000,text:`The love of Radha and Krishna teaches us that true love is pure connection not possession.
+
+Unka pyaar ego se pare tha. It was silent, spiritual, and selfless. It shows that real love understands without demanding and trusts without fear.
+
+The love of Shiva and Parvati teaches us commitment and balance. Parvati's tapasya and Shiva's acceptance show that love needs patience, respect, and equality. Pyaar sirf feeling nahi, zimmedari bhi hota hai.
+
+When we combine both, we learn something beautiful: Love should be as pure as Radha-Krishna and as strong as Shiva-Parvati. Dil se pyaar ho, par saath me samajh aur loyalty bhi ho.
+
+Love without ego. Stay with patience. Grow together.
+
+Tabhi rishta sirf relationship nahi, ek sukoon ban jata hai — a peaceful journey of two souls, not two egos.`,cats:['faith','philosophy'],status:'used',chapter:'Ch 7'},
+  {id:93,ts:1583020892000,text:`And maybe the first few chapters of this book could be the HIMYM for our kids, or maybe I write a new one where we didn't have to go through the separation.`,cats:['future'],status:'unused'},
+  {id:94,ts:1583020893000,text:`I have imagined a hundred times, the ride home after we get married! I'd hold your hand look into your eyes, close mine to thank God for the moment he gifted me with. I'll close my eyes watch our entire journey flash through in seconds. And apart from all the vows we'd already made in the mandap, I'd make another one, again, I will stay.`,cats:['future','devotion'],status:'unused'},
+  {id:95,ts:1583020894000,text:`From packing bags for a trip to packing diapers to packing medicines together.`,cats:['future'],status:'unused'},
+  {id:96,ts:1583020895000,text:`When someone falls in love with someone's flower, and not their roots, they don't understand what to do when autumn comes.`,cats:['philosophy'],status:'unused'},
+  {id:97,ts:1583020896000,text:`Isn't being illogical, the whole point of being in love?`,cats:['philosophy'],status:'unused'},
+  {id:98,ts:1583020897000,text:`Every version of me will love every version of you`,cats:['devotion'],status:'unused'},
+  {id:99,ts:1583020898000,text:`I Hope guilt eats you alive one quiet night at a time. I hope it tastes like every lie you ever fed me. And when the ego finally wears off I hope you realize what you did to me was beyond evil.`,cats:['loss'],status:'unused'},
+  {id:100,ts:1583020899000,text:`She suggested that I should watch 500 days of summer, and the before series`,cats:['memory'],status:'unused'},
+  {id:101,ts:1583020900000,text:`In our next birth let's swap lives. You become the poet I become your muse. You yearn for me, while I stay oblivious. You write books about me while I won't bother. In the next life I get the flowers and you are stuck with the thorns. You cry at nights while I sleep peacefully. You will be on your knees begging God for me, and you still won't get me. In our next life you will love me like breathing and I will be the one setting conditions. Let's switch places. You wait, and I never return.`,cats:['identity','longing'],status:'unused'},
+  {id:102,ts:1583020901000,text:`Today, during Shivaratri puja, I thought I would stay composed. But the moment I folded my hands and stood in front of Mahadev… my voice changed. When I started talking about him, my eyes filled on their own. I didn't plan to cry. I didn't even plan to say "I love him." But it came out. Softly. Honestly. Helplessly.
+
+"I love him so much."
+
+And in that moment, I wasn't asking for possession. I wasn't demanding a future. I was just placing my love at Mahadev's feet.
+
+I didn't say "make him mine." I didn't bargain. I just said: "Yeh pyaar aapko de rahi hoon. Ab aap sambhal lo."
+
+Because this love is too sacred to be forced, too intense to be hidden, and too pure to be manipulated.`,cats:['faith','devotion'],status:'unused'},
+  {id:103,ts:1583020902000,text:`The tragedy isn't that I loved her, its that I still do, without hope, without reason, without her.`,cats:['longing','loss'],status:'unused'},
+  {id:104,ts:1583020903000,text:`There was this fear in me that, if I expressed myself, and the person did not like it, I would lose that person, not that I was a people pleaser, people's opinion about me rarely mattered, but what my own people think of me mattered more to me than anything else. I didn't want to project my insecurities and so I had learned to stay quiet, process my emotions on my own without sharing.`,cats:['identity'],status:'unused'},
+  {id:105,ts:1583020904000,text:`She was all the colours I had`,cats:['devotion'],status:'unused'},
+  {id:106,ts:1583020905000,text:`Maybe the universe delays things to see if you're still willing to choose them later`,cats:['faith'],status:'unused'},
+  {id:107,ts:1583020906000,text:`Aditi ko Jay mil gaya
+Sid ko Ayesha mil gayi
+Naina ko Bunny mil gyaa
+
+Maybe we have this obsession of chasing something that is not written for us. Cheers to everyone who still dreams.`,cats:['future','longing'],status:'unused'},
+  {id:108,ts:1583020907000,text:`"I stayed faithful because I respected myself."
+
+He explained that love changes. Some years it's strong. Some years it's quiet. Some years it's exhausted. There were moments of temptation. Moments of distance.
+
+"But cheating," he said, "was never about love. It was about character."
+
+He said he didn't want to become a man who hides messages, lies to the woman he sleeps next to, and looks at himself differently in the mirror. "I didn't want to explain myself to my children one day. I didn't want to live with a version of me I didn't respect."
+
+Love, he said, is emotional. Loyalty is ethical. And ethics don't disappear just because feelings fluctuate.
+
+37 years without cheating wasn't about perfect love. It was about an unbreakable standard.`,cats:['identity','philosophy'],status:'unused'},
+  {id:109,ts:1583020908000,text:`If the love was real,
+Maybe we'll meet again someday.
+Maybe not in weeks,
+Not in months,
+Or even years,
+But when we do,
+I'll explain to you
+What I actually felt
+When your eyes were searching,
+While mine were just stuck at you.
+I'll explain how I felt
+When I saw you smiling.
+I'll explain everything to you one day.
+But that one day is not today,
+And I'll surely wait for that one day.
+Until then,
+Let's live the best versions of ourselves,
+Stay strangers with some cherished memories
+And take good care of ourselves
+Till we meet again.`,cats:['longing'],status:'unused'},
+  {id:110,ts:1583020909000,text:`We don't marry a compatible person, compatibility is an achievement of love. We're all looking for someone who likes the same music, who orders the same coffee, thinks exactly like us. That's not compatibility, that's similarity. Real compatibility isn't about finding someone who already fits perfectly, it's about choosing to build that fit together. Learning to handle the differences, the awkward silences, the bad moods, irrational fears, and still choosing each other. You are not born patient or kind or generous, you become those things, because you decide to stay. Compatibility isn't what you find — it's what you create.`,cats:['philosophy'],status:'unused'},
+  {id:111,ts:1583020910000,text:`Isn't love synonymous with waiting? If you're not patient, you cannot ever be in love, but the paradox being if you are in love, you cannot ever be patient. When I said I will always wait for you, what I actually meant was, that it hurts my heart for all the hours we're not together, but I can live with the distance for as long as I need to, if I know that one day the wait will be over. Then that would be enough for my heart. Because love is synonymous with waiting, because somehow the more you wait the more you learn to love. And the more you love the more you learn to wait.`,cats:['longing','philosophy'],status:'unused'},
+  {id:112,ts:1583020911000,text:`People quite often ask me, if I ever meet her, what would I even say? It leaves me speechless, because I myself don't know what will I say. They dismiss my feeling saying, if I don't know what to say why do I even want to meet? How do I explain them that it is not how the heart works?`,cats:['longing'],status:'unused'},
+];
+
+// ── State ─────────────────────────────────────────────────────────────
+let S = loadState();
+let dropState = {open:false, ideaId:null, triggerEl:null};
+let modalState = {mode:'add', id:null, tagSel:new Set(), statusSel:null};
+let mgrState = {type:'tag', colorIdx:0};
+let allExpanded = false;
+
+function loadState(){
+  try {
+    const saved = localStorage.getItem('ideaTracker_v3');
+    if(saved){
+      const d = JSON.parse(saved);
+      d.tags.forEach(t=>{ if(!t.color) t.color=PALETTE[0]; });
+      d.statuses.forEach(s=>{ if(!s.color) s.color=PALETTE[3]; });
+      // Backfill ts for any ideas loaded from older saves
+      const base = 1583020800000;
+      d.ideas.forEach((idea,idx)=>{ if(!idea.ts) idea.ts = base + idx*1000; });
+      return d;
+    }
+  } catch(e){}
+  return {
+    ideas: RAW_IDEAS.map(i=>({...i,expanded:false})),
+    tags: JSON.parse(JSON.stringify(DEFAULT_TAGS)),
+    statuses: JSON.parse(JSON.stringify(DEFAULT_STATUSES)),
+    navFilter:'all',
+    catFilter: [],
+    statusFilter: [],
+    view:'cards',
+    dark: false,
+    nextId: RAW_IDEAS.length + 1,
+  };
+}
+function save(){
+  try { localStorage.setItem('ideaTracker_v3', JSON.stringify(S)); } catch(e){}
+}
+
+// ── Helpers ───────────────────────────────────────────────────────────
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function tagByKey(k){ return S.tags.find(t=>t.key===k)||{key:k,label:k,color:PALETTE[0]}; }
+function statusByKey(k){ return S.statuses.find(s=>s.key===k)||{key:k,label:k,color:PALETTE[3]}; }
+function badgeStyle(color){ return `background:${color.bg};color:${color.text};border-color:${color.border}`; }
+function dotStyle(color){ return `background:${color.border}`; }
+function ideaCount(filterFn){ return S.ideas.filter(filterFn).length; }
+
+// ── Datetime helpers ──────────────────────────────────────────────────
+function nowTs(){ return Date.now(); }
+function tsToDateVal(ts){ // returns "YYYY-MM-DD"
+  const d=new Date(ts);
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+function tsToTimeVal(ts){ // returns "HH:MM:SS"
+  const d=new Date(ts);
+  return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')+':'+String(d.getSeconds()).padStart(2,'0');
+}
+function dateTimeToTs(dateVal, timeVal){
+  const s = dateVal+'T'+(timeVal||'00:00:00');
+  const d = new Date(s);
+  return isNaN(d.getTime()) ? Date.now() : d.getTime();
+}
+function fmtTs(ts){
+  if(!ts) return '';
+  const d=new Date(ts);
+  const day=String(d.getDate()).padStart(2,'0');
+  const mon=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()];
+  const yr=d.getFullYear();
+  const hh=String(d.getHours()).padStart(2,'0');
+  const mm=String(d.getMinutes()).padStart(2,'0');
+  return `${day} ${mon} ${yr}, ${hh}:${mm}`;
+}
+
+// ── Filtering ─────────────────────────────────────────────────────────
+function getFiltered(){
+  const q = (document.getElementById('search')||{value:''}).value.toLowerCase();
+  const sort = (document.getElementById('sort-sel')||{value:'newest'}).value;
+  let list = S.ideas.filter(i=>{
+    if(q && !i.text.toLowerCase().includes(q)) return false;
+    if(S.navFilter==='used' && i.status!=='used') return false;
+    if(S.navFilter==='unused' && i.status==='used') return false;
+    if(S.catFilter.length && !S.catFilter.some(c=>i.cats.includes(c))) return false;
+    if(S.statusFilter.length && !S.statusFilter.includes(i.status)) return false;
+    return true;
+  });
+  if(sort==='newest') list.sort((a,b)=>(b.ts||0)-(a.ts||0));
+  else if(sort==='oldest') list.sort((a,b)=>(a.ts||0)-(b.ts||0));
+  else if(sort==='az') list.sort((a,b)=>a.text.localeCompare(b.text));
+  else if(sort==='za') list.sort((a,b)=>b.text.localeCompare(a.text));
+  else if(sort==='used-first') list.sort((a,b)=>(b.status==='used')-(a.status==='used'));
+  else if(sort==='unused-first') list.sort((a,b)=>(a.status==='used')-(b.status==='used'));
+  return list;
+}
+
+// ── Main render ───────────────────────────────────────────────────────
+function render(){
+  buildSidebar();
+  buildStats();
+  buildActiveFilters();
+  const list = getFiltered();
+  const area = document.getElementById('main-area');
+  if(!list.length){
+    area.innerHTML='<div class="empty"><div class="empty-ico">🔍</div>No ideas match your filters.</div>';
+    return;
+  }
+  if(S.view==='cards') renderCards(list, area);
+  else if(S.view==='table') renderTable(list, area);
+  else renderKanban(list, area);
+}
+
+// ── Sidebar ───────────────────────────────────────────────────────────
+function buildSidebar(){
+  document.getElementById('cnt-all').textContent = S.ideas.length;
+  document.getElementById('cnt-used').textContent = S.ideas.filter(i=>i.status==='used').length;
+  document.getElementById('cnt-unused').textContent = S.ideas.filter(i=>i.status!=='used').length;
+  ['all','used','unused'].forEach(x=>{
+    document.getElementById('nav-'+x).classList.toggle('active', S.navFilter===x);
+  });
+  document.getElementById('cat-list').innerHTML = S.tags.map(t=>{
+    const cnt = S.ideas.filter(i=>i.cats.includes(t.key)).length;
+    const active = S.catFilter.includes(t.key);
+    return `<button class="cat-btn ${active?'active':''}" onclick="toggleCatFilter('${t.key}')">
+      <span class="dot" style="${dotStyle(t.color)}"></span>
+      <span>${esc(t.label)}</span>
+      <span class="cnt">${cnt}</span>
+    </button>`;
+  }).join('');
+  document.getElementById('status-list').innerHTML = S.statuses.map(s=>{
+    const cnt = S.ideas.filter(i=>i.status===s.key).length;
+    const active = S.statusFilter.includes(s.key);
+    return `<button class="cat-btn ${active?'active':''}" onclick="toggleStatusFilter('${s.key}')">
+      <span class="dot" style="${dotStyle(s.color)}"></span>
+      <span>${esc(s.label)}</span>
+      <span class="cnt">${cnt}</span>
+    </button>`;
+  }).join('');
+}
+
+// ── Stats ─────────────────────────────────────────────────────────────
+function buildStats(){
+  const total=S.ideas.length, used=S.ideas.filter(i=>i.status==='used').length;
+  document.getElementById('stats-strip').innerHTML=
+    `<div class="stat-pill"><span class="stat-num">${total}</span><span class="stat-lbl">Total</span></div>
+     <div class="stat-pill"><span class="stat-num">${used}</span><span class="stat-lbl">Used</span></div>
+     <div class="stat-pill"><span class="stat-num">${total-used}</span><span class="stat-lbl">Unused</span></div>`;
+}
+
+// ── Active filters bar ────────────────────────────────────────────────
+function buildActiveFilters(){
+  const chips = [];
+  S.catFilter.forEach(k=>{ const t=tagByKey(k); chips.push(`<span class="af-chip" style="${badgeStyle(t.color)}">${esc(t.label)}<button onclick="toggleCatFilter('${k}')">×</button></span>`); });
+  S.statusFilter.forEach(k=>{ const s=statusByKey(k); chips.push(`<span class="af-chip" style="${badgeStyle(s.color)}">${esc(s.label)}<button onclick="toggleStatusFilter('${k}')">×</button></span>`); });
+  const el = document.getElementById('active-filters');
+  if(chips.length){
+    el.innerHTML = `<span class="af-lbl">Filters:</span>${chips.join('')}<button class="act-btn" onclick="clearFilters()" style="font-size:11px;padding:2px 8px">Clear all</button>`;
+  } else { el.innerHTML=''; }
+}
+function clearFilters(){ S.catFilter=[]; S.statusFilter=[]; save(); render(); }
+
+// ── Cards ─────────────────────────────────────────────────────────────
+function renderCards(list, area){
+  area.innerHTML=`<div class="cards-grid">${list.map(cardHtml).join('')}</div>`;
+}
+function cardHtml(i){
+  const tagBadges = i.cats.map(k=>{
+    const t=tagByKey(k);
+    return `<span class="badge" style="${badgeStyle(t.color)}">${esc(t.label)}<span class="bx" onclick="removeTagInline(event,${i.id},'${k}')">×</span></span>`;
+  }).join('');
+  const st = statusByKey(i.status||'unused');
+  const dtStr = i.ts ? fmtTs(i.ts) : '';
+  return `<div class="idea-card ${i.status==='used'?'used':'unused'}" id="card-${i.id}">
+    <div class="card-head" onclick="toggleExpand(${i.id})">
+      <div class="card-text ${i.expanded?'':'clamped'}">${esc(i.text)}</div>
+      <button class="exp-btn">${i.expanded?'↑':'↓'}</button>
+    </div>
+    <div class="card-foot">
+      ${tagBadges}
+      <button class="add-tag-btn" onclick="openDropdown(event,${i.id})">+ tag</button>
+      <span class="badge" style="${badgeStyle(st.color)}">${esc(st.label)}${i.chapter?` · <em>${esc(i.chapter)}</em>`:''}</span>
+      ${dtStr?`<span class="card-dt" title="Created: ${dtStr}">🕐 ${dtStr}</span>`:''}
+      <div class="card-actions">
+        <button class="act-btn" onclick="openEdit(${i.id})">Edit</button>
+        <button class="act-btn" onclick="quickToggleStatus(event,${i.id})">${i.status==='used'?'↩ unused':'✓ used'}</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ── Table ─────────────────────────────────────────────────────────────
+function renderTable(list, area){
+  area.innerHTML=`<div class="tbl-wrap"><table>
+    <thead><tr>
+      <th style="width:44%">Idea</th>
+      <th>Tags</th>
+      <th>Status</th>
+      <th>Chapter</th>
+      <th onclick="cycleSortDate()" style="cursor:pointer" title="Sort by date">Date ↕</th>
+      <th></th>
+    </tr></thead>
+    <tbody>${list.map(i=>{
+      const st=statusByKey(i.status||'unused');
+      const tags=i.cats.map(k=>{const t=tagByKey(k);return `<span class="badge" style="${badgeStyle(t.color)};font-size:10px;padding:1px 7px">${esc(t.label)}</span>`;}).join(' ');
+      const dtStr = i.ts ? fmtTs(i.ts) : '—';
+      return `<tr onclick="openEdit(${i.id})">
+        <td class="td-text"><p>${esc(i.text)}</p></td>
+        <td>${tags}</td>
+        <td><span class="badge" style="${badgeStyle(st.color)}">${esc(st.label)}</span></td>
+        <td style="font-size:11px;color:var(--text3)">${esc(i.chapter||'')}</td>
+        <td style="font-size:11px;color:var(--text3);white-space:nowrap">${dtStr}</td>
+        <td onclick="event.stopPropagation()"><button class="act-btn" onclick="quickToggleStatus(event,${i.id})">${i.status==='used'?'↩':'✓'}</button></td>
+      </tr>`;
+    }).join('')}</tbody>
+  </table></div>`;
+}
+function cycleSortDate(){
+  const s=document.getElementById('sort-sel');
+  s.value = s.value==='newest' ? 'oldest' : 'newest';
+  render();
+}
+
+// ── Kanban ────────────────────────────────────────────────────────────
+function renderKanban(list, area){
+  area.innerHTML=`<div class="kanban-wrap">${S.tags.map(t=>{
+    const cards=list.filter(i=>i.cats.includes(t.key));
+    if(!cards.length) return '';
+    return `<div class="k-col">
+      <div class="k-col-head"><span><span class="dot" style="${dotStyle(t.color)};display:inline-block;vertical-align:middle;margin-right:5px"></span>${esc(t.label)}</span><span class="kc">${cards.length}</span></div>
+      <div class="k-cards">${cards.map(i=>{
+        const st=statusByKey(i.status||'unused');
+        return `<div class="k-card ${i.status==='used'?'used':'unused'}" onclick="openEdit(${i.id})">
+          ${esc(i.text)}
+          <div class="k-card-tags">${i.cats.map(k=>{const t2=tagByKey(k);return `<span class="badge" style="${badgeStyle(t2.color)};font-size:10px;padding:1px 6px">${esc(t2.label)}</span>`;}).join('')}</div>
+        </div>`;
+      }).join('')}</div>
+    </div>`;
+  }).join('')}</div>`;
+}
+
+// ── Actions ───────────────────────────────────────────────────────────
+function toggleExpand(id){
+  const i=S.ideas.find(x=>x.id===id); if(!i) return;
+  i.expanded=!i.expanded; save(); render();
+}
+function quickToggleStatus(e,id){
+  e.stopPropagation();
+  const i=S.ideas.find(x=>x.id===id); if(!i) return;
+  if(S.statuses.length<2){ i.status=i.status==='used'?'unused':'used'; save(); render(); return; }
+  const cur=S.statuses.findIndex(s=>s.key===i.status);
+  i.status=S.statuses[(cur+1)%S.statuses.length].key;
+  save(); render();
+}
+function removeTagInline(e,id,key){
+  e.stopPropagation();
+  const i=S.ideas.find(x=>x.id===id); if(!i) return;
+  if(i.cats.length<=1) return;
+  i.cats=i.cats.filter(c=>c!==key); save(); render();
+}
+function toggleExpandAll(){
+  allExpanded=!allExpanded;
+  S.ideas.forEach(i=>i.expanded=allExpanded);
+  document.getElementById('exp-all-btn').textContent=allExpanded?'Collapse all':'Expand all';
+  save(); render();
+}
+
+// ── Dropdown portal ───────────────────────────────────────────────────
+function openDropdown(e,id){
+  e.stopPropagation();
+  const idea=S.ideas.find(x=>x.id===id); if(!idea) return;
+  const portal=document.getElementById('drop-portal');
+  dropState={open:true,ideaId:id,triggerEl:e.currentTarget};
+  const rect=e.currentTarget.getBoundingClientRect();
+  portal.style.cssText=`display:block;top:${rect.bottom+window.scrollY+4}px;left:${Math.min(rect.left,window.innerWidth-200)}px`;
+  portal.innerHTML=
+    S.tags.map(t=>`<div class="drop-item ${idea.cats.includes(t.key)?'disabled':''}" onclick="addTagDrop(${id},'${t.key}')"><span class="dot" style="${dotStyle(t.color)}"></span>${esc(t.label)}</div>`).join('')+
+    `<div class="drop-sep"></div>
+     <div class="drop-new-input"><input id="dpi" placeholder="New tag name…" onclick="event.stopPropagation()"><button onclick="dropCreateTag(${id})">+</button></div>`;
+}
+function addTagDrop(id,key){
+  const i=S.ideas.find(x=>x.id===id); if(!i) return;
+  if(!i.cats.includes(key)) i.cats.push(key);
+  closeDrop(); save(); render();
+}
+function dropCreateTag(id){
+  const name=document.getElementById('dpi').value.trim(); if(!name) return;
+  const key='tag_'+Date.now();
+  const color=PALETTE[S.tags.length%PALETTE.length];
+  S.tags.push({key,label:name,color});
+  addTagDrop(id,key);
+}
+function closeDrop(){ document.getElementById('drop-portal').style.display='none'; dropState.open=false; }
+document.addEventListener('click',e=>{
+  if(dropState.open&&!document.getElementById('drop-portal').contains(e.target)&&e.target!==dropState.triggerEl) closeDrop();
+});
+
+// ── Nav filters ───────────────────────────────────────────────────────
+function setNav(v){ S.navFilter=v; save(); render(); }
+function toggleCatFilter(k){
+  const idx=S.catFilter.indexOf(k);
+  if(idx>=0) S.catFilter.splice(idx,1); else S.catFilter.push(k);
+  save(); render();
+}
+function toggleStatusFilter(k){
+  const idx=S.statusFilter.indexOf(k);
+  if(idx>=0) S.statusFilter.splice(idx,1); else S.statusFilter.push(k);
+  save(); render();
+}
+
+// ── View ──────────────────────────────────────────────────────────────
+function setView(v){
+  S.view=v;
+  ['cards','table','kanban'].forEach(x=>{ document.getElementById('vb-'+x).classList.toggle('active',x===v); });
+  save(); render();
+}
+
+// ── Sidebar toggle ────────────────────────────────────────────────────
+function toggleSidebar(){
+  const sb=document.getElementById('sidebar');
+  const isMobile=window.innerWidth<=640;
+  if(isMobile){
+    sb.classList.toggle('mobile-open');
+    document.getElementById('sb-overlay').style.display=sb.classList.contains('mobile-open')?'block':'none';
+  } else {
+    sb.classList.toggle('collapsed');
+  }
+}
+function closeMobileSidebar(){
+  document.getElementById('sidebar').classList.remove('mobile-open');
+  document.getElementById('sb-overlay').style.display='none';
+}
+
+// ── Idea modal ────────────────────────────────────────────────────────
+function openAdd(){
+  const now = nowTs();
+  modalState={mode:'add',id:null,tagSel:new Set([S.tags[0]?.key||'devotion']),statusSel:S.statuses[1]?.key||'unused'};
+  document.getElementById('modal-title').textContent='Add Idea';
+  document.getElementById('m-text').value='';
+  document.getElementById('m-chapter').value='';
+  document.getElementById('m-date').value=tsToDateVal(now);
+  document.getElementById('m-time').value=tsToTimeVal(now);
+  document.getElementById('m-delete-btn').style.display='none';
+  buildModalPickers();
+  openModal('idea-modal');
+  setTimeout(()=>document.getElementById('m-text').focus(),80);
+}
+function openEdit(id){
+  const i=S.ideas.find(x=>x.id===id); if(!i) return;
+  modalState={mode:'edit',id,tagSel:new Set(i.cats),statusSel:i.status||'unused'};
+  document.getElementById('modal-title').textContent='Edit Idea';
+  document.getElementById('m-text').value=i.text;
+  document.getElementById('m-chapter').value=i.chapter||'';
+  const ts = i.ts || nowTs();
+  document.getElementById('m-date').value=tsToDateVal(ts);
+  document.getElementById('m-time').value=tsToTimeVal(ts);
+  document.getElementById('m-delete-btn').style.display='inline-block';
+  buildModalPickers();
+  openModal('idea-modal');
+}
+function buildModalPickers(){
+  document.getElementById('m-tags').innerHTML=S.tags.map(t=>{
+    const sel=modalState.tagSel.has(t.key);
+    return `<span class="tpc ${sel?'sel':''}" style="background:${t.color.bg};color:${t.color.text};border-color:${sel?t.color.border:'transparent'}" onclick="toggleModalTag('${t.key}')">${esc(t.label)}</span>`;
+  }).join('');
+  document.getElementById('m-statuses').innerHTML=S.statuses.map(s=>{
+    const sel=modalState.statusSel===s.key;
+    return `<button class="sopt ${sel?'sel':''}" style="${sel?`background:${s.color.bg};color:${s.color.text};border-color:${s.color.border}`:''}" onclick="setModalStatus('${s.key}')">${esc(s.label)}</button>`;
+  }).join('');
+}
+function toggleModalTag(k){
+  if(modalState.tagSel.has(k)){
+    if(modalState.tagSel.size<=1) return;
+    modalState.tagSel.delete(k);
+  } else { modalState.tagSel.add(k); }
+  buildModalPickers();
+}
+function setModalStatus(k){ modalState.statusSel=k; buildModalPickers(); }
+function saveIdea(){
+  const text=document.getElementById('m-text').value.trim();
+  if(!text){ document.getElementById('m-text').focus(); return; }
+  const chapter=document.getElementById('m-chapter').value.trim()||undefined;
+  const cats=[...modalState.tagSel];
+  const status=modalState.statusSel||S.statuses[1]?.key||'unused';
+  const dateVal=document.getElementById('m-date').value;
+  const timeVal=document.getElementById('m-time').value;
+  const ts=dateTimeToTs(dateVal, timeVal);
+  if(modalState.mode==='add'){
+    S.ideas.push({id:S.nextId++,text,cats,status,chapter,ts,expanded:false});
+  } else {
+    const i=S.ideas.find(x=>x.id===modalState.id); if(!i) return;
+    Object.assign(i,{text,cats,status,chapter,ts});
+  }
+  save(); closeModal('idea-modal'); render();
+}
+function deleteIdea(){
+  if(modalState.mode!=='edit') return;
+  if(!confirm('Delete this idea? This cannot be undone.')) return;
+  S.ideas=S.ideas.filter(x=>x.id!==modalState.id);
+  save(); closeModal('idea-modal'); render();
+}
+
+// ── Manager modal ─────────────────────────────────────────────────────
+function openMgr(type){
+  mgrState={type,colorIdx:0};
+  document.getElementById('mgr-title').textContent=type==='tag'?'Manage Tags':'Manage Statuses';
+  document.getElementById('mgr-new-name').value='';
+  buildMgrList();
+  buildColorPick();
+  openModal('mgr-modal');
+}
+function buildMgrList(){
+  const arr=mgrState.type==='tag'?S.tags:S.statuses;
+  document.getElementById('mgr-list').innerHTML=arr.map((item,idx)=>{
+    const cnt=mgrState.type==='tag'
+      ?S.ideas.filter(i=>i.cats.includes(item.key)).length
+      :S.ideas.filter(i=>i.status===item.key).length;
+    return `<div class="mgr-item">
+      <span class="dot" style="${dotStyle(item.color)}"></span>
+      <span class="mgr-item-name">${esc(item.label)}</span>
+      <span class="mgr-item-cnt">${cnt} idea${cnt!==1?'s':''}</span>
+      <button class="mgr-del" onclick="mgrDel('${item.key}',${cnt})" title="Delete">×</button>
+    </div>`;
+  }).join('');
+}
+function buildColorPick(){
+  document.getElementById('mgr-color-pick').innerHTML=PALETTE.map((c,i)=>
+    `<span class="cpick ${i===mgrState.colorIdx?'sel':''}" style="background:${c.bg};border-color:${c.border}" onclick="pickColor(${i})" title="${c.text}"></span>`
+  ).join('');
+}
+function pickColor(i){ mgrState.colorIdx=i; buildColorPick(); }
+function mgrAdd(){
+  const name=document.getElementById('mgr-new-name').value.trim(); if(!name) return;
+  const key=(mgrState.type==='tag'?'tag_':'st_')+Date.now();
+  const color=PALETTE[mgrState.colorIdx];
+  if(mgrState.type==='tag') S.tags.push({key,label:name,color});
+  else S.statuses.push({key,label:name,color});
+  document.getElementById('mgr-new-name').value='';
+  save(); buildMgrList(); render();
+}
+function mgrDel(key,cnt){
+  const isTag=mgrState.type==='tag';
+  const arr=isTag?S.tags:S.statuses;
+  if(arr.length<=1){ alert('You must keep at least one '+(isTag?'tag':'status')+'.'); return; }
+  const msg=cnt>0
+    ?`This ${isTag?'tag':'status'} is used in ${cnt} idea${cnt!==1?'s':''}. Deleting it will remove it from those ideas. Continue?`
+    :`Delete "${isTag?tagByKey(key).label:statusByKey(key).label}"?`;
+  if(!confirm(msg)) return;
+  if(isTag){
+    S.tags=S.tags.filter(t=>t.key!==key);
+    const fallback=S.tags[0]?.key;
+    S.ideas.forEach(i=>{
+      i.cats=i.cats.filter(c=>c!==key);
+      if(i.cats.length===0 && fallback) i.cats=[fallback];
+    });
+  } else {
+    S.statuses=S.statuses.filter(s=>s.key!==key);
+    const fallback=S.statuses[0]?.key;
+    S.ideas.forEach(i=>{ if(i.status===key) i.status=fallback; });
+  }
+  save(); buildMgrList(); render();
+}
+
+// ── Modal helpers ─────────────────────────────────────────────────────
+function openModal(id){ document.getElementById(id).classList.add('open'); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+document.addEventListener('click',e=>{
+  ['idea-modal','mgr-modal'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(e.target===el) closeModal(id);
+  });
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){ closeModal('idea-modal'); closeModal('mgr-modal'); closeDrop(); }
+  if((e.metaKey||e.ctrlKey)&&e.key==='k'){ e.preventDefault(); document.getElementById('search')?.focus(); }
+});
+
+// ── Dark mode ─────────────────────────────────────────────────────────
+function toggleDark(){
+  S.dark=!S.dark;
+  document.body.classList.toggle('dark',S.dark);
+  save();
+}
+
+// ── Export / Import ───────────────────────────────────────────────────
+function exportData(){
+  const blob=new Blob([JSON.stringify({ideas:S.ideas,tags:S.tags,statuses:S.statuses},null,2)],{type:'application/json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download='idea_tracker_backup.json'; a.click();
+}
+function importData(e){
+  const file=e.target.files[0]; if(!file) return;
+  const r=new FileReader();
+  r.onload=ev=>{
+    try {
+      const d=JSON.parse(ev.target.result);
+      if(d.ideas) S.ideas=d.ideas;
+      if(d.tags) S.tags=d.tags;
+      if(d.statuses) S.statuses=d.statuses;
+      S.nextId=Math.max(...S.ideas.map(i=>i.id||0),0)+1;
+      save(); render();
+    } catch(err){ alert('Invalid backup file'); }
+  };
+  r.readAsText(file);
+  e.target.value='';
+}
+
+// ── Init ──────────────────────────────────────────────────────────────
+if(S.dark) document.body.classList.add('dark');
+['cards','table','kanban'].forEach(x=>{
+  document.getElementById('vb-'+x).classList.toggle('active',S.view===x);
+});
+render();
+</script>
+</body>
+</html>
