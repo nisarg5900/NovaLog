@@ -1637,7 +1637,9 @@ function removeTagInline(e,id,key){
   e.stopPropagation();
   const i=S.ideas.find(x=>x.id===id); if(!i) return;
   if(i.cats.length<=1) return;
-  i.cats=i.cats.filter(c=>c!==key); save(); render();
+  i.cats=i.cats.filter(c=>c!==key);
+  i.updated_at = Date.now();
+  save(); render();
 }
 function toggleExpandAll(){
   allExpanded=!allExpanded;
@@ -1662,6 +1664,7 @@ function openStatusDropdown(e,id){
 function setIdeaStatus(id, key){
   const i = S.ideas.find(x=>x.id===id); if(!i) return;
   i.status = key;
+  i.updated_at = Date.now();
   closeDrop(); save(); render();
 }
 function openDropdown(e,id){
@@ -1678,7 +1681,7 @@ function openDropdown(e,id){
 }
 function addTagDrop(id,key){
   const i=S.ideas.find(x=>x.id===id); if(!i) return;
-  if(!i.cats.includes(key)) i.cats.push(key);
+  if(!i.cats.includes(key)){ i.cats.push(key); i.updated_at = Date.now(); }
   closeDrop(); save(); render();
 }
 function dropCreateTag(id){
@@ -1833,11 +1836,12 @@ function saveIdea(){
   const dateVal=document.getElementById('m-date').value;
   const timeVal=document.getElementById('m-time').value;
   const ts=dateTimeToTs(dateVal, timeVal);
+  const updated_at = Date.now(); // foundation for future per-idea conflict merge
   if(modalState.mode==='add'){
-    S.ideas.push({id:S.nextId++,text,cats,status,chapter,ts,expanded:false});
+    S.ideas.push({id:S.nextId++,text,cats,status,chapter,ts,updated_at,expanded:false});
   } else {
     const i=S.ideas.find(x=>x.id===modalState.id); if(!i) return;
-    Object.assign(i,{text,cats,status,chapter,ts});
+    Object.assign(i,{text,cats,status,chapter,ts,updated_at});
   }
   save(); closeModal('idea-modal'); render();
 }

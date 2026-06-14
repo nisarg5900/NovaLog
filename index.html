@@ -54,8 +54,9 @@ a{color:inherit;text-decoration:none}
 .wrap{max-width:1100px;margin:0 auto;padding:0 24px}
 
 /* ─ Nav ─ */
-nav{padding:22px 0;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;backdrop-filter:blur(12px);background:rgba(7,7,13,.6);z-index:50;border-bottom:1px solid transparent;transition:border-color .3s}
-nav.scrolled{border-bottom-color:var(--border)}
+nav{position:sticky;top:0;z-index:50;width:100%;padding:14px 0;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);background:rgba(7,7,13,.7);border-bottom:1px solid transparent;transition:border-color .3s,padding .2s}
+nav.scrolled{border-bottom-color:var(--border);padding:10px 0}
+.nav-inner{max-width:1100px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;gap:16px}
 .brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:15px;letter-spacing:.2px}
 .brand img{width:28px;height:28px;transition:transform .4s cubic-bezier(.34,1.56,.64,1)}
 .brand:hover img{transform:rotate(12deg) scale(1.08)}
@@ -214,23 +215,25 @@ footer .ftr-links{display:flex;gap:22px}
 </div>
 <div class="cursor-glow" id="cursor-glow"></div>
 
-<div class="wrap">
-
 <nav id="nav">
-  <a href="/" class="brand">
-    <img src="assets/novalog-icon.svg" alt="">
-    <span>NovaLog</span>
-  </a>
-  <div class="links">
-    <a href="#story">Story</a>
-    <a href="#features">Features</a>
-    <a href="#changelog">Changelog</a>
-    <a href="#how">How</a>
-    <a href="#faq">FAQ</a>
-    <a href="https://github.com/nisarg5900/NovaLog" target="_blank" rel="noopener">GitHub</a>
-    <a href="app/" class="cta-sm">Open app →</a>
+  <div class="nav-inner">
+    <a href="/" class="brand">
+      <img src="assets/novalog-icon.svg" alt="">
+      <span>NovaLog</span>
+    </a>
+    <div class="links">
+      <a href="#story">Story</a>
+      <a href="#features">Features</a>
+      <a href="#changelog">Changelog</a>
+      <a href="#how">How</a>
+      <a href="#faq">FAQ</a>
+      <a href="https://github.com/nisarg5900/NovaLog" target="_blank" rel="noopener">GitHub</a>
+      <a href="app/" class="cta-sm">Open app →</a>
+    </div>
   </div>
 </nav>
+
+<div class="wrap">
 
 <header class="hero">
   <div class="badge reveal in"><span class="dot"></span> Free while in early access</div>
@@ -329,37 +332,12 @@ footer .ftr-links{display:flex;gap:22px}
 <section id="changelog">
   <div class="eyebrow reveal">What's new</div>
   <h2 class="reveal">Built in the open.<br>Updated often.</h2>
-  <p class="lead reveal reveal-delay-1">NovaLog ships in small, deliberate steps. Recent highlights — full history on <a href="https://github.com/nisarg5900/NovaLog/blob/main/CHANGELOG.md" target="_blank" rel="noopener" style="color:var(--brand2);text-decoration:underline">GitHub</a>.</p>
-  <div class="updates">
-    <div class="update reveal">
-      <div class="update-date">2026-06-13</div>
-      <div class="update-title">Visual polish &amp; install banner</div>
-      <div class="update-body">Card layout tightened: date pinned in the head, status pushed to the right. Sync badge gets a spinning two-arrow glyph. PWA gains a maskable icon for proper Android tiles, and a dismissable install banner sits at the top of the sidebar.</div>
-    </div>
-    <div class="update reveal reveal-delay-1">
-      <div class="update-date">2026-06-13</div>
-      <div class="update-title">Settings, profile, signup names</div>
-      <div class="update-body">New Settings modal consolidates account, theme, data, install, and sign-out. Sidebar replaces email with an initials avatar, display name, and @handle. Signup asks for First / Last name.</div>
-    </div>
-    <div class="update reveal reveal-delay-2">
-      <div class="update-date">2026-06-13</div>
-      <div class="update-title">Offline-first &amp; Markdown export</div>
-      <div class="update-body">Service worker caches the shell; edits made offline queue locally and sync automatically when you're back online. New Export modal: JSON backup, Markdown flat, by tag, or by status.</div>
-    </div>
-    <div class="update reveal">
-      <div class="update-date">2026-06-13</div>
-      <div class="update-title">Resurface &amp; markdown rendering</div>
-      <div class="update-body">"On this day" + "Random pick" widget surfaces forgotten fragments. Inline markdown in idea text (bold, italic, code) and <code>[[Idea title]]</code> links between ideas.</div>
-    </div>
-    <div class="update reveal reveal-delay-1">
-      <div class="update-date">2026-06-13</div>
-      <div class="update-title">Status icons + inline editing</div>
-      <div class="update-body">Pick from 16 Lucide-style icons for any status. Inline rename, recolour, and re-icon for tags and statuses in the Manage modal. The status pill on each card is now a one-click dropdown.</div>
-    </div>
-    <div class="update reveal reveal-delay-2">
-      <div class="update-date">2026-06-13</div>
-      <div class="update-title">Cross-user isolation hardening</div>
-      <div class="update-body">Per-user localStorage cache, empty boot state, and a wipe on sign-out — so two accounts on the same browser cannot see each other's snapshots.</div>
+  <p class="lead reveal reveal-delay-1">NovaLog ships in small, deliberate steps — each version pinned in <a href="https://github.com/nisarg5900/NovaLog/blob/main/CHANGELOG.md" target="_blank" rel="noopener" style="color:var(--brand2);text-decoration:underline">CHANGELOG.md</a>. The cards below load straight from there.</p>
+  <div class="updates" id="updates-grid">
+    <div class="update reveal" style="opacity:.5">
+      <div class="update-date">Loading…</div>
+      <div class="update-title">Fetching the latest releases</div>
+      <div class="update-body">If this doesn't load, the full changelog is one click away on GitHub.</div>
     </div>
   </div>
   <div class="changelog-cta reveal" style="text-align:center;margin-top:32px"><a href="https://github.com/nisarg5900/NovaLog/blob/main/CHANGELOG.md" target="_blank" rel="noopener" class="cta ghost">See full changelog →</a></div>
@@ -483,6 +461,63 @@ window.addEventListener('scroll', onScroll, { passive: true });
 onScroll();
 
 function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
+
+// ── Auto-load the most recent CHANGELOG.md entries into the landing ──
+function escHtml(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function inlineMd(s){
+  return escHtml(s)
+    .replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>')
+    .replace(/(?<!\w)\*([^*\n]+)\*(?!\w)/g, '<em>$1</em>')
+    .replace(/`([^`\n]+)`/g, '<code>$1</code>');
+}
+function parseChangelog(md){
+  // Match every "## v0.X.Y — date" heading and capture the body until the next heading.
+  const re = /^##\s+(v\d+\.\d+\.\d+)\s*[—–-]\s*([^\n]+)\n([\s\S]*?)(?=^##\s+v\d+\.\d+\.\d+|^---\s*$|\Z)/gm;
+  const out = [];
+  let m;
+  while((m = re.exec(md)) !== null){
+    const version = m[1];
+    const date    = m[2].trim();
+    const body    = m[3].trim();
+    // First line of body is the **subtitle**; the rest are bullets
+    const lines = body.split(/\n+/);
+    let subtitle = '';
+    if(lines[0] && lines[0].startsWith('**') && lines[0].endsWith('**')){
+      subtitle = lines.shift().slice(2, -2);
+    }
+    const bullets = lines.filter(l => l.startsWith('- ')).map(l => l.slice(2));
+    out.push({ version, date, subtitle, bullets });
+  }
+  return out;
+}
+async function loadChangelog(){
+  const grid = document.getElementById('updates-grid');
+  if(!grid) return;
+  try {
+    const res = await fetch('CHANGELOG.md', { cache: 'no-cache' });
+    if(!res.ok) throw new Error('HTTP ' + res.status);
+    const md = await res.text();
+    const entries = parseChangelog(md).slice(0, 6);
+    if(!entries.length) throw new Error('no entries parsed');
+    grid.innerHTML = entries.map((e, i) => `
+      <div class="update reveal ${i === 1 ? 'reveal-delay-1' : i === 2 ? 'reveal-delay-2' : ''}">
+        <div class="update-date"><span style="color:var(--brand2);font-weight:600">${escHtml(e.version)}</span> · ${escHtml(e.date)}</div>
+        <div class="update-title">${inlineMd(e.subtitle || '')}</div>
+        <div class="update-body">${e.bullets.slice(0, 3).map(b => inlineMd(b)).join(' · ')}</div>
+      </div>`).join('');
+    // Re-arm the reveal observer for the freshly-injected cards
+    grid.querySelectorAll('.reveal').forEach(r => { r.classList.add('in'); });
+  } catch (err) {
+    console.warn('Changelog load failed:', err);
+    grid.innerHTML = `
+      <div class="update reveal in">
+        <div class="update-date">Couldn't load CHANGELOG.md</div>
+        <div class="update-title">The full release history is on GitHub</div>
+        <div class="update-body"><a href="https://github.com/nisarg5900/NovaLog/blob/main/CHANGELOG.md" target="_blank" rel="noopener" style="color:var(--brand2);text-decoration:underline">Open CHANGELOG.md →</a></div>
+      </div>`;
+  }
+}
+loadChangelog();
 </script>
 
 </body>
