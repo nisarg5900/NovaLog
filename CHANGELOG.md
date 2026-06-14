@@ -2,81 +2,84 @@
 
 All notable changes are listed here. Newest first.
 
-## 2026-06-13 — Visual polish & install banner
+Versioning is **MAJOR.MINOR.PATCH** (loose SemVer for an app):
+**MAJOR** = breaking data-shape changes · **MINOR** = new features · **PATCH** = fixes & polish.
+Once the product is feature-complete enough to stop breaking things between versions, v1.0.0 ships.
+
+---
+
+## v0.7.0 — 2026-06-13
+**Versioning, editor fixes, polish**
+
+- Introduced versioning: app shows `v0.7.0` next to NovaLog in the sidebar, Settings → About links here
+- Editor: removed side-by-side and fullscreen buttons (they re-mounted CodeMirror and lost unsaved text inside the modal)
+- Preview overlay now opaque + properly positioned — source no longer bleeds through the rendered output
+- Idea modal grown from 600 → 880 px max width so editing feels less cramped
+- New quick theme toggle (sun/moon) in the topbar — no need to open Settings
+
+## v0.6.0 — 2026-06-13
+**Card layout, sync icon, install banner, changelog**
 
 - Card layout: date pinned in the head, status pushed to the right so it stays distinct from category tags
-- Sync badge: now a single spinning two-arrow icon (no more duplicate ✓)
+- Sync badge: single spinning two-arrow icon (no more "Synced ✓" double-tick)
 - PWA: new maskable icon variant — fills Android adaptive icon tiles correctly
-- Install: prominent purple banner at the top of the sidebar (dismissable), Settings → App still keeps an install row
+- Prominent purple install banner at the top of the sidebar (dismissable); Settings → App keeps a permanent install row
+- `CHANGELOG.md` + "What's new" section on the landing page
 
-## 2026-06-13 — Settings, profile, signup names
+## v0.5.0 — 2026-06-13
+**Settings, profile, signup names, markdown editor**
 
-- New **Settings modal** consolidates Account, Appearance, Data (Export/Import), Install, and Sign out
-- **Profile** in sidebar: initials avatar (stable HSL colour), display name + @handle, settings cog on hover
-- Signup form now asks for First Name / Last Name (required) and Username (optional)
+- New **Settings** modal consolidating Account, Appearance, Data, Install, Sign out
+- Initials avatar in the sidebar (HSL hash from username/uid), display name + @handle, animated cog
+- Signup form asks First/Last name (required) + optional Username
 - Account modal grew a "Your name" section to edit it later
+- Drop-in EasyMDE markdown editor with toolbar, live preview, and `Ctrl+B / Ctrl+I / Ctrl+L` shortcuts
 
-## 2026-06-13 — Visual polish, theme-aware logo, shortcut fixes
+## v0.4.0 — 2026-06-13
+**Theme-aware logo, sync icon, fixed shortcuts, scroll-to-top**
 
 - New light-mode wordmark; sidebar swaps logos with the theme
-- Sync badge slimmer, with a spinning two-arrow icon
-- Stats strip alignment cleaned up — number, dot, label all on one baseline
+- Stats strip alignment cleaned up — number, dot, label on a single baseline
 - "Expand all" hidden in Table and Kanban views (only meaningful in Cards)
-- Keyboard shortcuts revamped: `Ctrl+N` and `Ctrl+Shift+R` dropped (they conflicted with browser new-tab / hard-reload). New single-key shortcuts that fire outside text fields: `N` (add idea), `R` (Resurface), `/` (search). `Ctrl+K` for search still works
+- Keyboard shortcuts revamped: `Ctrl+N` and `Ctrl+Shift+R` dropped (browser conflicts). New single-key shortcuts that fire outside text fields: `N` (add idea), `R` (Resurface), `/` (search)
+- Scroll-to-top FAB in the app respecting iOS safe areas
 
-## 2026-06-13 — Offline-first + Markdown export
+## v0.3.0 — 2026-06-13
+**Offline-first, Markdown export, PWA install**
 
 - Service worker rewritten with stale-while-revalidate caching for the app shell
 - Per-user write queue: edits made offline are stored locally and pushed automatically when connectivity returns
 - Sync badge reflects offline state ("Offline — saved locally", "Syncing pending changes…")
 - New **Export** modal: JSON backup, Markdown flat, Markdown grouped by tag, Markdown grouped by status
-
-## 2026-06-13 — PWA install + keyboard shortcuts
-
 - Web manifest + service worker = installable on Chrome, Edge, Android, iOS (via Add to Home Screen)
-- App shortcuts for "New idea" and "Resurface" available from the dock / home screen
-- iOS PWA meta tags so the app feels native after install
-- First wave of keyboard shortcuts (since revised — see later entry)
+- PWA app shortcuts ("New idea", "Resurface")
 
-## 2026-06-13 — Markdown rendering & Resurface
+## v0.2.0 — 2026-06-13
+**Markdown, Resurface, status icons, inline editing**
 
-- Inline markdown in idea text everywhere: **bold**, *italic*, `code`, and `[[Idea title]]` links to other ideas
-- New **Resurface** widget (sparkles button in the topbar): "On this day" (ideas written on the same calendar day in past years) + "Random pick" with shuffle
-
-## 2026-06-13 — Cross-user data isolation
-
-- Per-user localStorage cache (no more shared `ideaTracker_v3` key) so two accounts on the same browser can't see each other's snapshots
-- Boot starts with a clean in-memory state; no pre-auth bleed possible
-- Sign-out and delete-account wipe every NovaLog cache key
-
-## 2026-06-13 — Status icons + inline editing + status dropdown
-
-- Each status can now have an **icon** from a 16-icon Lucide-style library (circle, check, star, flag, flame, …)
-- **Manage** modal supports full inline editing of tags and statuses: rename via the input, recolour via a popover, change icon via a popover
-- The status pill on each card is now a **dropdown** — click to switch status. The cycle button is gone
+- Inline markdown in idea text everywhere: `**bold**`, `*italic*`, `` `code` ``, and `[[Idea title]]` links between ideas
+- **Resurface** widget: "On this day" + "Random pick" with shuffle
+- Each status gets an **icon** from a 16-icon Lucide-style library
+- **Manage** modal: full inline editing of tags and statuses — rename via input, recolour + change icon via popovers
+- The status pill on each card is now a one-click dropdown (cycle button removed)
 - Stats strip, sidebar Views, By-Status filters, status row in the editor — all show the chosen icon
+- Cross-user data isolation: per-user localStorage cache, empty boot state, wipe on sign-out
 
-## 2026-06-13 — Generalisation
+## v0.1.0 — 2026-06-13
+**Generalisation + Account modal**
 
 - Hardcoded "Used in book" / "Not yet used" replaced with neutral defaults ("Open" / "Done") for new signups
-- Filtering, stats, sorting, and card borders all generic — work with any number of user-defined statuses
-- "Sort by used/unused" replaced with "Group by status"
-- Emojis throughout the UI swapped for crisp Lucide-style SVGs (search, menu, inbox, clock, refresh, chevrons, view-mode icons)
+- Filtering, stats, sorting, card borders generic — works with any number of user-defined statuses
+- Sidebar email replaced by a real **Account** modal: change email (with confirmation link), change password, sign out, danger-zone delete-account
+- `delete_my_account()` Postgres function (SECURITY DEFINER, RLS-gated) cascades to user data
+- Emojis throughout the UI swapped for Lucide-style SVGs
 
-## 2026-06-13 — Account modal & delete
-
-- Sidebar shows the signed-in email; click opens a real Account modal
-- Change email (with confirmation link), change password, sign out, and a danger-zone delete-account button
-- `delete_my_account()` Postgres function (SECURITY DEFINER, RLS-gated) wipes the user from auth.users and cascades to their idea data
-
-## 2026-06-13 — Landing page
-
-- Cosmic dark landing page at the repo root with story, features, how-it-works, and FAQ
-- Mouse-following nebula glow, drifting starfield, scroll-triggered fades, scroll-to-top button
-
-## 2026-06-13 — Initial release
+## v0.0.1 — 2026-06-13
+**Initial release**
 
 - Rebrand to **NovaLog** with new icon and wordmark
 - Repo restructured: landing at `/`, app at `/app/`
-- Supabase auth (email + password + hCaptcha), Postgres + RLS, anon key committed (safe by design)
+- Supabase auth (email + password + hCaptcha), Postgres + RLS, anon key safely committed
 - Cards / Table / Kanban views, tags & statuses, search, sort, light/dark theme, JSON import/export
+- Cosmic dark landing page with story, features, how-it-works, FAQ
+- Mouse-following nebula glow, drifting starfield, scroll-triggered fades

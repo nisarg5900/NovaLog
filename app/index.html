@@ -46,8 +46,9 @@ input,textarea,select{font-family:inherit}
 
 /* ─ Sidebar ─ */
 .sidebar-head{padding:14px 14px 10px;border-bottom:1px solid var(--border);flex-shrink:0}
-.sidebar-head h1{font-size:14px;font-weight:600;color:var(--text)}
+.sidebar-head h1{font-size:14px;font-weight:600;color:var(--text);display:inline-flex;align-items:baseline;gap:6px}
 .sidebar-head p{font-size:11px;color:var(--text3);margin-top:2px}
+.version-tag{font-size:10px;font-weight:500;color:var(--text3);background:var(--surface2);padding:1px 6px;border-radius:8px;letter-spacing:.3px;font-variant-numeric:tabular-nums}
 .sidebar-sec{padding:10px 10px 2px}
 .sidebar-sec-lbl{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--text3);padding:0 4px;margin-bottom:4px;display:flex;justify-content:space-between;align-items:center}
 .sidebar-sec-lbl button{font-size:10px;color:var(--accent);background:none;border:none;cursor:pointer;padding:0}
@@ -478,7 +479,7 @@ body.dark .theme-toggle-btn .theme-moon{display:none}
     <img class="logo-dark" src="../assets/novalog-icon.svg" alt="" style="width:28px;height:28px;flex-shrink:0">
     <img class="logo-light" src="../assets/novalog-icon-light.svg" alt="" style="width:28px;height:28px;flex-shrink:0">
     <div>
-      <h1>NovaLog</h1>
+      <h1>NovaLog <span id="version-tag" class="version-tag"></span></h1>
       <p>Where ideas are born</p>
     </div>
   </div>
@@ -727,6 +728,13 @@ body.dark .theme-toggle-btn .theme-moon{display:none}
         <div class="s-text"><div class="s-title" style="color:var(--accent)">Install NovaLog</div><div class="s-sub">Add to your dock / home screen</div></div>
       </button>
 
+      <div class="settings-section-lbl">About</div>
+      <a class="settings-row" href="https://github.com/nisarg5900/NovaLog/blob/main/CHANGELOG.md" target="_blank" rel="noopener" style="text-decoration:none;color:inherit">
+        <div class="s-icn"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div>
+        <div class="s-text"><div class="s-title">NovaLog <span id="settings-version" style="font-weight:400;color:var(--text3);font-size:12px">v0.0.0</span></div><div class="s-sub">View full changelog</div></div>
+        <span class="s-trail">↗</span>
+      </a>
+
       <div class="settings-section-lbl">Session</div>
       <button class="settings-row danger" onclick="closeModal('settings-modal'); signOut()">
         <div class="s-icn"><svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></div>
@@ -814,6 +822,13 @@ body.dark .theme-toggle-btn .theme-moon{display:none}
 </button>
 
 <script>
+// ── App version ──────────────────────────────────────────────────────
+// Bump on every push. MAJOR.MINOR.PATCH (SemVer-ish for an app):
+//   MAJOR = breaking data shape changes
+//   MINOR = new features
+//   PATCH = fixes + cosmetics
+const APP_VERSION = '0.7.0';
+
 // ── Inline SVG icons (Lucide-style) ───────────────────────────────────
 const ICON = {
   menu:       '<span class="icn"><svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></span>',
@@ -2128,6 +2143,13 @@ function handleUrlAction(){
     else if (action === 'resurface') openResurface();
   }, 400);
 }
+
+// Populate version everywhere it's shown
+(function paintVersion(){
+  const v = 'v' + APP_VERSION;
+  const tag = document.getElementById('version-tag');     if(tag) tag.textContent = v;
+  const set = document.getElementById('settings-version'); if(set) set.textContent = v;
+})();
 
 // ── Init ──────────────────────────────────────────────────────────────
 bootstrap().then(() => handleUrlAction());
